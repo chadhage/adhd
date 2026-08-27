@@ -1,8 +1,3 @@
-# audience
+# audience.md
 
-## rings
-  - internal
-  - canary
-  - private preview
-  - public preview
-  - general availability
+names=internal,canary,private-preview,public-preview,general-availability
