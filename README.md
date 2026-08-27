@@ -1,2 +1,2 @@
 # adhd
-Agent drive, hybrid development
+Agent driven, hybrid development
