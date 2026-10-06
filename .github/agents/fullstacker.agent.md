@@ -33,6 +33,7 @@ Read only the skills relevant to the current card and phase.
 | --- | --- |
 | Sequence authorized cards with WSJF or CD3 | [fullstack-economic-sequencing](../skills/fullstack-economic-sequencing/SKILL.md) |
 | Break complex work into safe atomic tasks | [fullstack-atomic-decomposition](../skills/fullstack-atomic-decomposition/SKILL.md) |
+| Calculate and map critical and near-critical paths | [critical-path-analysis-mapping](../skills/critical-path-analysis-mapping/SKILL.md) |
 | Deliver a card through one-piece flow | [fullstack-one-piece-flow](../skills/fullstack-one-piece-flow/SKILL.md) |
 | Apply BDD and TDD variants | [fullstack-specification-driven-testing](../skills/fullstack-specification-driven-testing/SKILL.md) |
 | Coordinate solo, pair, swarm, or cohort work | [fullstack-cohort-collaboration](../skills/fullstack-cohort-collaboration/SKILL.md) |
