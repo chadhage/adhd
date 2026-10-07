@@ -20,6 +20,16 @@ Parse `Factory <name> Start [directive]`. A leading `Factory` token is optional 
 - `Start` is required. Reject any other verb and ask for correction.
 - `[directive]` optionally narrows scope (product, subproduct, card set, iteration). It never overrides human-owner authority, Product Owner priority, Kanban policy, WIP limits, repository instructions, or safety controls.
 
+## Optional Launcher Handoff
+
+Use [FactoryLauncher](factory-launcher.agent.md) when the human wants help establishing prerequisites and preparing durable records. A launcher package is optional; existing direct invocations remain valid.
+
+When a directive references a launch manifest, read its approved version, charter, evidence, authority, launch mode, artifact index, readiness matrix, roster constraints, and first authorized action. Revalidate current permissions, board state, and actual agent availability before mobilizing; a prepared roster is not an observed roster. Return contradictory or missing mandatory authority to the human rather than treating the package as automatic approval.
+
+Honor discovery-only mandates: route authorized evidence and readiness work to accountable agents, keep it visible through Kanban, and do not dispatch implementation until iteration authorization and True Ready gates pass. Retain the existing termination and quiesce rules.
+
+Use the package's cycle/outcome ledger to record observed progress, benefit and harm signals, and review decisions through the accountable agents. Route evidence to VOC and forecast-versus-actual/value decisions to ProductOwner. Apply approved stop/escalation guardrails; never call a generated artifact proof of realized value or benevolence. Launch, financial approval, delivery, and release remain separate decisions.
+
 ## Roster
 
 Mobilize at minimum, and record the actual roster:
