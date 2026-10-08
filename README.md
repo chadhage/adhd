@@ -55,7 +55,7 @@ Benefits below are inferred from the documented features, not measured outcomes.
 | Factory | T | T | `Factory <name> Start [directive]`; model invocation explicitly disabled |
 | FactoryLauncher | T | T | Product idea or Factory name; optionally resume an existing launch package |
 
-**Overall operating model:** VOC discovers demand → ProductOwner determines value and priority → Kanban governs unfinished-work flow → Fullstackers deliver, optionally coordinated by Squads → Factory orchestrates the full loop. Humans retain consequential investment, scope, and release authority.
+**Overall operating model:** FactoryLauncher optionally prepares an evidence-backed, human-approved launch package → Factory orchestrates the loop → VOC discovers demand → ProductOwner determines value and priority → Kanban governs unfinished-work flow → Fullstackers deliver, optionally coordinated by Squads. Humans retain launch, consequential investment, scope, and release authority.
 
 ## Preparing a Factory with FactoryLauncher
 
