@@ -40,8 +40,8 @@ Benefits below are inferred from the documented features, not measured outcomes.
 | `Kanban` | Complete unfinished-work inventory; exactly two default buckets; evidence-backed transitions; WIP enforcement; duplicate/omission reconciliation; per-card and total-lot reporting | Makes unfinished work, blockers, ownership, and overload visible; prevents unsupported completion and misleading totals | Does not set product priority or execute card work |
 | `Fullstacker` | End-to-end vertical delivery; one-piece flow; atomic decomposition; solo/pair/cohort work; BDD/TDD; secure architecture; delivery automation; criterion-by-criterion done evidence | Produces integrated increments rather than disconnected layers; reduces regression risk and makes completion auditable | Works only on authorized cards; release and production changes require separate authority |
 | `Squad` | Named, fixed-size Fullstacker swarm; True Ready checks; ordered evidence gates; non-overlapping ownership; integration owner; handoff contracts and integrated validation | Enables coordinated delivery with fewer edit collisions; ensures member-level success becomes a verified integrated outcome | Orchestrator, not an extra implementer, board administrator, or release authority |
-| `Factory` | Continuous demand-to-delivery loop; VOC/ProductOwner/Kanban/Squad orchestration; cycle metrics; quiescence detection; bounded council negotiation and human escalation | Connects discovery, prioritization, readiness, and delivery; detects stalled flow and establishes an explicit recovery path | Delegates specialist work; cannot manufacture demand, bypass WIP, or self-authorize production actions |
-| `FactoryLauncher` | Adaptive prerequisite interview; minimum-viable checkpoint; optional efficiency refinement; delegated specialist preparation; durable launch package; value and harm feedback plans | Reduces launch ambiguity and preserves human control while preparing evidence-backed cycles of learning and value creation | Preparation is not launch consent, implementation authority, financial approval, or proof of benevolence |
+| `Factory` | Continuous demand-to-value loop; VOC/ProductOwner/Kanban/Squad orchestration; cycle metrics; continuity detection; required four-role recovery panel and Yes/No human escalation | Connects discovery, prioritization, readiness, and delivery; resolves stalls through bounded evidence-based recovery | Delegates specialist work; cannot manufacture demand, bypass WIP, or self-authorize production actions |
+| `FactoryLauncher` | Adaptive setup/resume; setup-MVP ownership; required recovery-panel mobilization; first bounded value cycle; durable launch package; value and harm feedback plans | Gets a new Factory through its first verified value increment and resumes existing production work, reducing launch and continuity risk | Invocation authorizes bounded setup/first-cycle or existing-work resumption, not future iterations, unapproved spending, external actions, deployment, or release |
 
 ## Invocation and access truth table
 
@@ -56,7 +56,7 @@ Benefits below are inferred from the documented features, not measured outcomes.
 | Factory | T | T | `Factory <name> Start [directive]`; model invocation explicitly disabled |
 | FactoryLauncher | T | T | Product idea or Factory name; optionally resume an existing launch package |
 
-**Overall operating model:** FactoryLauncher optionally prepares an evidence-backed, human-approved launch package → Factory orchestrates the loop → VOC discovers demand → ProductOwner determines value and priority → Kanban governs unfinished-work flow → Fullstackers deliver, optionally coordinated by Squads. Humans retain launch, consequential investment, scope, and release authority.
+**Overall operating model:** FactoryLauncher completes bounded setup or resumption through a verified value cycle → Factory sustains the loop → VOC discovers demand → ProductOwner determines value and priority → Kanban governs unfinished-work flow → Squads coordinate Fullstackers to deliver. Humans retain strategy, consequential investment, out-of-scope decisions, and release authority.
 
 ## Preparing a Factory with FactoryLauncher
 
@@ -107,11 +107,13 @@ increment, dissatisfiers, satisfiers, Definition of Done, demo, feedback rules,
 budget/burn, roster, skills, and authorization. Recommendations require
 confirmation; missing evidence remains unknown.
 
-Once the minimum gate passes, choose to finish the interview and prepare the
-package, continue an optional efficiency interview, or pause and save progress.
-You may stop earlier, but the resulting package will be marked incomplete.
-Discovery-ready does not mean delivery-ready: implementation requires separate
-iteration authorization and True Ready evidence.
+An explicit setup or resume invocation authorizes the bounded work needed to
+reach Factory setup MVP, including the required recovery panel and first value
+cycle. Do not offer a routine pause or stop choice before that MVP. Continue
+optional efficiency refinement only after the first value increment is verified
+and demonstrated. A discovery-only request remains limited to its explicit
+research scope; hard safety/permission limits and explicit human stop decisions
+remain binding.
 
 The approved package includes a charter and artifact index, decision/authority
 ledger, evidence and validation plan, ProductOwner backlog/economics, Kanban
@@ -123,22 +125,26 @@ guidance; `.docs/factories/<safe-name>/` is only a default when that guidance
 supports it. Invocable products follow their selected product reference's
 best-practice layout, or use `src/` when the reference does not define one.
 Agentic products' runtime agents are recorded separately from the ADHD agents
-used to develop them. The launcher does not fabricate cycle results or create
-application code.
+used to develop them. A package without an empirically verified value increment
+is not setup MVP. The launcher does not fabricate cycle results or create
+application code itself; it delegates delivery to Factory/Squad.
 
-After iteration 10, the invoker must choose whether to retain the 10-iteration
-cadence or set a new positive-integer cadence. Iteration 37 cannot be authorized
+Before an authorized work horizon is exhausted, ask the invoker whether to
+continue with the established cadence or choose a new positive-integer cadence.
+Do not pause active authorized work while awaiting that decision. Complete the
+iteration-36 calibration before its gate; iteration 37 cannot be authorized
 until VOC, Kanban, and empirical product artifacts have been calibrated.
 
-Launch is a separate explicit decision. Select [Factory](factory.agent.md)
-and submit the generated `Factory <name> Start [directive]` command referencing
-the approved manifest, version, mode, scope, and first action, for example:
+For an explicit setup or resume request, FactoryLauncher invokes [Factory](factory.agent.md)
+with the generated `Factory <name> Start [directive]` command referencing the
+approved manifest, version, mode, scope, and first action, for example:
 
 ```text
 Factory InvoiceFlow Start manifest=.docs/factories/invoice-flow/launch-manifest.md
 ```
 
 Use the exact activation prompt generated by FactoryLauncher when it differs
-from this illustrative form. Factory's model-invocation restriction remains
-unchanged. Runtime availability and actual mobilization must be verified;
-producing a package alone does not mean a Factory has started.
+from this illustrative form. Verify runtime availability and actual
+mobilization; producing a package alone does not mean a Factory has started.
+Future iterations, spending beyond the mandate, deployment, and release retain
+their separate approval requirements.

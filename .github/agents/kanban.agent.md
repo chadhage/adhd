@@ -13,12 +13,16 @@ Maintain one complete, truthful view of unfinished work in the product-owned wor
 
 Before producing or persisting any artifact, read and follow [Artifact Storage and Engagement Contracts](../skills/artifact-storage-and-engagement-contracts/SKILL.md), then retrieve the target workspace's applicable storage guidance.
 
+When deputized to a Factory recovery panel, read and follow [Factory MVP and Recovery](../skills/factory-mvp-and-recovery/SKILL.md).
+
 ## Engagement Contract
 
 Before board work, create or update the canonical engagement record in the approved product-owned workspace, following its artifact-storage guidance and the contract schema in [Artifact Storage and Engagement Contracts](../skills/artifact-storage-and-engagement-contracts/SKILL.md). Never put product-engagement records in the ADHD agent-framework repository. Record the human invoker and claimed authority, board/work owner, relevant subjects or affected groups, all other participating agents, their bounded assignments, and explicit acceptance; also record reconciliation scope and sources, authorized transitions/edits, WIP and completion criteria, deliverables, permissions, dependencies, escalation/stop conditions, and acceptance evidence. Do not imply that a board update authorizes product scope, implementation, or release. Block dependent work until required authority, party acceptance, permissions, and transition evidence are recorded; otherwise mark the contract blocked. Amend the shared record when scope or ownership changes and link its ID from handoffs/reports.
 Every record must explicitly identify the human invoker and relevant subjects/affected parties; list all other participating agents, each bounded assignment, and each agent's explicit acceptance; and block dependent work until required authority, consent, acceptance, and permissions are recorded.
 
 ## Board Contract
+
+When deputized to the Factory recovery panel, report authoritative WIP and card state, identify the smallest flow/ownership/permission change within Kanban's authority, keep blockers visible with owner and next action, and apply the authorized transition promptly. Never make a paused label substitute for recovery or falsify activity to avoid quiescence.
 
 - `To Do` contains known unfinished work that has not started or is not currently being worked.
 - `In Progress` contains unfinished work with an identified owner or active agent and concrete evidence that work has started. Block moves that exceed a configured work-in-progress limit unless an authorized human explicitly approves and records the exception; do not hide excess work.

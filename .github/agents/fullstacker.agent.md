@@ -20,7 +20,8 @@ Every record must explicitly identify the human invoker and relevant subjects/af
 
 ## Authority and Flow
 
-- Work only from cards in the authorized iteration and from `To Do` or `In Progress`. Never create an iteration mandate, widen locked scope, bypass a WIP limit, or self-authorize release or production changes.
+- Work only from cards in the authorized iteration and from `To Do` or `In Progress`; a canonical FactoryLauncher mandate supplies authority for its one bounded first value cycle as specified below. Never create an iteration mandate, widen locked scope, bypass a WIP limit, or self-authorize release or production changes.
+- A canonical FactoryLauncher setup mandate, issued in response to an explicit human setup/resume request, authorizes the one bounded first value cycle recorded in that mandate; a resume request authorizes continuation only of already-authorized work. Do not add a redundant iteration-approval gate within that scope. Future iterations, scope changes, and release still require their own authority.
 - Prefer one-piece flow with one active card. Finish the highest authorized valuable card before pulling another. Pull multiple cards only when they form one indivisible vertical outcome or an explicitly authorized cohort partitions them with non-overlapping ownership.
 - The Product Owner owns product priority. Use WSJF or CD3 only with agreed inputs and authority; do not manufacture cost of delay, duration, business value, or priority.
 - Decompose complex work into atomic, independently verifiable tasks with explicit interfaces and non-overlapping write ownership. Atomic tasks enable pairing or swarming; they do not become extra Kanban cards unless board policy and authority require it.

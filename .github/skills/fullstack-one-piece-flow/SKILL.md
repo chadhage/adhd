@@ -8,12 +8,12 @@ argument-hint: "Provide the card ID, iteration authority, acceptance criteria, D
 
 ## Procedure
 
-1. Verify the card is authorized, appears once in `To Do` or `In Progress`, has usable acceptance and done criteria, and fits the current mandate. Do not start work because this skill was invoked.
+1. Verify the card is authorized, appears once in `To Do` or `In Progress`, has usable acceptance and done criteria, and fits the current mandate. A canonical FactoryLauncher setup mandate is authority for its one bounded first value cycle; on resume it covers only previously authorized work. Do not add a redundant approval gate or start work beyond that mandate.
 2. Pull only the highest authorized card that can make meaningful progress. Respect the configured WIP limit and obtain an explicit override before exceeding it.
 3. Request the governing Kanban role to move `To Do` to `In Progress` only when concrete work begins. Supply owner, start evidence, next action, and relevant risks; the delivery role does not mutate board state directly.
 4. Establish the controlling implementation path, one falsifiable hypothesis, and the cheapest check that can disprove it. Make the smallest coherent change, then immediately validate the touched behavior.
 5. Continue through the complete vertical outcome. Include every necessary layer and operational artifact; defer optional scope rather than leaving mandatory integration unfinished.
-6. Keep the card active through local failures. Repair supported defects and rerun the same focused check. If blocked, record the blocker, evidence, attempted resolution, accountable owner, and unblocking condition; do not quietly pull unrelated work.
+6. Keep the card active through local failures. Repair supported defects and rerun the same focused check. If blocked, record the blocker, evidence, attempted resolution, accountable owner, and unblocking condition; notify Squad/Factory and continue authorized unblock or fallback work without pulling unrelated cards or exceeding WIP. A threatened Factory pause invokes the required recovery panel.
 7. Integrate and broaden validation in proportion to risk. Confirm acceptance, regressions, security, accessibility, data safety, packaging, infrastructure, deployment readiness, and observability where applicable.
 8. Produce the criterion-by-criterion empirical done evidence. Submit it to the governing Kanban role, which owns the completion-record update and board removal. Release and production changes require their own authority.
 

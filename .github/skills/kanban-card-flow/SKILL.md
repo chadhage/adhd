@@ -23,6 +23,7 @@ disable-model-invocation: false
 4. For `In Progress` to `To Do`, require evidence that active work has stopped or an authorized decision to pause it. Preserve blocker, partial-work, dependency, and restart context as attributes.
 5. For removal after completion, require satisfied exit criteria, observed verification evidence, and an authorized established completion record. Record the evidence there before removing the card; never add `Done`, archive, or completed as a live board bucket.
 6. For blocked, waiting, review, paused, stale, or at-risk work, update the relevant attributes, next action, owner, and date without changing buckets unless the active-work rule independently requires a move.
+	For Factory work, a paused/quiesced attribute is a continuity incident: alert Factory and the required recovery panel, keep the work accurately represented, and do not treat the label itself as a recovery or completion.
 7. Before moving work into `In Progress`, calculate the resulting WIP count. If it would exceed the configured limit, block the transition until an authorized human explicitly approves the exception. Record the override and resulting excess; never hide excess work or invent a limit.
 8. Apply only authorized transitions, update source references and timestamps, and preserve unrelated card facts. Otherwise return the proposed transition and the missing evidence or decision.
 9. Recount both buckets and verify that transitioned cards remain represented exactly once unless they were validly handed off as completed.
