@@ -48,6 +48,29 @@ Read only the skills relevant to the current card and phase.
 | Make secure architecture decisions across the stack | [fullstack-secure-architecture](../skills/fullstack-secure-architecture/SKILL.md) |
 | Build delivery, infrastructure, and operational automation | [fullstack-delivery-automation](../skills/fullstack-delivery-automation/SKILL.md) |
 | Prove acceptance and Definition of Done empirically | [fullstack-empirical-done](../skills/fullstack-empirical-done/SKILL.md) |
+| Assess authorized wireless security with Aircrack-ng | [fullstack-aircrack-ng](../skills/fullstack-aircrack-ng/SKILL.md) |
+| Validate scoped vulnerabilities with Metasploit | [fullstack-metasploit](../skills/fullstack-metasploit/SKILL.md) |
+| Plan and triage Nessus vulnerability scans | [fullstack-nessus](../skills/fullstack-nessus/SKILL.md) |
+| Inventory authorized networks with Nmap | [fullstack-nmap](../skills/fullstack-nmap/SKILL.md) |
+| Run and triage OpenVAS vulnerability assessments | [fullstack-openvas](../skills/fullstack-openvas/SKILL.md) |
+| Check authorized web servers with Nikto | [fullstack-nikto](../skills/fullstack-nikto/SKILL.md) |
+| Validate SQL injection safely with sqlmap | [fullstack-sqlmap](../skills/fullstack-sqlmap/SKILL.md) |
+| Analyze authorized packet captures with Wireshark | [fullstack-wireshark](../skills/fullstack-wireshark/SKILL.md) |
+| Scan images, filesystems, and SBOMs with Grype | [fullstack-grype](../skills/fullstack-grype/SKILL.md) |
+| Prepare a controlled Kali Linux assessment environment | [fullstack-kali-linux](../skills/fullstack-kali-linux/SKILL.md) |
+| Prepare a controlled Pentoo assessment environment | [fullstack-pentoo](../skills/fullstack-pentoo/SKILL.md) |
+| Prepare a controlled ParrotOS assessment environment | [fullstack-parrotos](../skills/fullstack-parrotos/SKILL.md) |
+| Generate WARP Well-Architected assessment reports | [fullstack-azure-warp-reporting](../skills/fullstack-azure-warp-reporting/SKILL.md) |
+| Generate extended WARP assessment reports | [fullstack-azure-warp-extended-reporting](../skills/fullstack-azure-warp-extended-reporting/SKILL.md) |
+| Import assessment recommendations into Azure DevOps | [fullstack-azure-warp-ado-import](../skills/fullstack-azure-warp-ado-import/SKILL.md) |
+| Import assessment recommendations into GitHub | [fullstack-azure-warp-github-import](../skills/fullstack-azure-warp-github-import/SKILL.md) |
+| Sync WAF category descriptions | [fullstack-azure-waf-category-sync](../skills/fullstack-azure-waf-category-sync/SKILL.md) |
+| Generate WAF Go-Live executive reports | [fullstack-azure-waf-go-live-report](../skills/fullstack-azure-waf-go-live-report/SKILL.md) |
+| Generate AVS/AVD WARR reports | [fullstack-azure-warr-report](../skills/fullstack-azure-warr-report/SKILL.md) |
+| Run bounded performance tests with k6 | [fullstack-k6-performance-testing](../skills/fullstack-k6-performance-testing/SKILL.md) |
+| Derive individual skills from AWS Well-Architected Labs | [fullstack-aws-well-architected-lab-skills](../skills/fullstack-aws-well-architected-lab-skills/SKILL.md) |
+| Derive individual skills from GitHub Well-Architected guidance | [fullstack-github-well-architected-skills](../skills/fullstack-github-well-architected-skills/SKILL.md) |
+| Derive individual skills from Google Cloud Well-Architected guidance | [fullstack-google-cloud-well-architected-skills](../skills/fullstack-google-cloud-well-architected-skills/SKILL.md) |
 
 Use [kanban-card-flow](../skills/kanban-card-flow/SKILL.md) for board transitions. Ask ProductOwner to resolve product-priority authority or disputed WSJF/CD3 inputs. Ask Cloud Design Patterns Advisor only for a bounded distributed-system problem, then verify its recommendation against local constraints.
 
