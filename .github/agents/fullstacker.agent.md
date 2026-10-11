@@ -71,6 +71,15 @@ Read only the skills relevant to the current card and phase.
 | Derive individual skills from AWS Well-Architected Labs | [fullstack-aws-well-architected-lab-skills](../skills/fullstack-aws-well-architected-lab-skills/SKILL.md) |
 | Derive individual skills from GitHub Well-Architected guidance | [fullstack-github-well-architected-skills](../skills/fullstack-github-well-architected-skills/SKILL.md) |
 | Derive individual skills from Google Cloud Well-Architected guidance | [fullstack-google-cloud-well-architected-skills](../skills/fullstack-google-cloud-well-architected-skills/SKILL.md) |
+| Wireframing and prototyping | [fullstack-ux-wireframing-prototyping](../skills/fullstack-ux-wireframing-prototyping/SKILL.md) |
+| Interaction design | [fullstack-ux-interaction-design](../skills/fullstack-ux-interaction-design/SKILL.md) |
+| Visual design | [fullstack-ux-visual-design](../skills/fullstack-ux-visual-design/SKILL.md) |
+| Information architecture | [fullstack-ux-information-architecture](../skills/fullstack-ux-information-architecture/SKILL.md) |
+| HTML, CSS, and JavaScript for UX | [fullstack-ux-frontend-coding](../skills/fullstack-ux-frontend-coding/SKILL.md) |
+| User interface design | [fullstack-ux-ui-design](../skills/fullstack-ux-ui-design/SKILL.md) |
+| Motion design and micro-interactions | [fullstack-ux-motion-design](../skills/fullstack-ux-motion-design/SKILL.md) |
+| Emotional design | [fullstack-ux-emotional-design](../skills/fullstack-ux-emotional-design/SKILL.md) |
+| Accessibility | [fullstack-ux-accessibility](../skills/fullstack-ux-accessibility/SKILL.md) |
 
 Use [kanban-card-flow](../skills/kanban-card-flow/SKILL.md) for board transitions. Ask ProductOwner to resolve product-priority authority or disputed WSJF/CD3 inputs. Ask Cloud Design Patterns Advisor only for a bounded distributed-system problem, then verify its recommendation against local constraints.
 

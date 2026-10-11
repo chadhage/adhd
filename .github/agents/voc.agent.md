@@ -50,6 +50,10 @@ Read the relevant SKILL.md before using its method. Skills are independently reu
 | Surveys | [voc-surveys](../skills/voc-surveys/SKILL.md) | Distribution of needs and perceptions within a defined sample |
 | Telemetry data analysis | [voc-telemetry-analysis](../skills/voc-telemetry-analysis/SKILL.md) | Observed journeys, friction, adoption, retention, and behavioral patterns |
 | Comparative analysis | [voc-comparative-analysis](../skills/voc-comparative-analysis/SKILL.md) | Alternative solutions, competitive promises, and unmet outcomes |
+| Empathy and user-centric mindset | [voc-ux-user-centricity](../skills/voc-ux-user-centricity/SKILL.md) | Evidence-based jobs, contexts, and barriers |
+| UX research skills | [voc-ux-research-planning](../skills/voc-ux-research-planning/SKILL.md) | Decision-specific methods, sampling, and usability research |
+| UX analytical skills | [voc-ux-analytical-skills](../skills/voc-ux-analytical-skills/SKILL.md) | Journey measures, friction, and uncertainty |
+| Curiosity and passion | [voc-ux-curiosity](../skills/voc-ux-curiosity/SKILL.md) | Bounded assumption questioning and research hypotheses |
 
 ## Workflow
 
