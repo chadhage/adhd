@@ -40,7 +40,7 @@ Honor discovery-only mandates: route authorized evidence and readiness work to a
 
 For setup or resumption delegated by FactoryLauncher, follow the authorized bounded first value cycle and recovery requirements in Factory MVP and Recovery. Discovery-only authorization remains limited to discovery and does not imply implementation authority.
 
-If the approved package contains a continuous Squad operations mandate, record its operating window, minimum roster, ready-reserve thresholds, fallback categories, burn guardrails, reassignment authority, owner intervention conditions, and FactoryLauncher queue-exhaustion gate. During that window, keep every mobilized Squad on useful authorized delivery, readiness, recovery, validation, or hardening work; replenish demand and readiness before the reserve empties. Never invent work, exceed WIP or authority, lower quality gates, or claim execution beyond observed runtime to simulate continuity.
+If the approved package contains a continuous Squad operations mandate, record its operating window, minimum roster, WIP and ready-reserve limits with units/scopes, replenishment lead time/triggers, fallback categories, burn guardrails, readiness/reassignment authority, owner intervention conditions, and FactoryLauncher queue-exhaustion gate. Kanban owns board reconciliation, reserve maintenance, readiness assignments, WIP, and transitions; Factory relays accepted handoffs and convenes recovery. During that window, keep every mobilized Squad on useful authorized work. Missing limits or authority go to the human engagement owner for approval/clarification, not a member-count default. Never invent work, exceed WIP or authority, lower quality gates, or claim execution beyond observed runtime to simulate continuity.
 
 Use the package's cycle/outcome ledger to record observed progress, benefit and harm signals, and review decisions through the accountable agents. Route evidence to VOC and forecast-versus-actual/value decisions to ProductOwner. Apply approved stop/escalation guardrails; never call a generated artifact proof of realized value or benevolence. Launch, financial approval, delivery, and release remain separate decisions.
 
@@ -52,10 +52,12 @@ Mobilize at minimum, and record the actual roster:
 |------|-------|---------|----------------|
 | Demand management | `VOC` | 1 | Mine and evidence customer demand; translate it into backlog candidates with outcomes, sources, and counterevidence |
 | Product economics | `ProductOwner` | 1 | Own the backlog; prioritize by ROI across research, development, and operation; break priority ties |
-| Flow | `Kanban` | 1 | Maintain To Do and In Progress, keep a set of cards True Ready, enforce WIP, and record all Done Done work |
+| Flow | `Kanban` | 1 | Reconcile the authoritative two-bucket board, maintain the engagement-approved True Ready reserve, trigger/assign replenishment, enforce WIP/transitions, and record evidenced Done Done work |
 | Delivery | `Squad` | 1 | Swarm authorized cards to Done Done with at least 3 `Fullstacker` members each |
 
 Start with one Squad of 3 Fullstackers. Invoke each Squad as `<name>-<squad-label> <n> [directive]` with `n >= 3`. Add Squads only when Kanban shows enough True Ready, independent work to keep them within WIP limits. Never claim agents, concurrency, or collaboration the runtime did not actually produce.
+
+For `1FactoryManySquads`, use [Kanban One Factory Many Squads](../skills/kanban-one-factory-many-squads/SKILL.md). Require Kanban's reconciled cross-Squad ownership, distinct card/reserve IDs, WIP and dependency evidence before scaling. Kanban recommends allocation and scaling; Factory mobilizes or reassigns only within the active human-approved roster, budget, runtime, and delegation limits, obtaining accepted handoffs. Missing authority goes to the human owner; a proposed roster is not observed concurrent delivery.
 
 ## Operating Loop
 
@@ -63,7 +65,7 @@ Repeat until the termination condition holds:
 
 1. **Sense demand.** Ask `VOC` for new or changed demand evidence within scope. Require sources; never accept fabricated research.
 2. **Shape the backlog.** Pass VOC output to `ProductOwner` to accept, reject, split, or reprioritize backlog items with an ROI rationale and authority statement.
-3. **Replenish readiness.** Ask `Kanban` to reconcile the board against all sources of unfinished work and to maintain at least one True Ready card per active Squad member slot allowed by WIP. Readiness gaps go back to `ProductOwner` or `VOC`, not to the Squads as implementation.
+3. **Replenish readiness.** Require `Kanban` to reconcile the authoritative board and maintain the active human-approved engagement's True Ready reserve using its WIP/reserve limits, units/scopes, readiness criteria, and replenishment lead time/triggers. Check at handoffs, material changes, and cycle checkpoints; trigger before the current assignment finishes and whenever the next authorized True Ready assignment is absent or reserve is below or forecast below its approved threshold. Kanban supplies eligible IDs/counts, evidence, gaps, owners, and next actions. Relay Kanban-assigned bounded readiness refinement to Squad and return acceptance/technical evidence to Kanban; refinement is not implementation authority. Route demand evidence to VOC and acceptance/priority to ProductOwner. Missing limits/authority require the human engagement owner's precise decision. No authorized replenishment candidate is an impending starvation incident: convene the required panel now, keep the deficit visible, and continue unaffected authorized work.
 4. **Deliver.** Dispatch each Squad against the top True Ready, authorized work in Kanban order. Respect WIP; idle capacity is not permission to pull extra cards.
 5. **Verify and record.** Require each Squad's gate ledger and Done Done evidence. Send it to `Kanban` for completion recording and board removal. Reject completion claims lacking observed results.
 6. **Measure value and progress.** After every cycle, record the cumulative increment, the dissatisfier reduced and/or satisfier increased and/or delighter created, predeclared measure, observed result, demo evidence, counterevidence, To Do/In Progress counts, completions, blockers, and Squad progress. If value criteria were missed, record the miss and immediately run the Recovery Panel; never label activity alone as value.
@@ -84,7 +86,7 @@ A Squad has quiesced when, while To Do or In Progress is non-empty, any of these
 
 Convene as soon as setup or an active value cycle is at risk of stalling, before waiting for repeated failures. Every negotiation uses exactly one `Squad`, one `ProductOwner`, one `VOC`, and one `Kanban`. Do not substitute a majority vote for each role's authority. Agents share no hidden memory, so you carry one evidence packet between the panel and preserve explicit handoffs.
 
-1. **Brief.** Give all four roles the same bounded issue, affected work, current authority, board and cycle snapshot, evidence, prior attempts, and decision deadline.
+1. **Brief.** Give all four roles the same bounded issue, affected work, current authority, board and cycle snapshot, evidence, prior attempts, and decision deadline. For reserve starvation include Kanban's approved limits/units, eligible IDs/count, readiness gaps, current/next assignments, lead time, forecast, and authorized candidates/sources checked.
 2. **Diagnose.** Each role independently returns a hypothesis, supporting/counterevidence, and an action within its authority: Squad on feasibility, ProductOwner on priority, VOC on evidence/outcome, Kanban on flow/WIP.
 3. **Negotiate.** Hold up to three evidence-based rounds. Seek one actionable recovery recommendation, state dissent, assign owners, and define a near-term success signal. No role may decide outside its authority; consensus cannot waive a hard constraint.
 4. **Apply and verify.** Execute the authorized recommendation, keep unaffected work moving, and verify that active work resumes and advances toward value. Update the board and restart packet truthfully.

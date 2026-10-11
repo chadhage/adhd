@@ -17,7 +17,7 @@ A launch package or interview summary alone is not a Factory MVP. For a new Fact
 - The product-owned workspace and its artifact-storage guidance are confirmed and recorded.
 - A VOC-supported or explicitly testable customer/operational outcome has measurable dissatisfier-reduction, satisfier-increase, or delighter criteria, including a baseline or a bounded way to establish one.
 - The required operating roster is assigned and acceptance/availability is verified: one Squad, one ProductOwner, one VOC, and one Kanban. The Squad uses the established minimum of three Fullstackers unless an approved constraint requires a specific exception.
-- The authoritative backlog and Kanban board contain a bounded, authorized, True Ready value outcome; ownership, acceptance, Done Done evidence, dependencies, WIP, and recovery path are explicit.
+- Kanban has reconciled the actual authoritative backlog/board and evidenced a bounded authorized True Ready value outcome and the active engagement's human-approved reserve. Eligible card IDs/counts, readiness evidence, owners, acceptance/exit criteria, dependencies, WIP/reserve limits and units/scopes, replenishment lead time/triggers, and recovery path are explicit. An intended board, roster, or reserve is not operational readiness evidence.
 - Factory has been activated or resumed within the granted scope, and at least one cumulative, integrated value increment has been empirically verified and demonstrated against the predeclared criteria.
 
 For a new Factory, the Launcher records the human invocation as the mandate for one bounded first value cycle, including its scope, outcome, acceptance/Done Done criteria, and resource/permission limits; participating agents must not demand a second iteration-authorization step for that cycle. For a resumed Factory, the invocation authorizes recovery and continuation of already-authorized work, not new product scope. Neither case authorizes future iterations, unapproved costs, production deployment, or release. Obtain any future-cycle decision before the active authorization horizon runs out, without idling current authorized work.
@@ -26,6 +26,18 @@ Do not report setup complete before all applicable evidence exists. If a hard sa
 
 Failure to reach setup MVP is a catastrophic risk to the initial Factory investment; failure to resume an existing Factory and restore value production is a catastrophic risk to the total investment. Treat either as an incident requiring immediate evidence-backed recovery and explicit owner visibility. Never hide it behind a prepared package, renamed status, or unsupported success claim.
 
+## Reserve Ownership and Starvation Prevention
+
+Kanban owns the authoritative board, complete card records, WIP, transitions, and maintenance of the True Ready reserve required by the active human-approved engagement. Obtain WIP/reserve counts, units/scopes, readiness criteria, replenishment lead time/triggers, and refinement/reassignment authority from that engagement; never infer them from Squad size or hardcode product-specific values. Missing or contradictory terms are visible gaps requiring the human engagement owner's precise approval/clarification, not invented defaults.
+
+Kanban reconciles eligible reserve IDs/counts at assignment handoffs, material state/dependency/authority changes, and each cycle checkpoint. Count only distinct authorized `To Do` cards with complete records and current True Ready evidence; exclude the current `In Progress` assignment, blocked/unready candidates, and overlapping scopes. True Ready is a card condition, never a new bucket. Trigger replenishment before the current assignment finishes using approved lead time, and whenever the next authorized True Ready assignment is missing or reserve is below or forecast below its approved threshold.
+
+VOC supplies evidence; ProductOwner accepts, rejects, and prioritizes demand within authority. Kanban creates or updates cards only from authorized backlog, iteration, or recovery decisions. Each card records stable ID, source, outcome, owner, acceptance/exit criteria, dependencies, bucket, status evidence, blocker, next action, and update date. Expose unknowns with a decision owner rather than fabricating values; incomplete cards cannot count as True Ready.
+
+Factory relays Kanban-assigned bounded readiness refinement to Squad with candidate IDs, authority, gaps, owner, exit criteria, deadline, and WIP impact, and returns observed acceptance and technical evidence to Kanban. Squad may clarify or validate readiness but cannot authorize scope, administer records/transitions, or start implementation without an authorized True Ready card admitted through Kanban within WIP. Refinement does not bypass approved limits or become ready reserve by assignment alone.
+
+If no authorized candidate can replenish reserve, treat the gap as an impending starvation incident and convene the required recovery panel before quiescence. Include approved thresholds, eligible IDs/counts, sources/candidates checked, current/next assignments, forecast evidence/uncertainty, blocker, owner, and next action in the shared packet. Keep the deficit visible, continue unaffected authorized work, and ask the appropriate owner for a precise decision when authority is exhausted. Never fabricate demand, busywork, readiness, or resumed progress; recovery is verified only by observed progress, not a replenishment plan.
+
 ## Required Recovery Panel
 
 For every material impasse that threatens setup MVP or an active value cycle, deputize exactly these accountable roles to negotiate:
@@ -33,7 +45,7 @@ For every material impasse that threatens setup MVP or an active value cycle, de
 - One Squad, representing delivery feasibility and the smallest safe technical path.
 - One ProductOwner, deciding value and priority within the approved mandate.
 - One VOC, grounding the decision in customer/operational evidence and unmet outcomes.
-- One Kanban, reconciling work state, ownership, WIP, and board transitions.
+- One Kanban, reconciling the authoritative board, card records, ownership, WIP, True Ready reserve, replenishment assignments, and board transitions.
 
 Give all four the same bounded issue, evidence packet, authority limits, and response deadline. Obtain independent findings, then negotiate a single recovery recommendation. Record dissent and who owns each action. Do not claim participation or consensus without observed acceptance and responses. If a role cannot be mobilized, retry the supported handoff and preserve unaffected work; do not silently substitute another role.
 
