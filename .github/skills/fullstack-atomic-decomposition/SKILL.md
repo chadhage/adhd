@@ -19,4 +19,4 @@ argument-hint: "Provide the authorized card, acceptance criteria, architecture c
 
 ## Output and Checks
 
-Return the task graph, critical path, contracts, ownership, validations, shared-file risks, integration checkpoints, and mapping from every task to acceptance or risk. The plan must be executable without duplicate ownership and must preserve one integrated card outcome.
+Return the task graph, contracts, ownership, validations, shared-file risks, integration checkpoints, and mapping from every task to acceptance or risk. Include a calculated critical path only when durations, dependency relationships, calendar assumptions, and a selected endpoint support it; otherwise label the dependency graph unestimated and identify the missing inputs. The plan must be executable without duplicate ownership and must preserve one integrated card outcome.

@@ -13,9 +13,10 @@ argument-hint: "Provide the card, participants, runtime capabilities, task graph
 3. For pairing, establish driver and navigator responsibilities, a rotation trigger, the current hypothesis, and the validation target. Do not claim pairing when work occurred in isolated sequential sessions without interaction.
 4. For swarming or cohorts, assign non-overlapping files or components and explicit interface ownership. Protect shared schemas, lock files, migrations, generated code, and central configuration with one writer or serialized changes.
 5. Define handoff packets: task and card IDs, assumptions, changed artifacts, commands and results, unresolved risks, interface version, and integration condition. Agents do not retain hidden shared memory.
-6. Integrate in small increments using the repository's branch policy. Resolve conflicts by preserving intended behavior and user changes, not by choosing the easiest side.
-7. Run contract and end-to-end validation on the combined result. Individual task success does not prove the card is done.
-8. Record actual contributors, reviews, evidence, and unresolved dissent. Never invent parallel execution, consensus, review, or validation.
+6. Define reassignment recovery before parallel work: if an owner becomes unavailable or misses an approved checkpoint, preserve its branch/worktree and partial artifacts, freeze conflicting writes, identify an authorized replacement, and obtain explicit handoff acceptance covering current revision, unresolved decisions, and validation debt. Do not infer abandonment or discard another contributor's work. If ownership cannot be transferred safely, keep the task blocked and escalate while other independent work continues.
+7. Integrate in small increments using the repository's branch policy. Resolve conflicts by preserving intended behavior and user changes, not by choosing the easiest side.
+8. Run contract and end-to-end validation on the combined result. Individual task success does not prove the card is done.
+9. Record actual contributors, accepted ownership transfers, reviews, evidence, and unresolved dissent. Never invent parallel execution, consensus, review, or validation.
 
 ## Output and Checks
 

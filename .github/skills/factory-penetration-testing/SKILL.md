@@ -43,13 +43,15 @@ Use existing repository tooling first; record tool/rule/database versions and sc
 | UI | Client-side trust, unsafe rendering, exposed privileged configuration, CSRF where applicable, CORS, cookie attributes and browser security headers |
 | Dependencies/build | Lockfiles and SBOM, exact affected versions and reachability, secrets with redacted evidence, package provenance, untrusted pipeline inputs and excessive build permissions |
 | Containers/IaC | Privileged execution, exposed services, default credentials, least privilege, network boundaries, encryption and unsafe defaults; inspect plans before any apply |
-| Agent/tool artifacts | Prompt injection through retrieved content, cross-tenant data access, tool authorization, untrusted generated command execution, delegation limits and secret leakage using synthetic canaries |
+| Agent/tool artifacts | Direct and indirect prompt injection through retrieved content, fake approval claims, cross-tenant data access, tool authorization, untrusted generated command execution, delegated-summary provenance, persistent instruction poisoning and secret leakage using synthetic canaries |
 
 Distinguish scanner matches from confirmed defects. Verify dependency advisory applicability against exact versions and actual usage. Prefer applicable OWASP testing guidance and CWE classification; use existing platform-specific secure-architecture and delivery skills when relevant, not by default.
 
 ### 4. Validate in the Authorized Lab
 
 Start with negative controls: unauthenticated access, wrong role, wrong tenant/object, invalid input and expired credentials, alongside a valid baseline. Execute one bounded test per hypothesis. Prefer repository tests, request fixtures and proven assessment tools; do not build a general exploit framework.
+
+For prompt-injection hypotheses, place benign instruction-like strings in authorized synthetic fixtures for every in-scope ingestion channel (repository documents/comments, issues, CSV cells, transcripts, webpages, tool output, and agent handoffs). Verify the model treats them as data, does not infer approval or expand scope, and the pre-tool policy asks/denies before any non-read action. Record the selected harness, hook discovery, tool name/payload schema, approval result, effective sandbox/network policy, and evidence that rejection caused no tool call or persistent change. A unit test of the hook alone does not prove model behavior or that the active harness loaded the hook.
 
 Use the smallest harmless proof that establishes the violated property. Demonstrate unauthorized access using a synthetic record or canary, not bulk retrieval or real customer data. Record prerequisites, exact revision/environment, sanitized steps or test command, expected versus actual behavior, timestamps, relevant logs and observable impact. Add a regression test when code changes are authorized.
 
@@ -67,7 +69,7 @@ Deliver an executive summary, technical findings, effective controls observed, c
 
 Route confirmed defects and unresolved material risks to the authoritative product backlog/board. Use existing Kanban card-flow and empirical-done policies; do not create a competing board, set product priority, accept risk, or grant release approval. Link findings to existing cards and deduplicate by root cause and affected asset.
 
-When authorized, fix the root cause in the owning abstraction and add focused regression coverage. Retest the original proof on the fixed revision, negative controls and valid behavior, plus adjacent paths implicated by the fix. Record actual commands/results and residual risks. A commit, proposed patch, report, or green unrelated test is not retest evidence.
+When authorized, fix the root cause in the owning abstraction and add focused regression coverage. Retest the original proof on the fixed revision, negative controls and valid behavior, plus adjacent paths implicated by the fix. A person/agent that did not author the remediation should independently execute or review the retest evidence where the runtime and engagement permit; if independence is unavailable, disclose the self-retest limitation and require accountable owner review before marking retest passed. Record retester identity/role, tested revision/digest, actual commands/results, and residual risks. A commit, proposed patch, report, or green unrelated test is not retest evidence.
 
 ## Completion Checks
 

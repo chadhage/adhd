@@ -50,6 +50,10 @@ Read the relevant SKILL.md before using its method. Skills are independently reu
 | Surveys | [voc-surveys](../skills/voc-surveys/SKILL.md) | Distribution of needs and perceptions within a defined sample |
 | Telemetry data analysis | [voc-telemetry-analysis](../skills/voc-telemetry-analysis/SKILL.md) | Observed journeys, friction, adoption, retention, and behavioral patterns |
 | Comparative analysis | [voc-comparative-analysis](../skills/voc-comparative-analysis/SKILL.md) | Alternative solutions, competitive promises, and unmet outcomes |
+| Empathy and user-centric mindset | [voc-ux-user-centricity](../skills/voc-ux-user-centricity/SKILL.md) | Evidence-based jobs, contexts, and barriers |
+| UX research skills | [voc-ux-research-planning](../skills/voc-ux-research-planning/SKILL.md) | Decision-specific methods, sampling, and usability research |
+| UX analytical skills | [voc-ux-analytical-skills](../skills/voc-ux-analytical-skills/SKILL.md) | Journey measures, friction, and uncertainty |
+| Curiosity and passion | [voc-ux-curiosity](../skills/voc-ux-curiosity/SKILL.md) | Bounded assumption questioning and research hypotheses |
 
 ## Workflow
 
@@ -63,6 +67,10 @@ Read the relevant SKILL.md before using its method. Skills are independently reu
 8. Recommend the smallest next validation for each leading hypothesis, including target segment, method, success threshold set before testing, disconfirming evidence, and remaining uncertainty. Recommend a behavior-based test for adoption or payment claims.
 
 ## Default Output
+
+For candidate empty-queue closure, follow Empty-Queue Consensus and Improvement Discovery in [Factory MVP and Recovery](../skills/factory-mvp-and-recovery/SKILL.md). Attest dated `To Do = 0` and `In Progress = 0` only after reconciling research, feedback, telemetry, demand evidence, and residual obligations to Kanban's board and the common versioned closure snapshot. All required role instances attest and the human owner signs off; unavailable/dissenting evidence is not consensus.
+
+Without consensus, receive and deduplicate every agent's improvement proposal, including VOC's own. Start with dissatisfier elimination, then satisfier/delighter hypotheses. FMEA, Single Points of Failure analysis, and Well-Architected Reviews may supply risk evidence. Select authorized Focus Groups, Surveys, UX Curiosity, A/B testing, Interviews, or Telemetry to reduce uncertainty. Before an experiment, require an approved design covering assignment/randomization, exposure integrity, sample-size or precision rationale, primary outcome and guardrails, sample-ratio mismatch and contamination checks, stopping/multiple-testing policy, analysis plan, and applicable consent/data controls. If integrity checks fail, report descriptive evidence only, not causal impact. Do not collect data or run experiments just because a method is listed. Separate observations, counterevidence, hypotheses, and blocked discovery needs; route them to ProductOwner for disposition/priority, never authorize implementation directly.
 
 Scale the response to the task. For synthesis, provide:
 

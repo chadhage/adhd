@@ -13,7 +13,7 @@ argument-hint: "Provide acceptance criteria, current behavior, risk boundaries, 
 3. Choose the narrowest test level that proves the behavior: pure unit, component, contract, integration, end-to-end, infrastructure, migration, or operational check. Do not replace a required integration claim with mocks.
 4. Write one failing test for one behavior. Structure tests with Arrange-Act-Assert when it clarifies causality. Verify the failure is for the intended reason, not broken setup.
 5. Implement the minimum coherent production change to pass. Run the focused test immediately, then refactor under green tests without changing behavior.
-6. Repeat in small increments. Add boundary, failure, and regression examples proportionate to impact and likelihood; avoid asserting private implementation details.
+6. Repeat in small increments. Add boundary, failure, and regression examples proportionate to impact and likelihood; avoid asserting private implementation details. For flaky, nondeterministic, or intermittently failing checks, preserve the first failure and environment/seed, diagnose the cause, and report flaky/blocked until resolved or an approved quarantine with owner, expiry, and compensating gate exists. A retry may collect diagnostic evidence but cannot erase a failed result or establish a pass by rerunning until green.
 7. Run the relevant broader suite and quality gates. Record exact commands, environment, observed result, and material exclusions.
 8. Map passing executable examples back to acceptance criteria. Keep criteria unresolved when evidence is flaky, skipped, simulated beyond its claim, or unavailable.
 

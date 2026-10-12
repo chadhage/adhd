@@ -81,7 +81,7 @@ If durations or dependencies are missing, return a draft network and the unresol
 
    An activity's $FF_i$ is the minimum relationship free float across its successors. Define terminal-node free float against the selected endpoint convention. Negative total float indicates a target or constraint conflict, not extra capacity.
 8. Apply working calendars and date constraints using their declared time-arithmetic rules. Recalculate all bounds rather than treating nonworking time as ordinary duration. If no calendar-capable calculation is available, return the logic network and numeric-duration result with an explicit warning that calendar dates are unverified.
-9. Enumerate the longest path or paths to the selected endpoint. In an unconstrained basic network, longest-path activities normally have zero total float. With date constraints, calendars, or resource effects, report longest-path membership and zero/negative-float status separately; do not assume they are identical.
+9. Determine longest/critical paths from the declared precedence-constraint model, not by summing activity durations along a graph path when generalized SS/FF/SF links or leads/lags are present. Transform generalized constraints to a validated equivalent network or solve the corresponding difference constraints; preserve the activity/relationship mapping. If the chosen calculation method cannot represent a relation, report the network and withhold path claims. In an unconstrained basic finish-to-start network, longest-path activities normally have zero total float. With date constraints, calendars, or resource effects, report longest-path membership and zero/negative-float status separately; do not assume they are identical.
 10. Identify near-critical paths using a supplied threshold. If none is supplied, report path durations and floats without inventing a threshold. Highlight merge points, scarce-resource dependencies, and activities whose delay can create a new critical path. For PERT analysis, report expected path duration and, only under the stated independence approximation, path variance as the sum of activity variances.
 11. When requested, estimate critical-path drag: the reduction in endpoint duration possible if a critical activity or constraining wait were eliminated, bounded by parallel-path behavior. Label approximations and recompute the network for material decisions.
 12. Evaluate acceleration scenarios separately:
@@ -128,6 +128,7 @@ Return:
 - The graph is acyclic and connected to the selected endpoint, or defects are explicitly reported and calculations withheld where invalid.
 - Forward/backward passes and float values reconcile with the declared conventions.
 - FS, SS, FF, and SF relationships and leads/lags use the declared generalized bounds; calendar-date claims use verified calendar arithmetic.
+- Generalized-precedence critical-path claims use a validated constraint calculation, not naive summation of activity durations; include a small independently calculated check network when generalized links materially affect the result.
 - Every reported critical path has the stated total duration and valid dependency continuity.
 - Longest-path, zero-float, constraint-critical, and resource-critical claims are distinguished.
 - Estimates, scenarios, and actual observations are not conflated.

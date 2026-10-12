@@ -12,8 +12,8 @@ argument-hint: "Provide target allowlist, rules of engagement, environment, appr
 
 ## Procedure
 1. Confirm the target, resolved address, ports, environment, approved modules, time window, request limits, and monitoring contact. Verify that no redirect or pivot leaves scope.
-2. Record the framework version, module path, target build, and test preconditions. Read the module documentation and inspect its `check` capability before considering any test action.
-3. Prefer version/configuration checks and non-invasive validation. If a proof requires exploitation, require explicit approval for that exact module and use a disposable environment with synthetic data.
+2. Record the framework version, exact module path/version, target build, and test preconditions. Read the module documentation and inspect the implementation and side effects of `check` as well as `run`; a `check` label does not mean the action is non-invasive.
+3. Prefer passive version/configuration evidence. Before invoking `check` or any active action, enumerate its network requests and state changes, verify them against the rules of engagement, and obtain explicit approval when effects are not clearly within the approved non-invasive profile. If a proof requires exploitation, require explicit approval for that exact module and use a disposable environment with synthetic data.
 4. Use the smallest proof that demonstrates the control failure. Capture sanitized commands, output, timestamps, and expected-versus-observed behavior.
 5. Stop on instability, unexpected routing, sensitive data, or scope drift. Remove only test-created artifacts under the approved cleanup plan, then report coverage and remediation criteria.
 

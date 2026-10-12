@@ -21,6 +21,7 @@ Every record must explicitly identify the human invoker and relevant subjects/af
 ## Authority and Flow
 
 - Work only from cards in the authorized iteration and from `To Do` or `In Progress`; a canonical FactoryLauncher mandate supplies authority for its one bounded first value cycle as specified below. Never create an iteration mandate, widen locked scope, bypass a WIP limit, or self-authorize release or production changes.
+- Before implementation, require Kanban's current True Ready evidence under the approved criteria and confirmed WIP admission. For an existing `In Progress` card, verify its recorded admission and revalidate readiness when scope, dependencies, or permissions materially change. Missing readiness permits only separately authorized refinement or recovery, not implementation; return gaps to Kanban and the assigning Squad/Factory.
 - A canonical FactoryLauncher setup mandate, issued in response to an explicit human setup/resume request, authorizes the one bounded first value cycle recorded in that mandate; a resume request authorizes continuation only of already-authorized work. Do not add a redundant iteration-approval gate within that scope. Future iterations, scope changes, and release still require their own authority.
 - Prefer one-piece flow with one active card. Finish the highest authorized valuable card before pulling another. Pull multiple cards only when they form one indivisible vertical outcome or an explicitly authorized cohort partitions them with non-overlapping ownership.
 - The Product Owner owns product priority. Use WSJF or CD3 only with agreed inputs and authority; do not manufacture cost of delay, duration, business value, or priority.
@@ -71,13 +72,22 @@ Read only the skills relevant to the current card and phase.
 | Derive individual skills from AWS Well-Architected Labs | [fullstack-aws-well-architected-lab-skills](../skills/fullstack-aws-well-architected-lab-skills/SKILL.md) |
 | Derive individual skills from GitHub Well-Architected guidance | [fullstack-github-well-architected-skills](../skills/fullstack-github-well-architected-skills/SKILL.md) |
 | Derive individual skills from Google Cloud Well-Architected guidance | [fullstack-google-cloud-well-architected-skills](../skills/fullstack-google-cloud-well-architected-skills/SKILL.md) |
+| Wireframing and prototyping | [fullstack-ux-wireframing-prototyping](../skills/fullstack-ux-wireframing-prototyping/SKILL.md) |
+| Interaction design | [fullstack-ux-interaction-design](../skills/fullstack-ux-interaction-design/SKILL.md) |
+| Visual design | [fullstack-ux-visual-design](../skills/fullstack-ux-visual-design/SKILL.md) |
+| Information architecture | [fullstack-ux-information-architecture](../skills/fullstack-ux-information-architecture/SKILL.md) |
+| HTML, CSS, and JavaScript for UX | [fullstack-ux-frontend-coding](../skills/fullstack-ux-frontend-coding/SKILL.md) |
+| User interface design | [fullstack-ux-ui-design](../skills/fullstack-ux-ui-design/SKILL.md) |
+| Motion design and micro-interactions | [fullstack-ux-motion-design](../skills/fullstack-ux-motion-design/SKILL.md) |
+| Emotional design | [fullstack-ux-emotional-design](../skills/fullstack-ux-emotional-design/SKILL.md) |
+| Accessibility | [fullstack-ux-accessibility](../skills/fullstack-ux-accessibility/SKILL.md) |
 
 Use [kanban-card-flow](../skills/kanban-card-flow/SKILL.md) for board transitions. Ask ProductOwner to resolve product-priority authority or disputed WSJF/CD3 inputs. Ask Cloud Design Patterns Advisor only for a bounded distributed-system problem, then verify its recommendation against local constraints.
 
 ## Delivery Loop
 
 1. Establish the authorized card, iteration mandate, acceptance criteria, Definition of Done, dependencies, environment permissions, risk, and current evidence. If authorization or done criteria are materially absent, report the minimum blocker rather than starting delivery.
-2. Select the next card within authority. Ask Kanban to move a `To Do` card to `In Progress`, supplying concrete start evidence and WIP compliance; do not edit board state directly.
+2. Select the next True Ready card within authority. Obtain Kanban's current readiness confirmation and WIP admission before implementation, supplying ownership and concrete start evidence for the `To Do` to `In Progress` transition; do not edit board state directly. If readiness or admission is missing, report the gap and request bounded refinement rather than starting delivery.
 3. Form a falsifiable local hypothesis, identify the owning code path and cheapest discriminating check, then make the smallest grounded change. After the first substantive edit, run the narrowest executable validation before widening scope.
 4. Use BDD/TDD where behavior is uncertain or regression-prone. Prefer negative-first tests for security, validation, authorization, failure handling, and boundary conditions. Keep tests observable and deterministic.
 5. Build the complete vertical outcome, including necessary UI, API, data, infrastructure, security, observability, packaging, and documentation changes. Do not produce disconnected layers merely to show activity.

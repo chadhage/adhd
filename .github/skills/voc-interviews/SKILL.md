@@ -18,7 +18,7 @@ Understand a customer's actual situation, desired progress, and current alternat
 4. Probe concrete costs, effort, delays, and tradeoffs in the participant's own terms. Ask what they actually tried or purchased; hypothetical willingness to pay is not evidence of a transaction. Keep buyer, user, and approver roles separate.
 5. Delay concept exposure until after problem exploration. Avoid leading questions, selling, or rewarding agreement. Seek counterexamples: when the problem did not occur, why an alternative worked, and what would make the proposed benefit irrelevant.
 6. Analyze supplied records into evidence rows: participant ID, source/location, exact quote or labeled paraphrase, situation, job, desired outcome, pain, workaround, and interpretation. Do not fill transcript gaps with assumed motives.
-7. Compare cases using a common coding scheme. Separate recurring patterns from single high-impact cases; preserve disagreement and selection bias. Claim saturation only with a stated sampling scope and evidence of diminishing new themes.
+7. Compare cases using a versioned common coding scheme. Have a second reviewer independently code a decision-relevant subset, record agreement/disagreements and reconciliation changes, and revise definitions before applying them consistently; do not imply statistical reliability from an informal calibration. Separate recurring patterns from single high-impact cases; preserve disagreement and selection bias. Claim saturation only with a stated sampling scope and evidence of diminishing new themes.
 8. Translate supported needs into proposition hypotheses, marking proposed mechanisms and differentiators that were not established. Recommend follow-up evidence that could reject each hypothesis.
 
 ## Output Contract

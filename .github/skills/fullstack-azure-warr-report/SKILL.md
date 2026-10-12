@@ -12,10 +12,10 @@ argument-hint: "Provide the authorized AVS/AVD assessment CSV, assessment type, 
 
 ## Procedure
 1. Inspect the current [GenerateWARRReport.ps1 source](https://github.com/Azure/WellArchitected-Tools/blob/cd7e629b230e78fd556170dd11265175b358d239/WARR/GenerateWARRReport.ps1) and template. Confirm PowerShell and PowerPoint requirements, parameter names, template path, and expected assessment CSV format.
-2. Verify the report is for one authorized AVS or AVD workload. Set `-AssessmentType` to exactly `AVS` or `AVD`; provide `-AssessmentReport` and `-YourName` only when the approved deck requires presenter attribution.
+2. Verify the report is for one authorized AVS or AVD workload. Set `-AssessmentType` to exactly `AVS` or `AVD` and pass every mandatory parameter required by the pinned script. In particular, verify whether `-YourName` is mandatory for the selected source revision; if so, obtain approved attribution or stop for an owner decision. Do not omit a required parameter under the assumption that attribution is optional, and do not invent or silently substitute a presenter name.
 3. Use copies of the CSV and `WARR_PowerPoint_Template.pptx` in an isolated working directory. Keep the originals unchanged and ensure the destination does not overwrite a prior report.
 4. Run the generator through PowerShell 7+ with desktop PowerPoint available. Capture errors and warnings without exposing assessment data in shared logs.
-5. Review overall scores, design-area ratings, recommendation priorities, links, presenter name, and assessment type. Confirm recommendations match the source CSV; correct presentation issues without changing the underlying assessment findings.
+5. Parse the source CSV and reconcile workload identity, assessment type, answer/score counts, design-area/category totals, and recommendation IDs against the generated deck and intermediate outputs. Review priorities, links, and presenter attribution. If the pinned script cannot expose enough information to prove recommendation coverage, report the gap rather than asserting a complete match. Correct presentation issues without changing the underlying assessment findings.
 6. Store the final deck only in the approved protected location and record source revision, input file, report type, validation, and manual edits.
 
 ## Safety and Limits
