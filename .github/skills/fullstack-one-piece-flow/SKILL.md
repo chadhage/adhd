@@ -9,7 +9,7 @@ argument-hint: "Provide the card ID, iteration authority, acceptance criteria, D
 ## Procedure
 
 1. Verify the card is authorized, appears once in `To Do` or `In Progress`, has usable acceptance and done criteria, and fits the current mandate. A canonical FactoryLauncher setup mandate is authority for its one bounded first value cycle; on resume it covers only previously authorized work. Do not add a redundant approval gate or start work beyond that mandate.
-2. Pull only the highest authorized card that can make meaningful progress. Respect the configured WIP limit and obtain an explicit override before exceeding it.
+2. Pull only the highest authorized True Ready card that can make meaningful progress. Require Kanban's current readiness evidence under approved criteria and WIP admission before implementation. For `In Progress`, verify recorded admission and revalidate readiness after material scope, dependency, or permission changes. Missing readiness authorizes no implementation; request separately authorized refinement or recovery. Respect the configured WIP limit and obtain an explicit override before exceeding it.
 3. Request the governing Kanban role to move `To Do` to `In Progress` only when concrete work begins. Supply owner, start evidence, next action, and relevant risks; the delivery role does not mutate board state directly.
 4. Establish the controlling implementation path, one falsifiable hypothesis, and the cheapest check that can disprove it. Make the smallest coherent change, then immediately validate the touched behavior.
 5. Continue through the complete vertical outcome. Include every necessary layer and operational artifact; defer optional scope rather than leaving mandatory integration unfinished.

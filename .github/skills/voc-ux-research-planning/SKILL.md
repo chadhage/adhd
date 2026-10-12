@@ -8,7 +8,7 @@ description: "Use to plan UX research that reduces a specific design uncertainty
 ## Procedure
 1. Name the design decision, uncertainty, evidence already available, and authorized product/research scope. Use approved product-owned storage.
 2. Select methods based on the question: interviews for context, comparative analysis for alternatives, and task-based usability tests for observed interaction problems. Reuse the existing VOC methods rather than duplicate them.
-3. Define representative recruitment criteria, sample rationale, accessibility needs, consent, data minimization, budget, and stop conditions. Do not impose the article's fixed interview/test counts on every project.
+3. Define recruitment criteria and a coverage matrix mapping each decision question to relevant contexts/participant characteristics and known exclusions. State the sample rationale, accessibility needs, consent, data minimization, budget, and stop conditions; distinguish coverage goals from statistical representativeness and do not impose the article's fixed interview/test counts on every project.
 4. Specify neutral tasks/questions, observation fields, success criteria, counterevidence, and analysis approach before collection. Obtain permission before participant contact or external data transfer.
 5. Conduct only authorized sessions or analyze supplied records. Separate observations, interpretations, and recommendations; document sampling and tool limitations.
 6. Return decision-relevant findings and the smallest next validation. Route product disposition to ProductOwner and engineering changes to delivery owners.

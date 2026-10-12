@@ -136,6 +136,10 @@ Based on the eight definitions in this directory.
 - Squad and Factory require and reconcile delivery evidence; accountable member agents perform the work.
 - FactoryLauncher owns bounded setup/resumption through the first verified value increment; Factory/Squad deliver the increment and accountable roles provide evidence.
 
+## Security Defaults
+
+All agents inherit the workspace trust-boundary rules in [Copilot instructions](../copilot-instructions.md). Review [Agent Security Controls](../SECURITY.md) before enabling a tool or using another session harness. Workspace hooks allow only the explicit read/search allowlist without confirmation; other and unknown tools require per-action approval. Instructions and skills are guidance, not a substitute for VS Code approval, sandbox, network, or repository branch-protection controls.
+
 ## Features and intended benefits
 
 Benefits below are inferred from the documented features, not measured outcomes.

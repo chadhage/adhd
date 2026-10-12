@@ -8,7 +8,7 @@ description: "Use UX collaboration to coordinate design, research, product decis
 ## Procedure
 1. Establish the authorized card, actual participants, accepted assignments, interfaces, and design/research evidence. Use approved product-owned records.
 2. Agree on task vocabulary, component/state names, decision owners, and handoff content. Reuse the established collaboration and atomic-ownership methods through Fullstackers.
-3. Assign non-overlapping write ownership and an integration owner; serialize shared components and schemas. Do not assume shared memory or concurrent execution.
+3. Assign non-overlapping write ownership and an integration owner; serialize shared components and schemas. For owner unavailability or reassignment, preserve partial work, freeze conflicting writes, and require the receiver to accept the exact revision, open decisions, and validation debt. Do not treat silence, an expired call, or inaccessible shared memory as abandonment; escalate unresolved custody. Do not assume shared memory or concurrent execution.
 4. Route research to VOC through the authorized coordinator, priority to ProductOwner, card records to Kanban, and implementation to Fullstacker. No collaborative consensus overrides role authority.
 5. Check the integrated experience against approved behavior, design intent, and acceptance criteria; preserve unresolved disagreement and next actions.
 

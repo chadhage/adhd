@@ -7,8 +7,8 @@ description: "Use interaction design to define and validate control behavior, st
 
 ## Procedure
 1. Identify the authorized user task, evidence, existing patterns, and acceptance criteria. Persist artifacts only in approved product-owned locations.
-2. Inventory controls and states: idle, focus, loading, success, invalid input, disabled, failure, cancellation, and retry where relevant.
-3. Specify triggers, state transitions, feedback, focus behavior, data preservation, and recovery. Never depend on hover alone or allow duplicate submissions without appropriate protection.
+2. Inventory controls and states: idle, focus, loading, success, invalid input, disabled, failure, cancellation, retry, and stale/out-of-order response where relevant.
+3. Specify triggers, state transitions, feedback, focus behavior, data preservation, and recovery. For asynchronous work, define cancellation, timeout, repeated submission, response ordering, stale-result rejection, and behavior after navigation/unmount. Never depend on hover alone or allow duplicate submissions without appropriate protection.
 4. Implement the smallest flow using existing components; check keyboard, pointer, touch, and assistive-technology behavior with the accessibility skill as needed.
 5. Validate happy and failure paths against observable acceptance criteria; report actual tests and unresolved usability evidence.
 

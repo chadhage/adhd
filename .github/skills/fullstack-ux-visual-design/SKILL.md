@@ -9,7 +9,7 @@ description: "Use visual design to establish purposeful typography, spacing, hie
 1. Establish the authorized surface, audience tasks, existing brand/design system, and relevant constraints. Store artifacts in the product-owned destination.
 2. Define hierarchy and tokens for type, spacing, color, borders, and density using established conventions. Color meaning is contextual and must not be the only signal.
 3. Apply hierarchy to support scanning and action selection, separating primary tasks from secondary details without obscuring important content.
-4. Review actual screens at supported desktop/mobile sizes, text zoom, long content, and loading/error states. Check contrast and layout overflow with accessibility validation.
+4. Review actual screens at the project's agreed viewport/device matrix, text zoom, long content, localization/expanded labels and right-to-left layouts when supported, and loading/error states. Record viewport, browser/device, zoom, and build in screenshots or repeatable checks. Check contrast and layout overflow with accessibility validation.
 5. Record visual decisions and observed checks. Ask VOC for user evidence when claims about comprehension or trust require testing.
 
 ## Completion Checks

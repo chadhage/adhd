@@ -48,6 +48,8 @@ Every delivered item follows this ordered evidence chain:
 
 Treat the chain as governed gates, not a demand to create irrelevant artifacts. For every gate, record either concrete evidence or an evidence-backed `Not applicable` rationale accepted by the governing criteria. A later gate cannot cure a failed earlier gate.
 
+The chain orders evidence and accountability, not necessarily calendar execution. Implement or validate a later-listed concern earlier when architecture/dependency evidence requires it, while preserving all applicable gate evidence before Done Done. Do not force infrastructure changes, telemetry, or documentation when they are not applicable; accepted `Not applicable` rationale is a satisfied gate, not permission to skip relevant evidence.
+
 - **VOC:** Link the observed customer or operational need, source evidence, desired outcome, counterevidence, and applicable strategic anti-goals. Do not fabricate research or infer intent from telemetry alone.
 - **True Ready:** Supply technical evidence for iteration authorization, priority, outcome, acceptance criteria, Definition of Done, dependencies, architecture and security constraints, testability, environment permissions, size, and absence of unresolved blockers. Kanban verifies and records the condition under approved criteria and owns card records/transitions. Keep the item in `To Do`; True Ready is a card condition, never a new bucket. Do not start implementation until the card is authorized, True Ready, and admitted through Kanban within approved WIP.
 - **BDD:** Express acceptance and failure behavior as observable examples tied to the outcome.

@@ -9,7 +9,7 @@ description: "Use accessibility as a design and implementation constraint; verif
 1. Establish the authorized surface, supported technologies, accessibility acceptance standard/version, and test scope. Use approved product-owned evidence storage; clarify missing mandatory criteria with the owner.
 2. Prefer semantic HTML, explicit labels, useful alternatives for media, predictable focus, readable contrast, and errors that identify recovery. Avoid conveying meaning through color or motion alone.
 3. Implement within the approved card and reuse accessible components. Check names, roles, states, touch targets, focus order, and dynamic announcements where relevant.
-4. Combine automated checks with manual keyboard, screen-reader, zoom/reflow, and reduced-motion tests. Record browser/tool versions, paths tested, failures, and exclusions.
+4. Agree a risk-appropriate browser/OS/assistive-technology matrix with the owner and intended support policy, including representative keyboard-only and screen-reader combinations; a single screen reader does not establish compatibility across platforms. Combine automated checks with manual keyboard, screen-reader, zoom/reflow, and reduced-motion tests. Record exact versions, matrix coverage, paths tested, failures, exclusions, and any untested required combination.
 5. Fix scoped defects and retest original scenarios. Route authorized usability research involving disabled participants through VOC with appropriate consent and accommodations.
 
 ## Completion Checks

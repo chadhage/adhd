@@ -10,7 +10,7 @@ description: "Use UX business acumen to connect design proposals to customer out
 2. Map the proposal to a measurable outcome such as task success, support cost, retention, or conversion, with autonomy and quality guardrails. Identify the hypothesized causal mechanism.
 3. Obtain feasibility and lifecycle cost inputs from delivery owners. Reuse product financial/value-proposition modeling; label unknown inputs and avoid double-counted benefits.
 4. Compare the proposal with doing nothing and feasible alternatives. Decide disposition and priority only within delegated authority; request required investment or scope decisions.
-5. Predeclare validation criteria and review the actual outcome after delivery. Separate financial forecast, observed correlation, realized benefit, and release approval.
+5. Before delivery, record the outcome owner, baseline window, review date/horizon, metric definition, attribution method, and decision threshold (or state which are not yet approved). Review the actual outcome after delivery using a comparable population/window and disclose confounders; separate financial forecast, observed correlation, realized benefit, and release approval.
 
 ## Completion Checks
 The decision has evidence, alternatives, assumptions, authority, and a review measure. Business metrics cannot waive accessibility, privacy, safety, or strategic anti-goals.

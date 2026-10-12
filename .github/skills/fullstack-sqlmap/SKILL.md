@@ -11,8 +11,8 @@ argument-hint: "Provide the exact test endpoint and parameter, authorization, sy
 - Verify that a parameterized-query remediation prevents the original behavior.
 
 ## Procedure
-1. Confirm explicit authorization for the exact URL, HTTP method, parameter, account, and test window. Use a disposable or staging environment with synthetic data; verify redirects and request routing remain in scope.
-2. Review the request for tokens, personal data, and state-changing actions. Prepare a baseline request and a request limit; use a test identity with minimal permissions.
+1. Confirm explicit authorization for the exact URL, HTTP method, parameter, account, and test window. Use a disposable or staging environment with synthetic data; verify redirects and request routing remain in scope. For any permitted state-changing request, confirm an isolated disposable dataset, a tested restore point, and an observed rollback before testing; otherwise exclude the request or stop.
+2. Review the request for tokens, personal data, and state-changing actions. Prepare a sanitized baseline request and a hard request/time limit; use a test identity with minimal permissions. Exclude parameters/endpoints that mutate business data, trigger external side effects, or reach production dependencies unless those exact effects are separately authorized and safely reversible.
 3. Prefer a manual regression test or the lowest-impact sqlmap detection options. Limit tests to the named parameter and conservative detection settings; monitor request volume and application health.
 4. Stop after confirming or rejecting the injection hypothesis. Preserve only sanitized request/response evidence and relevant logs; do not enumerate databases or retrieve records.
 5. Recommend parameterized queries and safe error handling. Retest the original input and negative controls, and report tool/version, environment, request bounds, and remaining uncertainty.

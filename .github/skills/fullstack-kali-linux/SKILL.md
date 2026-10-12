@@ -12,8 +12,8 @@ argument-hint: "Provide the assessment objective, authorized targets, Kali versi
 
 ## Procedure
 1. Define the assessment objective and authorization before booting tools. Name exact targets, allowed techniques, time window, data rules, and stop contact.
-2. Obtain the distribution from its official source and verify published integrity/authenticity data where available. Record image, release, and tool versions.
-3. Use an isolated VM or dedicated lab network with snapshots, least-privilege access, and synthetic data. Disable shared folders, bridged networking, or host integration unless needed and approved.
+2. Obtain the distribution from its official source and verify its signature or checksum against an authenticated official channel. Record image digest, release, and tool versions. If no independently authenticated integrity value is published or the check fails, do not boot it for assessment; obtain a verifiable image or owner-approved alternate environment.
+3. Use an isolated VM or dedicated lab network with snapshots, least-privilege access, and synthetic data. Disable shared folders, bridged networking, or host integration unless needed and approved. Verify effective isolation by inspecting routes/firewall policy and testing that only explicitly authorized destinations are reachable before loading assessment tools.
 4. Install or update packages only under the environment's change policy. Pin the assessment baseline and record tool versions so results are reproducible.
 5. Run only the tools and tests allowed by scope. Store evidence outside the image in approved protected storage; sanitize captures and reports before sharing.
 6. Revert or rebuild the disposable environment after the exercise, preserve required audit evidence, and report coverage, limitations, and cleanup status.

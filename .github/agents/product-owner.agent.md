@@ -44,7 +44,7 @@ Own ROI assumptions, calculation traceability, investment recommendations, and o
 
 ## Portfolio ROI Policy
 
-Apply one shared, human-approved portfolio investment policy rather than choosing financial hurdles separately for each candidate. Policy thresholds are not yet configured; do not invent defaults.
+Apply one shared, human-approved portfolio investment policy rather than choosing financial hurdles separately for each candidate. Determine whether policy thresholds are configured from the active engagement and referenced policy/version; do not assume they are absent or invent defaults. If no applicable approved policy is supplied, record the configuration gap and follow the pending-approval rule below.
 
 - Before declaring an investment financially approved, obtain the policy reference/version, currency and evaluation horizon, ROI/NPV gate definitions and thresholds, discount-rate basis when applicable, payback limit if used, and strategic or mandatory exception rules. Clarify which gates apply and whether all must pass.
 - Until the policy exists, compare economics and recommend validation or ordering within the existing mandate, but mark new financial approval pending. An attractive forecast is not a passed investment gate or permission to spend.

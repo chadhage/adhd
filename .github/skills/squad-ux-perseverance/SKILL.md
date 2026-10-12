@@ -6,7 +6,7 @@ description: "Use patience and perseverance to manage evidence-based UX refineme
 # Patience and Perseverance
 
 ## Procedure
-1. Establish the authorized outcome, iteration/refinement budget, evidence, remaining criteria, and stop conditions. Preserve history in approved product records.
+1. Establish the authorized outcome, cumulative attempt/time/cost budget, evidence, remaining criteria, and stop conditions. Preserve each attempt's hypothesis, changed intervention, result, and cumulative spend/time in approved product records; trigger owner review at the approved limit rather than resetting a local counter after handoff.
 2. Form one falsifiable explanation for the current UX failure and choose the cheapest discriminating check. Do not repeat an unsuccessful change without new evidence.
 3. Delegate a bounded refinement to the accountable delivery owner, verify it, and record success, failure, or ambiguity honestly.
 4. Keep partial improvements and unresolved criteria visible. ProductOwner decides priority/scope; Kanban controls updates/transitions; do not lower criteria to claim completion.

@@ -8,8 +8,8 @@ argument-hint: "Provide the card, acceptance criteria, Definition of Done, chang
 
 ## Procedure
 
-1. Freeze the evaluated card version, authorized scope, acceptance criteria, Definition of Done, required quality gates, environment, and evidence timestamp. Do not silently weaken criteria after implementation.
-2. Build a matrix with one row per criterion: required observable outcome, artifact or system under test, validation method, exact evidence, result, environment, and residual limitation.
+1. Freeze the evaluated card version, authorized scope, acceptance criteria, Definition of Done, required quality gates, environment, and evidence timestamp. Identify the exact source revision and immutable build/package/image digest under test. Bind every result to that identity; if the tested artifact changes, rebuild or rerun every affected criterion. Do not silently weaken criteria after implementation.
+2. Build a matrix with one row per criterion: required observable outcome, artifact or system under test and digest, validation method, exact evidence and evidence digest/reference, result, environment, observation time, and residual limitation. State evidence freshness requirements from the applicable policy; stale or unbound evidence cannot pass a changed artifact.
 3. Inspect produced artifacts for existence, relevance, integrity, and traceability. Source files, schemas, IaC, images, packages, documentation, and reports demonstrate production only when their contents and provenance are verified.
 4. Require observed behavior for behavioral claims. Use test results, API responses, UI interaction and screenshots where relevant, migration checks, infrastructure validation, deployment health, telemetry, security scans, performance measurements, accessibility checks, and recovery exercises according to the criterion.
 5. Distinguish passed, failed, blocked, not run, and not applicable. `Not applicable` requires rationale. Skipped, flaky, stale, mocked beyond the claim, or unavailable checks do not pass.

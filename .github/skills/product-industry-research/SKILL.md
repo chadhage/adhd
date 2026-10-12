@@ -15,7 +15,7 @@ argument-hint: "Provide the sector, geography, customer segment, decision, horiz
 5. If sizing is decision-relevant, define TAM (total relevant demand), SAM (demand addressable by the offering and constraints), and SOM (realistically obtainable within the horizon and capacity). Prefer transparent bottom-up customer counts and spending inputs; show units, ranges, sources, overlap, and reach constraints.
 6. Do not choose an arbitrary percentage of a large market as attainable revenue. Reconcile top-down figures only with compatible definitions and assumptions. Unknown adoption or price inputs remain unknown, not implied facts.
 7. Connect findings to specific VOC hypotheses: why this segment may experience the problem, what constrains adoption, and what must be tested with customers. Industry attractiveness is not proof of product fit or ROI.
-8. Recommend a focused backlog implication or further research with evidence gaps, owner, and refresh/review trigger. State tool or source-access limits and avoid unsupported claims of exhaustive coverage.
+8. Recommend a focused backlog implication or further research with evidence gaps, owner, and refresh/review trigger. Set source-specific freshness rules according to data volatility and decision horizon; recheck publication/data dates at review and downgrade or exclude stale evidence rather than treating retrieval date as evidence freshness. State tool or source-access limits and avoid unsupported claims of exhaustive coverage.
 
 ## Output and Checks
 

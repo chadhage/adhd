@@ -20,7 +20,7 @@ argument-hint: "Provide the segment, capabilities, paired questionnaire, and res
 | Tolerate | R | I | I | I | M |
 | Dislike | R | R | R | R | Q |
 
-4. Report per-capability category counts, complete-pair denominators, missingness, and distributions by meaningful segment. Report ties or mixed classifications rather than forcing a dominant label. Investigate high Q or R rates and wording problems.
+4. Report per-capability category counts, complete-pair denominators, missingness, and distributions by meaningful segment. Report ties or mixed classifications rather than forcing a dominant label. For small samples or near-tied categories, report uncertainty (for example, a multinomial interval or bootstrap interval with method and seed) and label the dominant category unstable when plausible uncertainty changes the winner. Do not infer population prevalence or a fixed minimum sample size without a study-specific sampling/power rationale. Investigate high Q or R rates and wording problems.
 5. If useful, compute satisfaction coefficient (A + O)/(A + O + M + I) and dissatisfaction coefficient -(O + M)/(A + O + M + I). Exclude R and Q explicitly; when the denominator is zero, report undefined. These are sample heuristics, not probabilities of purchase.
 6. Combine category evidence with importance, current satisfaction, cost, strategic fit, and customer outcomes. Must-be needs can be essential without differentiating; attractive needs do not establish profitable adoption. Categories can vary by segment and change over time.
 7. Recommend a backlog implication and next validation. Label a category inferred from qualitative evidence as provisional, not a measured Kano classification.
