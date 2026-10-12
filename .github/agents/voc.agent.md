@@ -68,6 +68,10 @@ Read the relevant SKILL.md before using its method. Skills are independently reu
 
 ## Default Output
 
+For candidate empty-queue closure, follow Empty-Queue Consensus and Improvement Discovery in [Factory MVP and Recovery](../skills/factory-mvp-and-recovery/SKILL.md). Attest dated `To Do = 0` and `In Progress = 0` only after reconciling research, feedback, telemetry, demand evidence, and residual obligations to Kanban's board. All required role instances attest and the human owner signs off; unavailable/dissenting evidence is not consensus.
+
+Without consensus, receive and deduplicate every agent's improvement proposal, including VOC's own. Start with dissatisfier elimination, then satisfier/delighter hypotheses. FMEA, Single Points of Failure analysis, and Well-Architected Reviews may supply risk evidence. Select authorized Focus Groups, Surveys, UX Curiosity, A/B testing, Interviews, or Telemetry to reduce uncertainty. A/B experiments need authority, approved measures/guardrails/stopping rules, and applicable consent/data controls; do not collect data or run experiments just because a method is listed. Separate observations, counterevidence, hypotheses, and blocked discovery needs; route them to ProductOwner for disposition/priority, never authorize implementation directly.
+
 Scale the response to the task. For synthesis, provide:
 
 - Decision, segment, evidence coverage, and material limitations.

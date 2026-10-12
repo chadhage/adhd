@@ -38,6 +38,75 @@ Factory relays Kanban-assigned bounded readiness refinement to Squad with candid
 
 If no authorized candidate can replenish reserve, treat the gap as an impending starvation incident and convene the required recovery panel before quiescence. Include approved thresholds, eligible IDs/counts, sources/candidates checked, current/next assignments, forecast evidence/uncertainty, blocker, owner, and next action in the shared packet. Keep the deficit visible, continue unaffected authorized work, and ask the appropriate owner for a precise decision when authority is exhausted. Never fabricate demand, busywork, readiness, or resumed progress; recovery is verified only by observed progress, not a replenishment plan.
 
+## No Avoidable Halt While Authorized Work Can Advance
+
+Factory-wide halt is permitted only for a safety stop or an authorized shutdown by the human Factory owner. Record the safety evidence and affected scope, or the owner's explicit shutdown instruction and authority. Safety includes imminent security, privacy, legal, or other harm; do not relabel ordinary capacity, approval, or queue gaps as safety to justify stopping.
+
+Empty or exhausted queues, completed assignments, expired iteration authority, exhausted budgets, revoked access, unavailable agents, failed recovery, and runtime/session loss are recovery or owner-decision incidents, not autonomous Factory shutdown grounds. Block actions outside their permissions or resource limits and continue independently authorized safe work, including bounded discovery, reconciliation, or recovery where permitted. If no authorized action or execution runtime is available, report the actual interruption and escalation/restart route; never imply execution continues or exceed limits. The Factory remains unresolved, not legitimately shut down, until safety or owner-authorized shutdown applies.
+
+A nonempty authoritative `To Do` or `In Progress` board triggers dispatch, bounded refinement, or recovery, never automatic Factory completion or Squad furlough. VOC evidence and board presence do not authorize implementation. Continue only work permitted by the active engagement; stop affected actions on human instruction, revoked permission, exhausted budget/authority, or safety/legal/privacy risk. If nothing can safely advance, report the actual restriction, not operational continuity or queue exhaustion.
+
+### Empty-Queue Consensus and Improvement Discovery
+
+Queue-based Factory shutdown requires unanimous, dated zero-work attestations from FactoryLauncher, Factory, every participating Squad, VOC, Kanban, and every participating ProductOwner (including delegated AssociateProductOwners). Enumerate actual required role instances from the accepted engagement/roster; never substitute one representative for all Squads or ProductOwners. FactoryLauncher coordinates and independently validates the closure packet; Factory supplies orchestration/handoff evidence. Each role attests that its reconciled in-scope unfinished work has `To Do = 0` and `In Progress = 0`, citing authoritative sources, scope, snapshot/version, timestamp, completion/disposition evidence, residual proposals/obligations, and explicit acceptance or dissent. Kanban reconciles all inventories to one authoritative board, not separate role boards. Squad attestations include member/technical residuals; ProductOwner attestations include delegated backlog obligations.
+
+A zero board count is insufficient. Missing roles, inaccessible sources, stale snapshots, contradictions, pending in-scope work, unsupported completion, or dissent invalidate consensus. Do not hide blocked, paused, deferred, research, refinement, recovery, or residual obligations to attain zero. Preserve rejected/retired/out-of-scope dispositions with authority and reopen criteria; review unresolved improvement candidates rather than omitting them. Revalidate source changes before owner sign-off. Present the complete consensus packet, risks, reopen triggers, and shutdown request to the human Factory owner. Only recorded human sign-off authorizes queue-based shutdown; silence, agent agreement, or Launcher validation is not approval. Immediate safety stops and explicit human stop instructions remain binding without consensus; they are not verified empty-queue closure.
+
+Without complete zero-work consensus, every participating agent must inspect authorized evidence for something to improve and submit a bounded proposal to VOC directly or through Factory's permitted handoff. Start with eliminating a dissatisfier, then consider adding a satisfier or delighter. Do not invent demand, obligatory feature additions, or implementation authority. If no credible proposal is evidenced or sources/permissions are missing, record the search attempted, uncertainty, owner, and smallest discovery/permission decision instead of fabricating a proposal. Continue existing independently authorized work and recovery; unverified closure is not shutdown grounds.
+
+Dissatisfier discovery methods include Failure Mode and Effects Analysis (FMEA), Single Points of Failure analysis, and Well-Architected Reviews. Record failure mode, affected outcome, cause/effect, controls, evidence, uncertainty, and next validation; do not invent risk scores or claim an unperformed review. Satisfier/delighter discovery methods include Focus Groups, Surveys, UX Curiosity, A/B testing, Interviews, and Telemetry. Select methods for the uncertainty and authorized inputs, not as a compulsory checklist. Human research, new telemetry, experiments, external access, cost, and data use require applicable approvals. A/B tests need approved design, measures, guardrails, and stopping rules before execution. Reuse relevant skills and official architecture guidance; method names are not empirical evidence.
+
+Each proposal records proposing agent, source/date, affected user or operational job, dissatisfier/satisfier/delighter hypothesis, observed gap and counterevidence, smallest validation, outcome measure, dependencies, cost/permission uncertainty, and next owner/action. VOC deduplicates and assesses evidence, preserves dissent, and returns supported hypotheses or bounded research recommendations to ProductOwner. ProductOwner dispositions and prioritizes within authority. Kanban creates/updates cards only from authorized decisions and controls readiness/reserves/transitions; Squad implements only authorized True Ready work within WIP. Store proposals and attestations in existing product-owned records under their storage guidance, not competing boards or framework-repository product records.
+
+### Continuity Envelope and Accepted Handoffs
+
+Obtain the human-approved operating window, roster and permitted exceptions/replacements, WIP/reserve units and limits, replenishment lead time, fallback/refinement authority and measurable exits, budget, authority-expiry checkpoints, acknowledgement/waiting/liveness deadlines, escalation route, and restart permissions. These are engagement terms, not global numeric defaults. Missing terms require the human engagement owner's precise decision while unaffected authorized work continues. Request renewal before permission, budget, or the iteration horizon expires; neither discovered work nor owner silence extends authority. Prepare demos/calibration and mandatory gates early; optional analysis or perfect certainty must not delay authorized dispatch.
+
+Completion or blockage of one assignment does not end the Squad's operating mandate. Before a handoff gap, Kanban supplies eligible next card IDs and Factory obtains the receiving Squad's explicit acceptance of authorized delivery, refinement, validation, or unblocking work. Preserve partial work, dependencies, integration ownership, authority, exit criteria, and a checkpoint/decision deadline. A proposed assignment is not an accepted handoff; a returned agent call is not a demobilization decision. A bounded card invocation may return its evidence packet, but Factory remains accountable for the next dispatch or a visible restriction. No implementation begins without authorized True Ready work admitted within WIP.
+
+Waiting members must have a recorded reason, owner, next action, and engagement-approved deadline; queued time is not progress. Use useful pairing/review or bounded authorized fallback where possible, never redundant activity. On missed acknowledgement, progress, or waiting deadlines, Factory convenes recovery or escalates the precise decision immediately. Unknown deadlines are visible contract gaps, not permission to wait indefinitely or invent a timeout.
+
+### Liveness and Recovery Routing
+
+Kanban reports dated current/next assignment IDs, accepted owners, eligible reserve, blocker/recovery owner, last observed progress and evidence, expected next checkpoint, starvation forecast/uncertainty, and deadline breaches. Factory acts on missing progress under approved deadlines; routine status updates alone do not constitute progress. Check handoffs, material changes, cycle checkpoints, and scheduled checks only where the runtime actually supports them.
+
+- Unready cards or missing fields: Kanban routes authorized refinement and owner decisions; incomplete cards do not count as ready reserve.
+- Demand awaiting disposition: VOC supplies evidence and ProductOwner accepts/rejects/prioritizes within authority; no speculative delivery.
+- Blocked WIP, dependency cycles, external delays, or write contention: Squad identifies technical paths, ProductOwner approves scope/order within authority, and Kanban governs transitions. Never hide blocked WIP or admit extra work to bypass limits.
+- Build/test/environment failures: Squad performs bounded diagnosis and focused verification; preserve failed gates and continue independent authorized work.
+- Insufficient independent work or unavailable roles: Factory proposes approved reassignment, replacement, or roster exception with accepted ownership; never invent participation or silently substitute a missing recovery-panel role.
+- Failed or unavailable recovery panel: preserve the incident, escalate the missing role/decision under approved deadlines or after the established three-round limit, and keep unaffected work moving. Do not restart the round counter to avoid escalation.
+
+### Squad Furlough and Hard Stops
+
+Furlough means temporary owner-authorized suspension/demobilization of a Squad, not card completion, an extra board bucket, or a label concealing idle time. Factory may execute it only with an explicit owner decision or an applicable human-approved demobilization condition in the engagement. Record approving authority, reason, affected IDs, partial work/evidence, accepted receiving ownership and integration responsibilities, cost/roster impact, restart owner, reopen trigger, and review date. If ownership transfer cannot be accepted, expose the blocker and retain accountability rather than abandoning work. Assignment completion, an unready queue, or one blocked card is not furlough authority. Legitimate queue exhaustion retains the independent FactoryLauncher validation gate.
+
+An immediate human or safety stop must not wait for handoff acceptance. Stop first, preserve safe state, record the existing custodian and pending transfer, and escalate; do not imply a transfer occurred. Emergency stoppage is not verified recovery or completed work.
+
+### Execution Infrastructure and Restart
+
+Agent definitions and restart packets do not implement a scheduler or persistent execution. Unattended continuity requires a separately authorized external supervisor with an owner, permitted invocation/credential handling, product-owned durable checkpoints, actual execution/progress monitoring, bounded retry/restart limits, duplicate-run prevention, serialized Kanban updates, budget controls, and stop/revocation propagation. Revalidate authority and card state before reinvocation; resume from recorded evidence, never replay consequential operations blindly. Install or operate such infrastructure only with its own approval; this contract does not supply that approval.
+
+Without an available supervisor, disclose session/runtime interruption, persist the restart packet when permitted, and identify the actual human/runtime resume route. Do not promise reinvocation or background work that has not been implemented and tested.
+
+### Continuity Acceptance Scenarios
+
+Exercise these in an authorized product test engagement before claiming operational assurance. Record input board/authority, actual accepted roles, expected versus observed actions, evidence, failures, and cleanup. Text checks of these definitions are not runtime scenario tests.
+
+| Injected condition | Required observed result |
+| --- | --- |
+| Assignment completes with unfinished authorized cards | Factory obtains an accepted next assignment or records the exact restriction; no automatic furlough. |
+| To Do exists but reserve is unready | Kanban assigns permitted refinement and exposes the deficit; no premature implementation. |
+| All WIP blocked or dependency/write ownership conflicts | Recovery routes bounded unblocking and independent work without exceeding or hiding WIP. |
+| Required role unavailable or handoff unaccepted | Missing acceptance stays visible; approved replacement/exception or precise escalation, never fictional participation. |
+| Session ends, execution crashes, or call returns | Authorized supervisor checkpoints and safely reinvokes within limits, or runtime interruption and the real resume route are disclosed. |
+| Authority/budget expires or renewal is unanswered | Affected work stops; only independently authorized work continues; silence is not approval. |
+| Explicit stop, revocation, or safety incident | Stop is enforced immediately, supervisor restarts are inhibited, and ownership/state is preserved without claiming recovery. |
+| Validated queue exhaustion without owner shutdown | All required role instances provide dated zero-work attestations; Launcher presents unanimous consensus for explicit human sign-off; no autonomous halt. |
+| Missing, stale, dissenting, or nonzero role attestation | Queue-based shutdown fails; every agent submits evidenced improvement/discovery proposals through VOC without fabricating demand or bypassing authority. |
+
+Apply restart inhibition to the affected permission/safety scope; an owner-authorized Factory shutdown inhibits all Factory restarts. An action-level stop does not shut down unaffected authorized work.
+
 ## Required Recovery Panel
 
 For every material impasse that threatens setup MVP or an active value cycle, deputize exactly these accountable roles to negotiate:

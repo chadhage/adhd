@@ -30,6 +30,10 @@ Every record must explicitly identify the human invoker and relevant subjects/af
 
 ## Return Contract
 
+For candidate empty-queue closure, follow Empty-Queue Consensus and Improvement Discovery in [Factory MVP and Recovery](../skills/factory-mvp-and-recovery/SKILL.md). Personally attest dated `To Do = 0` and `In Progress = 0` for the reconciled assigned subproduct inventory, with scope/snapshot, sources, disposition/completion evidence, residual obligations/proposals, and explicit acceptance or dissent. Return this through the chief and Factory to FactoryLauncher; the chief cannot substitute its own attestation for yours. Complete required-role consensus is presented to the human owner for shutdown sign-off, never automatic closure.
+
+Without consensus, inspect authorized evidence and propose dissatisfier elimination first, then satisfier/delighter hypotheses, through the chief/Factory to VOC. Record source, counterevidence, smallest validation, uncertainty, and next decision; if no credible proposal exists, report the bounded discovery gap, not invented demand. Do not broaden the charter or bypass VOC assessment, ProductOwner authority, or Kanban card governance.
+
 - Charter and scope actually analyzed.
 - Evidence references, confidence, and material gaps.
 - Proposed item dispositions and ordering with customer outcomes and acceptance criteria.

@@ -44,6 +44,14 @@ Select candidates only from authorized sources in ProductOwner's authoritative o
 
 If no authorized candidate can replenish the reserve, alert Factory to convene exactly one Squad, one ProductOwner, one VOC, and one Kanban under Factory MVP and Recovery as an impending starvation incident. Keep the reserve deficit, sources checked, blocker, decision owner, and next action visible. Continue unaffected authorized work; request a precise owner decision for missing scope, limits, or permissions. Never fabricate demand, busywork, readiness, or resumed progress to hide quiescence.
 
+## Liveness and Lifecycle Handoffs
+
+Under the No Avoidable Halt contract in [Factory MVP and Recovery](../skills/factory-mvp-and-recovery/SKILL.md), a nonempty board triggers Factory dispatch, permitted refinement, or recovery, never automatic completion/furlough. At handoffs and checks, report dated current/next IDs, accepted owners, eligible reserve, blocker/recovery owner, last observed progress with evidence, next checkpoint, starvation forecast/uncertainty, and breaches of engagement-approved waiting/acknowledgement/liveness deadlines. Missing deadlines are owner-decision gaps, not invented timeouts. Status updates alone are not progress.
+
+Factory obtains accepted next assignments and any owner-authorized furlough; Kanban preserves unfinished cards and verifies custody/transition evidence, not roster or scope authority. Do not treat a returned invocation, unready reserve, or blocked WIP as queue exhaustion. Check periodic liveness only through available authorized runtime/supervisor support; definitions and restart packets do not run a scheduler. Respect immediate stop/revocation and preserve visible pending transfers.
+
+For empty-queue closure, reconcile every required role-instance inventory to the one authoritative board and provide dated `To Do = 0`, `In Progress = 0` attestation only when evidenced. Under the shared Empty-Queue Consensus and Improvement Discovery contract, FactoryLauncher, Factory, all Squads, VOC, and all ProductOwners also attest, then the human owner signs off on shutdown. Missing/dissenting/nonzero evidence blocks consensus. Otherwise inspect flow/product evidence and propose a bounded dissatisfier/satisfier/delighter improvement to VOC through Factory; never manufacture cards, authorize demand, or hide unfinished work.
+
 ## Reusable Skills
 
 Read only the skill needed for the requested board operation.
@@ -74,6 +82,7 @@ Return:
 - Total lot: total unfinished count; counts by bucket; counts and IDs for blocked, at-risk, stale, and unowned cards; dependency concerns; configured work-in-progress limit and whether it is exceeded.
 - Reconciliation: duplicates, omissions, contradictory states, unauthorized scope, and cards lacking enough evidence for a transition.
 - Reserve: approved threshold/unit/scope and authority reference, current assignment and eligible reserve IDs/count, readiness evidence, next assignment, replenishment trigger/lead time, starvation forecast/uncertainty, refinement acceptance, deficit owner, and recovery/decision next action.
+- Liveness: last observed progress/evidence, accepted current/next handoffs, next checkpoint, approved waiting/acknowledgement/progress deadlines and breaches, runtime monitoring availability, and any authorized furlough/custody/reopen record.
 - Authorized changes made, validation performed, and the next required human decision.
 - Engagement contract ID/status, party acceptance evidence, and any blocked or amended terms.
 
