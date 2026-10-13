@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "boardPaths": [],
+  "approvalsPath": null,
+  "approvalQueuePath": null,
+  "progressPath": null,
+  "unattended": false,
+  "supervisor": null
+}
