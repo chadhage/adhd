@@ -26,10 +26,10 @@ Run the hook policy regression suite from the workspace root:
 node --test .github/hooks/tests/pre-tool-policy.test.mjs
 ```
 
-Run the Factory halt-prevention tooling tests (see [`.github/tools/README.md`](tools/README.md)) the same way:
+Run the full quality gate, which also covers the Factory halt-prevention tooling and acceptance tests (see [`.github/tools/README.md`](tools/README.md)), the same way:
 
 ```powershell
-node --test .github/tools/tests/queue-and-lock.test.mjs .github/tools/tests/baseline-calc.test.mjs .github/tools/tests/detection-and-preflight.test.mjs .github/tools/tests/supervisor.test.mjs .github/hooks/tests/factory-ops.test.mjs
+node .github/tools/run-tests.mjs
 ```
 
 The hook also reads `.github/hooks/factory-ops.json`. It ships empty, so no board write is allowed without a prompt. When the owner lists an exact board file there, structurally valid `edit`/`create` calls on that one file (and reads of it) are allowed; every other action still asks, and an unreadable or malformed config falls back to asking. The `agentStop` gate and the supervisor read the same file and are inert until it names a board. Edits to `.github/tools/` are protected paths because hooks execute those scripts.

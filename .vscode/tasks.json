@@ -14,16 +14,11 @@
 			"group": "test"
 		},
 		{
-			"label": "Factory Halt-Prevention Tooling Tests",
+			"label": "Factory Quality Gate (tests, coverage, ratio, acceptance)",
 			"type": "shell",
 			"command": "node",
 			"args": [
-				"--test",
-				".github/tools/tests/queue-and-lock.test.mjs",
-				".github/tools/tests/baseline-calc.test.mjs",
-				".github/tools/tests/detection-and-preflight.test.mjs",
-				".github/tools/tests/supervisor.test.mjs",
-				".github/hooks/tests/factory-ops.test.mjs"
+				".github/tools/run-tests.mjs"
 			],
 			"isBackground": false,
 			"problemMatcher": [],

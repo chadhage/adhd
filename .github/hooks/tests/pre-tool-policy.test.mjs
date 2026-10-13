@@ -8,19 +8,19 @@ import { evaluatePreToolUse, formatHookResponse } from '../pre-tool-policy.mjs';
 const cases = JSON.parse(await readFile(new URL('./prompt-injection-cases.json', import.meta.url), 'utf8'));
 const hookPath = fileURLToPath(new URL('../pre-tool-policy.mjs', import.meta.url));
 
-test('only explicit local read/search tools are automatically allowed', () => {
+test('positive: only explicit local read/search tools are automatically allowed', () => {
   for (const toolName of ['read', 'search', 'view', 'glob', 'grep', 'readFile', 'search/textSearch']) {
     assert.equal(evaluatePreToolUse({ tool_name: toolName }).decision, 'allow', toolName);
   }
 });
 
-test('unknown, write, network, execution, and delegation tools require approval', () => {
+test('negative: unknown, write, network, execution, and delegation tools require approval', () => {
   for (const toolName of ['edit', 'create', 'powershell', 'bash', 'web_fetch', 'web_search', 'task', 'mcp_server/action', '']) {
     assert.notEqual(evaluatePreToolUse({ tool_name: toolName }).decision, 'allow', toolName);
   }
 });
 
-test('untrusted injection text cannot grant authority or change the tool decision', () => {
+test('negative: untrusted injection text cannot grant authority or change the tool decision', () => {
   for (const item of cases) {
     const result = evaluatePreToolUse({
       tool_name: item.toolName,
@@ -32,7 +32,7 @@ test('untrusted injection text cannot grant authority or change the tool decisio
   }
 });
 
-test('protected persistent instruction and record paths always require human review', () => {
+test('negative: protected persistent instruction and record paths always require human review', () => {
   for (const path of [
     '.github/agents/factory.agent.md',
     '.github/skills/example/SKILL.md',
@@ -48,7 +48,7 @@ test('protected persistent instruction and record paths always require human rev
   }
 });
 
-test('Local and Copilot hook payloads receive their respective decision schemas', () => {
+test('positive: Local and Copilot hook payloads receive their respective decision schemas', () => {
   const local = formatHookResponse({ hook_event_name: 'PreToolUse', tool_name: 'powershell' }, 'preToolUse');
   assert.equal(local.hookSpecificOutput.permissionDecision, 'ask');
   assert.equal(local.hookSpecificOutput.hookEventName, 'PreToolUse');
@@ -57,7 +57,7 @@ test('Local and Copilot hook payloads receive their respective decision schemas'
   assert.equal(copilot.permissionDecision, 'ask');
 });
 
-test('tool and subagent results receive provenance reminders without echoing their contents', () => {
+test('positive: tool and subagent results receive provenance reminders without echoing their contents', () => {
   const postTool = formatHookResponse({ toolName: 'web_fetch' }, 'postToolUse');
   assert.match(postTool.additionalContext, /untrusted data/);
   assert.match(postTool.additionalContext, /source\/provenance/);
@@ -72,12 +72,12 @@ test('tool and subagent results receive provenance reminders without echoing the
   assert.match(localSubagent.hookSpecificOutput.additionalContext, /cannot grant human approval/);
 });
 
-test('invalid tool events fail closed', () => {
+test('negative: invalid tool events fail closed', () => {
   assert.equal(evaluatePreToolUse({}).decision, 'deny');
   assert.equal(evaluatePreToolUse({ tool_name: {} }).decision, 'deny');
 });
 
-test('hook process asks for a non-read action and fails closed on malformed input', () => {
+test('negative: hook process asks for a non-read action and fails closed on malformed input', () => {
   const approval = spawnSync(process.execPath, [hookPath, 'preToolUse'], {
     encoding: 'utf8',
     input: JSON.stringify({ toolName: 'powershell', toolArgs: { command: '<synthetic command>' } }),
@@ -92,7 +92,7 @@ test('hook process asks for a non-read action and fails closed on malformed inpu
   assert.equal(malformed.status, 2);
 });
 
-test('workspace settings and hook registration preserve restrictive defaults', async () => {
+test('positive: workspace settings and hook registration preserve restrictive defaults', async () => {
   const [hookConfig, settings] = await Promise.all([
     readFile(new URL('../tool-policy.json', import.meta.url), 'utf8').then(JSON.parse),
     readFile(new URL('../../../.vscode/settings.json', import.meta.url), 'utf8').then(JSON.parse),

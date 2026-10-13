@@ -59,11 +59,41 @@ node .github/tools/liveness-check.mjs --board <kanban.md> --progress <progress.j
 - **Stop hook.** Verified against the GitHub Copilot hooks reference: `agentStop` (VS Code `Stop`) takes `stop_hook_active` and `cwd`, honors `{"decision":"block","reason":"..."}`, and the runtime overrides after 8 consecutive blocks. The script accepts both documented payload shapes. A live end-to-end block has not been observed in a Factory workspace; confirm it the first time a board is configured.
 - **Supervisor.** `supervisor.mjs tick` is meant to be run by an external scheduler that you install; this repository does not install one. Use the full path to the resume executable (no shell is used, so `.cmd` shims may not run). The resumed run inherits the scheduler user's environment and the supervisor stores no credentials. A resumed run is still subject to the hook: with `unattended` on, non-allowlisted actions are denied and queued, not performed. A stalled resumed run is reported as `child-stalled`, never killed.
 
-## Tests
+## Tests and the quality gate
 
 ```powershell
-node --test .github/tools/tests/queue-and-lock.test.mjs .github/tools/tests/baseline-calc.test.mjs .github/tools/tests/detection-and-preflight.test.mjs .github/tools/tests/supervisor.test.mjs .github/hooks/tests/factory-ops.test.mjs
+node .github/tools/run-tests.mjs
 ```
+
+One command runs every suite under `.github/tools/tests/` and `.github/hooks/tests/` and enforces the owner-specified policy. It exits `1` and names each violation if any of these fail:
+
+| Rule | Requirement |
+|---|---|
+| All tests pass | 100%, including the acceptance suite. Skipped and TODO tests count as failures. |
+| Every test is classified | Its title starts with `positive: ` or `negative: `. A negative test asserts a rejection, denial, block, failure, or refusal to act. |
+| Negative-to-positive ratio | At least 2 negative tests per positive test. |
+| Coverage | Every source file is at least 85% on lines, branches, and functions. Test files and the runner itself are excluded. |
+
+Run a single file while developing with `node --test <file>`. `run-tests.mjs` is the pass/fail authority.
+
+### Acceptance tests
+
+[`acceptance.test.mjs`](tests/acceptance.test.mjs) drives the shipped hook and tools as real processes in a temporary product-like workspace, one group per Continuity Acceptance Scenario that tooling can verify. Scenarios that depend on agent judgment are not machine-testable and need an authorized product test engagement.
+
+| Scenario | Coverage |
+|---|---|
+| AC-1 Assignment completes with unfinished cards | Machine-tested: the stop gate blocks a turn end without a shutdown approval |
+| AC-5 Session ends or a call returns | Machine-tested: a real resumed process, duplicate-run prevention, retry bound, and disclosure when no supervisor exists |
+| AC-7 Voluntary stop, revocation, safety | Machine-tested: inhibit file, agent-forged approvals rejected, human approval honored |
+| AC-8 Queue exhaustion without invoker approval | Machine-tested: an empty board is still not a shutdown |
+| AC-10 Approval pending, timed out, or denied | Machine-tested: ask, unattended deny-and-queue, yield on a pending decision, no retry after denial, scoped board writes |
+| AC-11 Engagement term missing | Machine-tested: measured proposal, no-data, and refusal to run on unsourced values |
+| AC-12 Writer unavailable | Machine-tested: a held lock returns a proposal and no mutation |
+| AC-13 Runtime capability missing | Machine-tested: preflight degradation with owner decisions; settings never edited |
+| AC-14 Idle role with no approval | Machine-tested: logged as a suspected unapproved halt, healthy after progress |
+| To Do exists but reserve is unready; all WIP blocked; required role unavailable; authority or budget expires; missing or dissenting attestation | **Not machine-testable**: agent behavior, not tooling |
+
+Tests that start real processes must not depend on timing: a resumed child stays alive until the test releases it, deadlines in those tests are far above scheduling delay, and the child is reaped inside the test before the workspace is removed (Windows keeps a directory busy while a child uses it).
 
 ## Supervisor usage
 
