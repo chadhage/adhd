@@ -3,8 +3,9 @@ import { existsSync, readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
+import { loadFactoryOps } from '../hooks/factory-ops.mjs';
 
-const requiredEvents = ['preToolUse', 'postToolUse', 'subagentStart'];
+const requiredEvents = ['preToolUse', 'postToolUse', 'subagentStart', 'agentStop'];
 
 function runHook(root, scriptPath, eventName, input) {
   const started = performance.now();
@@ -75,6 +76,22 @@ export function checkHookHealth({ root = process.cwd(), configPath = '.github/ho
     limitMs !== undefined && slowest < limitMs,
     `slowest=${Math.round(slowest)}ms timeout=${limitMs ?? 'unset'}ms`,
   );
+
+  const stopScript = /node\s+(\S+\.mjs)/.exec(config.hooks?.agentStop?.[0]?.command ?? '');
+  const stopPath = stopScript && resolve(root, stopScript[1]);
+  if (stopPath && existsSync(stopPath)) {
+    const stop = spawnSync(process.execPath, [stopPath], {
+      cwd: root,
+      encoding: 'utf8',
+      input: JSON.stringify({ hook_event_name: 'Stop', stop_hook_active: true, cwd: root }),
+    });
+    add('stop-gate-runs-and-never-traps', stop.status === 0 && !/"block"/.test(stop.stdout), `exit=${stop.status}`);
+  } else {
+    add('stop-gate-runs-and-never-traps', false, 'agentStop command does not resolve from the workspace root');
+  }
+
+  const ops = loadFactoryOps({ root, configPath: resolve(root, '.github/hooks/factory-ops.json') });
+  add('factory-ops-config-valid', ops.problems.length === 0, ops.problems.join('; ') || 'no problems');
 
   return { ok: checks.every((check) => check.ok), checks };
 }

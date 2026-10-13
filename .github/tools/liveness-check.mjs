@@ -11,7 +11,7 @@ import { parseBoard } from './lib/board.mjs';
  * progress within the supplied deadline). The deadline is required: it is an
  * operating value that must be measured (baseline-calc.mjs) or owner-approved.
  */
-export function checkLiveness({ boardText, progressText = '', approvalsText = '', deadlineMs, deadlineStatus, now = Date.now() }) {
+export function checkLiveness({ boardText, progressText = '', approvalsText = '', deadlineMs, deadlineStatus, now = Date.now(), extraProgressMs = [] }) {
   const board = parseBoard(boardText);
   if (!board.parsed) {
     return { status: 'unverifiable', exit: 3, reason: 'Board has no To Do / In Progress buckets; unfinished work cannot be counted.' };
@@ -31,9 +31,12 @@ export function checkLiveness({ boardText, progressText = '', approvalsText = ''
     return { status: 'ok', exit: 0, board, reason: `Stoppage approved by ${approvals.at(-1).approver}; verify scope and resume guidance.`, approval: approvals.at(-1) };
   }
 
-  const stamps = parseJsonLines(progressText)
-    .entries.map((entry) => Date.parse(entry.ts))
-    .filter(Number.isFinite);
+  const stamps = [
+    ...parseJsonLines(progressText)
+      .entries.map((entry) => Date.parse(entry.ts))
+      .filter(Number.isFinite),
+    ...extraProgressMs.filter(Number.isFinite),
+  ];
   if (!stamps.length) {
     return { status: 'no-progress-record', exit: 3, board, reason: 'No dated progress entries. Start recording observed progress at each transition or gate.' };
   }

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -8,7 +9,7 @@ import { checkLiveness } from '../liveness-check.mjs';
 import { parseBoard } from '../lib/board.mjs';
 import { checkHookHealth } from '../hook-health.mjs';
 import { parseJsonc, runPreflight } from '../capability-preflight.mjs';
-import { evaluateStop, formatStopResponse } from '../stop-gate.mjs';
+import { evaluateStop, formatStopResponse, pendingDecisions } from '../stop-gate.mjs';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 
@@ -65,32 +66,78 @@ test('liveness ignores forged, non-human, or revoked approvals', () => {
   }
 });
 
-test('stop gate: opt-in, blocks without a valid human approval, and avoids hook loops', async (t) => {
+test('stop gate: opt-in, blocks without approval or a pending human decision, and avoids hook loops', async (t) => {
   const dir = await tempDir(t);
   const board = join(dir, 'kanban.md');
-  const approvals = join(dir, 'approvals.jsonl');
+  const approvalsPath = join(dir, 'approvals.jsonl');
+  const queuePath = join(dir, 'queue.jsonl');
   await writeFile(board, headingBoard);
+  const args = { boardPaths: [board], approvalsPath, queuePath };
 
-  assert.equal(evaluateStop({ boardPath: undefined }).decision, 'allow');
-  assert.equal(evaluateStop({ boardPath: join(dir, 'missing.md') }).decision, 'allow');
+  assert.equal(evaluateStop({ boardPaths: [] }).decision, 'allow');
+  assert.equal(evaluateStop({ boardPaths: [join(dir, 'missing.md')] }).decision, 'allow');
 
-  const blocked = evaluateStop({ boardPath: board, approvalsPath: approvals });
+  const blocked = evaluateStop(args);
   assert.equal(blocked.decision, 'block');
+  assert.ok(blocked.reason.length > 0);
   assert.deepEqual(Object.keys(formatStopResponse(blocked)).sort(), ['decision', 'reason']);
+  assert.deepEqual(formatStopResponse({ decision: 'allow' }), {});
 
-  await writeFile(approvals, `${human('factory-shutdown-approval', { approverKind: 'agent' })}\n${human('stoppage-approval')}\n`);
-  assert.equal(evaluateStop({ boardPath: board, approvalsPath: approvals }).decision, 'block');
+  await writeFile(approvalsPath, `${human('factory-shutdown-approval', { approverKind: 'agent' })}\n${human('stoppage-approval')}\n`);
+  assert.equal(evaluateStop(args).decision, 'block');
 
-  const loop = evaluateStop({ event: { stop_hook_active: true }, boardPath: board, approvalsPath: approvals });
+  const loop = evaluateStop({ ...args, event: { stop_hook_active: true } });
   assert.equal(loop.decision, 'allow');
   assert.equal(loop.incident.trigger, 'unapproved halt (suspected)');
+  assert.equal(evaluateStop({ ...args, event: { stopHookActive: true } }).decision, 'allow');
 
-  await writeFile(approvals, `${human('factory-shutdown-approval')}\n`);
-  assert.equal(evaluateStop({ boardPath: board, approvalsPath: approvals }).decision, 'allow');
+  await writeFile(approvalsPath, `${human('factory-shutdown-approval')}\n`);
+  assert.equal(evaluateStop(args).decision, 'allow');
 
   await writeFile(board, 'unparseable');
-  await writeFile(approvals, '');
-  assert.match(evaluateStop({ boardPath: board, approvalsPath: approvals }).reason, /could not be parsed/);
+  await writeFile(approvalsPath, '');
+  assert.match(evaluateStop(args).reason, /could not be parsed/);
+});
+
+test('stop gate: a pending human decision lets the turn end, and a resolved one does not', async (t) => {
+  const dir = await tempDir(t);
+  const board = join(dir, 'kanban.md');
+  const queuePath = join(dir, 'queue.jsonl');
+  await writeFile(board, headingBoard);
+  const args = { boardPaths: [board], queuePath };
+
+  const request = (id) => JSON.stringify({ type: 'request', id });
+  await writeFile(queuePath, `${request('AQ-1')}\n`);
+  assert.deepEqual(pendingDecisions(`${request('AQ-1')}\n`), ['AQ-1']);
+  assert.match(evaluateStop(args).reason, /AQ-1/);
+  assert.equal(evaluateStop(args).decision, 'allow');
+
+  await writeFile(queuePath, `${request('AQ-1')}\n${JSON.stringify({ type: 'decision', id: 'AQ-1', decision: 'denied' })}\n`);
+  assert.deepEqual(pendingDecisions(await readFile(queuePath, 'utf8')), []);
+  assert.equal(evaluateStop(args).decision, 'block');
+});
+
+test('stop gate process accepts both documented agentStop payload shapes and is inert without a board', async (t) => {
+  const dir = await tempDir(t);
+  const board = join(dir, 'kanban.md');
+  await writeFile(board, headingBoard);
+  const scriptPath = fileURLToPath(new URL('../stop-gate.mjs', import.meta.url));
+  const run = (input, ...extra) => spawnSync(process.execPath, [scriptPath, ...extra], { encoding: 'utf8', input: JSON.stringify(input) });
+
+  const camel = { sessionId: 's', timestamp: 1, cwd: dir, transcriptPath: 't', stopReason: 'end_turn', stop_hook_active: false };
+  const vscode = { hook_event_name: 'Stop', session_id: 's', timestamp: '2026-10-13T00:00:00Z', cwd: dir, transcript_path: 't', stop_reason: 'end_turn', stop_hook_active: false };
+  for (const payload of [camel, vscode]) {
+    const blocked = run(payload, '--board', board);
+    assert.equal(blocked.status, 0, blocked.stderr);
+    assert.equal(JSON.parse(blocked.stdout).decision, 'block');
+
+    const released = run({ ...payload, stop_hook_active: true }, '--board', board);
+    assert.deepEqual(JSON.parse(released.stdout), {});
+    assert.match(released.stderr, /unapproved halt/);
+  }
+
+  const inert = run(camel);
+  assert.deepEqual(JSON.parse(inert.stdout), {});
 });
 
 test('hook health passes for this repository and fails when the script cannot be resolved', async (t) => {
