@@ -18,7 +18,7 @@
   "workbench.browser.enableChatTools": false,
   "chat.agent.networkFilter": true,
   "chat.useHooks": true,
-  "chat.subagents.allowInvocationsFromSubagents": false,
+  "chat.subagents.allowInvocationsFromSubagents": true,
   "chat.agent.sandbox.enabled": "on",
   "chat.agent.sandbox.network.allowNetwork": false,
   "chat.agent.sandbox.network.allowLocalNetwork": false,
