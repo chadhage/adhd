@@ -121,7 +121,7 @@ Pathway classes and the required result, each a recovery or owner-decision incid
 
 **Checkpointed restart packet.** When permitted, persist the restart packet at every handoff and cycle checkpoint, not only while awaiting an answer. Include exact state, completed work, assignments, evidence, attempted recoveries, safe next actions, pending decisions and queued approvals, and runtime capabilities. If persistence is not permitted, say so.
 
-**Reference tooling.** Optional utilities in [`.github/tools/`](../../tools/README.md) support these rules: a read-only capability preflight, an approval queue, revision-checked writes, a baseline calculator, and a read-only suspected-halt detector. They grant no authority and restart nothing; the Stop-hook gate is provided but unregistered pending harness verification and owner approval, and a restart supervisor requires its own authorization.
+**Reference tooling.** Utilities in [`.github/tools/`](../../tools/README.md) support these rules: a read-only capability preflight, an approval queue, revision-checked writes, a baseline calculator, a read-only suspected-halt detector, an `agentStop` gate that is registered but inert until a workspace configures a board, and a supervisor pass for an external scheduler that resumes work only within owner-approved bounds. They grant no authority. Prompt-free board writes apply only to board files the owner lists in `.github/hooks/factory-ops.json`.
 
 ### Empty-Queue Consensus and Improvement Discovery
 

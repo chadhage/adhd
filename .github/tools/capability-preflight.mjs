@@ -3,6 +3,8 @@ import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { checkHookHealth } from './hook-health.mjs';
+import { loadFactoryOps } from '../hooks/factory-ops.mjs';
+import { validateSupervisorConfig } from './supervisor.mjs';
 
 /** Parses VS Code style JSON with comments and trailing commas. */
 export function parseJsonc(text) {
@@ -49,6 +51,8 @@ export function runPreflight({
     capabilities.push({ capability, status, evidence, effect, ownerDecision });
 
   let settings = {};
+  const ops = loadFactoryOps({ root, configPath: resolve(root, '.github/hooks/factory-ops.json') });
+  const isUnattended = unattended || ops.unattended;
   const absoluteSettings = resolve(root, settingsPath);
   try {
     settings = parseJsonc(readFileSync(absoluteSettings, 'utf8'));
@@ -66,8 +70,8 @@ export function runPreflight({
   }
 
   const humanRequired = settings['chat.tools.global.autoApprove'] !== true;
-  if (humanRequired && unattended) {
-    add('approval-availability', 'degraded', 'Non-read tools ask for approval and the run is declared unattended.', 'A runtime with no interactive human treats ask as deny, so every non-read action blocks.', 'Decide how non-read approvals are handled when no human is present; do not weaken the gate without approval.');
+  if (humanRequired && isUnattended) {
+    add('approval-availability', 'degraded', 'Non-read tools ask for approval and the run is unattended.', ops.approvalQueuePath ? 'No human can answer, so non-read actions are denied and parked in the approval queue; only allowlisted board writes proceed.' : 'No human can answer and no approval queue is configured, so non-read actions are denied untracked.', 'Decide how non-read approvals are handled when no human is present; do not weaken the gate without approval.');
   } else if (humanRequired) {
     add('approval-availability', 'info', 'Non-read tools ask for approval; a human is assumed present.', 'Pending approvals block only the exact action; queue them with approval-queue.mjs.', 'Stay reachable for approvals or declare the run unattended.');
   } else {
@@ -101,10 +105,20 @@ export function runPreflight({
     add('records-write-access', 'unknown', 'No --records-dir supplied.', 'Unverified.', 'Supply the product-owned records directory.');
   }
 
+  add(
+    'scoped-board-writes',
+    ops.problems.length ? 'degraded' : ops.boardPaths.length ? 'ok' : 'info',
+    ops.problems.length ? ops.problems.join('; ') : `${ops.boardPaths.length} allowlisted board file(s)`,
+    ops.boardPaths.length ? 'Structurally valid edits of the listed boards need no prompt.' : 'No board is allowlisted, so every board write asks for approval.',
+    ops.problems.length ? 'Fix factory-ops.json through the reviewed change process.' : 'List the exact board file(s) in .github/hooks/factory-ops.json to enable prompt-free board writes.',
+  );
+
   if (supervisorConfig && existsSync(resolve(supervisorConfig))) {
     add('supervisor', 'ok', `Found ${resolve(supervisorConfig)}`, 'A supervisor is configured; its authorization and testing are verified separately.', 'Confirm the supervisor is authorized and tested.');
+  } else if (ops.supervisor && validateSupervisorConfig(ops.supervisor).length === 0) {
+    add('supervisor', 'ok', `Configured in factory-ops.json (owner ${ops.supervisor.owner}; deadline ${ops.supervisor.deadline.status}, retry ${ops.supervisor.retry.status}).`, 'Resumption can run when an external scheduler invokes supervisor.mjs tick; scheduling is verified separately.', 'Confirm the scheduler is installed and that provisional values are confirmed or replaced.');
   } else {
-    add('supervisor', 'degraded', 'No supervisor configuration found.', 'Unattended continuity is unavailable; a session end halts the Factory until a human resumes it.', 'Authorize a supervisor, or accept attended operation.');
+    add('supervisor', 'degraded', ops.supervisor ? `Invalid supervisor config: ${validateSupervisorConfig(ops.supervisor).join('; ')}` : 'No supervisor configuration found.', 'Unattended continuity is unavailable; a session end halts the Factory until a human resumes it.', 'Supply the owner-approved supervisor values and exact resume command, or accept attended operation.');
   }
 
   add('concurrency', 'unknown', 'Not detectable from the workspace.', 'Concurrent execution is claimed only when observed.', 'Report observed concurrency in the first cycle report.');

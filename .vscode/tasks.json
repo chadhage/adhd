@@ -21,7 +21,9 @@
 				"--test",
 				".github/tools/tests/queue-and-lock.test.mjs",
 				".github/tools/tests/baseline-calc.test.mjs",
-				".github/tools/tests/detection-and-preflight.test.mjs"
+				".github/tools/tests/detection-and-preflight.test.mjs",
+				".github/tools/tests/supervisor.test.mjs",
+				".github/hooks/tests/factory-ops.test.mjs"
 			],
 			"isBackground": false,
 			"problemMatcher": [],

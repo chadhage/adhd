@@ -29,8 +29,10 @@ node --test .github/hooks/tests/pre-tool-policy.test.mjs
 Run the Factory halt-prevention tooling tests (see [`.github/tools/README.md`](tools/README.md)) the same way:
 
 ```powershell
-node --test .github/tools/tests/queue-and-lock.test.mjs .github/tools/tests/baseline-calc.test.mjs .github/tools/tests/detection-and-preflight.test.mjs
+node --test .github/tools/tests/queue-and-lock.test.mjs .github/tools/tests/baseline-calc.test.mjs .github/tools/tests/detection-and-preflight.test.mjs .github/tools/tests/supervisor.test.mjs .github/hooks/tests/factory-ops.test.mjs
 ```
+
+The hook also reads `.github/hooks/factory-ops.json`. It ships empty, so no board write is allowed without a prompt. When the owner lists an exact board file there, structurally valid `edit`/`create` calls on that one file (and reads of it) are allowed; every other action still asks, and an unreadable or malformed config falls back to asking. The `agentStop` gate and the supervisor read the same file and are inert until it names a board. Edits to `.github/tools/` are protected paths because hooks execute those scripts.
 
 Run `node .github/tools/hook-health.mjs` after any change to the hook or its registration; a failing hook denies every tool call and halts all work. The health check never relaxes the fail-closed behavior.
 
