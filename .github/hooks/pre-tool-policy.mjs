@@ -166,26 +166,32 @@ export async function applyUnattendedPolicy(event, evaluation, ops = loadFactory
   return { decision: 'deny', reason: 'Unattended run: no human can approve this action and it could not be queued. Continue other authorized work; do not retry or route around this control.' };
 }
 
+/** Pure request handler: returns what the hook process should print and its exit code. */
+export async function handleHookInput(input, configuredEvent, ops = loadFactoryOps()) {
+  if (Buffer.byteLength(input, 'utf8') > maxInputBytes) {
+    return { exitCode: 2, stderr: 'Hook input exceeded the size limit; denying the tool call.' };
+  }
+  try {
+    const event = JSON.parse(input);
+    const eventName = (event?.hook_event_name ?? event?.hookEventName ?? configuredEvent ?? 'preToolUse').replace(/[^a-z]/gi, '').toLowerCase();
+    const evaluation = eventName === 'pretooluse' ? await applyUnattendedPolicy(event, evaluatePreToolUse(event, ops), ops) : undefined;
+    return { exitCode: 0, stdout: `${JSON.stringify(formatHookResponse(event, configuredEvent, evaluation))}\n` };
+  } catch {
+    return { exitCode: 2, stderr: 'Hook input was invalid; denying the tool call.' };
+  }
+}
+
 async function runHook() {
   let input = '';
   for await (const chunk of process.stdin) {
     input += chunk;
-    if (Buffer.byteLength(input, 'utf8') > maxInputBytes) {
-      process.stderr.write('Hook input exceeded the size limit; denying the tool call.');
-      process.exitCode = 2;
-      return;
-    }
+    if (Buffer.byteLength(input, 'utf8') > maxInputBytes) break;
   }
 
-  try {
-    const event = JSON.parse(input);
-    const eventName = (event?.hook_event_name ?? event?.hookEventName ?? process.argv[2] ?? 'preToolUse').replace(/[^a-z]/gi, '').toLowerCase();
-    const evaluation = eventName === 'pretooluse' ? await applyUnattendedPolicy(event, evaluatePreToolUse(event)) : undefined;
-    process.stdout.write(`${JSON.stringify(formatHookResponse(event, process.argv[2], evaluation))}\n`);
-  } catch {
-    process.stderr.write('Hook input was invalid; denying the tool call.');
-    process.exitCode = 2;
-  }
+  const result = await handleHookInput(input, process.argv[2]);
+  if (result.stdout) process.stdout.write(result.stdout);
+  if (result.stderr) process.stderr.write(result.stderr);
+  process.exitCode = result.exitCode;
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {

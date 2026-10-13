@@ -157,6 +157,8 @@ export async function tick({ ops = loadFactoryOps(), execute = false, now = Date
     child.on?.('error', () => {});
     child.unref?.();
     attempt.pid = child.pid ?? null;
+    // spawn reports a missing executable asynchronously; no pid means nothing started.
+    if (!Number.isInteger(attempt.pid)) attempt.error = 'no-pid';
   } catch (error) {
     attempt.error = error.code ?? error.message;
   }
@@ -174,9 +176,9 @@ export async function tick({ ops = loadFactoryOps(), execute = false, now = Date
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   try {
-    const { values, positionals } = parseArgs({ allowPositionals: true, options: { config: { type: 'string' }, execute: { type: 'boolean' } } });
-    if (positionals[0] !== 'tick') throw new Error('Usage: supervisor.mjs tick [--execute] [--config <factory-ops.json>]');
-    const ops = values.config ? loadFactoryOps({ configPath: resolve(values.config) }) : loadFactoryOps();
+    const { values, positionals } = parseArgs({ allowPositionals: true, options: { config: { type: 'string' }, root: { type: 'string' }, execute: { type: 'boolean' } } });
+    if (positionals[0] !== 'tick') throw new Error('Usage: supervisor.mjs tick [--execute] [--config <factory-ops.json>] [--root <workspace>]');
+    const ops = loadFactoryOps({ ...(values.root ? { root: resolve(values.root) } : {}), ...(values.config ? { configPath: resolve(values.config) } : {}) });
     const result = await tick({ ops, execute: Boolean(values.execute) });
     process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
     process.exitCode = result.exit;

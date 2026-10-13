@@ -69,9 +69,9 @@ async function readStdin() {
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   try {
     const { values } = parseArgs({
-      options: { config: { type: 'string' }, board: { type: 'string' }, approvals: { type: 'string' }, queue: { type: 'string' } },
+      options: { config: { type: 'string' }, root: { type: 'string' }, board: { type: 'string' }, approvals: { type: 'string' }, queue: { type: 'string' } },
     });
-    const ops = values.config ? loadFactoryOps({ configPath: resolve(values.config) }) : loadFactoryOps();
+    const ops = loadFactoryOps({ ...(values.root ? { root: resolve(values.root) } : {}), ...(values.config ? { configPath: resolve(values.config) } : {}) });
     const result = evaluateStop({
       event: await readStdin(),
       boardPaths: values.board ? [resolve(values.board)] : ops.boardPaths,
