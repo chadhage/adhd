@@ -72,8 +72,10 @@ acceptance, mobilization, and value-producing progress are observed.
 
 The setup/resume request does not authorize unrelated scope, future iterations,
 spending beyond the approved envelope, customer contact, private-system access,
-production deployment, or release. Hard safety and permission limits and an
-explicit human stop decision remain binding. A discovery-only request remains
+production deployment, or release. Hard safety and permission limits remain
+binding. Any voluntary stoppage requires the human invoker's explicit approval
+after receiving an evidence-based justification and resume guidance; immediate
+safety containment is limited to the affected action. Missing operating values (limits, deadlines, sizing bars) are measured from observed work and proposed to the owner for confirmation or replacement, never set as arbitrary defaults. A discovery-only request remains
 limited to its explicit research scope.
 
 The approved package includes a charter and artifact index, decision/authority

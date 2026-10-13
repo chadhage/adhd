@@ -10,7 +10,7 @@ disable-model-invocation: false
 
 ## Purpose and Inputs
 
-Produce a complete, non-duplicative inventory of unfinished work and reconcile the True Ready reserve required by the active human-approved engagement. Obtain the product-owned board path from its artifact-storage guidance, authoritative sources, scope, reporting date, iteration/recovery authority, approved WIP and reserve limits with units/scopes, readiness criteria, replenishment lead time/triggers, and edit/readiness-assignment authority. Do not derive counts from member capacity or invent defaults. Expose missing or contradictory terms and request the human engagement owner's precise approval/clarification; preserve unaffected authorized work.
+Produce a complete, non-duplicative inventory of unfinished work and reconcile the True Ready reserve required by the active human-approved engagement. Obtain the product-owned board path from its artifact-storage guidance, authoritative sources, scope, reporting date, iteration/recovery authority, approved WIP and reserve limits with units/scopes, readiness criteria, replenishment lead time/triggers, and edit/readiness-assignment authority. Do not derive counts from member capacity or invent arbitrary defaults. Expose missing or contradictory terms, propose an empirically derived value under Empirical Baselines Instead of Arbitrary Defaults in [Factory MVP and Recovery](../factory-mvp-and-recovery/SKILL.md), and request the human engagement owner's confirmation or replacement; preserve unaffected authorized work.
 
 ## Procedure
 
