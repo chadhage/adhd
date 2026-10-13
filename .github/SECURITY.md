@@ -26,6 +26,14 @@ Run the hook policy regression suite from the workspace root:
 node --test .github/hooks/tests/pre-tool-policy.test.mjs
 ```
 
+Run the Factory halt-prevention tooling tests (see [`.github/tools/README.md`](tools/README.md)) the same way:
+
+```powershell
+node --test .github/tools/tests/queue-and-lock.test.mjs .github/tools/tests/baseline-calc.test.mjs .github/tools/tests/detection-and-preflight.test.mjs
+```
+
+Run `node .github/tools/hook-health.mjs` after any change to the hook or its registration; a failing hook denies every tool call and halts all work. The health check never relaxes the fail-closed behavior.
+
 Tests cover the deterministic tool gate and benign prompt-injection fixtures. They do not prove that a model will always ignore hostile content. For each harness in use, run the manual scenarios in `tests/prompt-injection/README.md`, inspect its effective sandbox/network policy, and confirm that rejected approval results in no tool call or file change.
 
 The hook intentionally avoids logging prompts, tool arguments, tool results, or credentials. Hook scripts are executable security policy: review and approve edits to them as carefully as changes to agent definitions.

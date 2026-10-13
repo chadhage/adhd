@@ -13,5 +13,19 @@
 			"problemMatcher": [],
 			"group": "test"
 		},
+		{
+			"label": "Factory Halt-Prevention Tooling Tests",
+			"type": "shell",
+			"command": "node",
+			"args": [
+				"--test",
+				".github/tools/tests/queue-and-lock.test.mjs",
+				".github/tools/tests/baseline-calc.test.mjs",
+				".github/tools/tests/detection-and-preflight.test.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "test"
+		},
 	]
 }
