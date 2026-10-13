@@ -1,11 +1,15 @@
 # ADHD
 
 ```text
-    _    ____  _   _ ____  
-   / \  |  _ \| | | |  _ \ 
-  / _ \ | | | | |_| | | | |
- / ___ \| |_| |  _  | |_| |
-/_/   \_\____/|_| |_|____/ 
+    ###       #########      ##       ##    #########
+   ## ##      ##      ##     ##       ##    ##      ##
+  ##   ##     ##       ##    ##       ##    ##       ##
+ ##     ##    ##       ##    ##       ##    ##       ##
+###########   ##       ##    ###########    ##       ##
+##       ##   ##       ##    ##       ##    ##       ##
+##       ##   ##       ##    ##       ##    ##       ##
+##       ##   ##      ##     ##       ##    ##      ##
+##       ##   #########      ##       ##    #########
 ```
 
 Agent Driven Hybrid Development.
@@ -14,10 +18,37 @@ Agent Driven Hybrid Development.
 
 This repository depends on the following tools and services:
 
-- **Visual Studio Code**: The supported editor and host for the agent definitions, skills, and GitHub Copilot integration in this repository.
-- **GitHub account**: Required to access GitHub services and authenticate GitHub Copilot in Visual Studio Code.
-- **GitHub Copilot**: The Visual Studio Code extension and AI service used to run the repository's agents and skills.
-- **GitHub Copilot account access**: The signed-in GitHub account must have an active GitHub Copilot plan or access provided by an organization.
+| Prerequisite | Description | Action / Link |
+| --- | --- | --- |
+| **Visual Studio Code** | The supported editor and host for the agent definitions, skills, and GitHub Copilot integration in this repository. | [Download and Install VS Code](https://code.visualstudio.com/Download) |
+| **GitHub account** | Required to access GitHub services and authenticate GitHub Copilot in Visual Studio Code. | [Sign up for GitHub](https://github.com/signup) · [Account creation guide](https://docs.github.com/get-started/start-your-journey/creating-an-account-on-github) |
+| **GitHub Copilot account and extension** | An active subscription or free plan access is required, and the extension must be properly installed in VS Code. | [GitHub Copilot plans](https://github.com/features/copilot) · [Set up Copilot in VS Code](https://code.visualstudio.com/docs/copilot/setup) · [Copilot extension](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) |
+| **Active agent harness verification** | Verify that GitHub Copilot is selected as the active and current session harness in VS Code using the Session Target control in Chat. | [Choose and use an agent harness](https://code.visualstudio.com/docs/agents/run/agent-harnesses) |
+
+## Getting started
+
+1. Complete all [prerequisites](#prerequisites).
+2. Create a workspace directory with `reference` and `product` subdirectories. For example:
+
+   ```text
+   C:\myworkspace1
+   ├── reference
+   └── product
+   ```
+
+   On a Unix-like system, you could use `/myworkspace1` instead.
+3. Clone ADHD into the `reference` directory:
+
+   ```sh
+   git clone https://github.com/chadhage/adhd.git C:\myworkspace1\reference\adhd
+   ```
+
+   On a Unix-like system, use `/myworkspace1/reference/adhd` as the destination.
+4. Launch Visual Studio Code.
+5. Open the `adhd` folder you cloned under `myworkspace1\reference` (for example, `C:\myworkspace1\reference\adhd`).
+6. Open GitHub Copilot Chat and change the mode to **FactoryLauncher**.
+7. Type your prompt.
+8. Press **Enter** to start.
 
 ## Licensing disclaimer
 

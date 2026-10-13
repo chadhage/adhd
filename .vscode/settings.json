@@ -17,8 +17,6 @@
   },
   "workbench.browser.enableChatTools": false,
   "chat.agent.networkFilter": true,
-  "chat.agent.allowedNetworkDomains": [],
-  "chat.agent.deniedNetworkDomains": [],
   "chat.useHooks": true,
   "chat.subagents.allowInvocationsFromSubagents": false,
   "chat.agent.sandbox.enabled": "on",
