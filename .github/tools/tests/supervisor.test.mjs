@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import os from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { loadFactoryOps } from '../../hooks/factory-ops.mjs';
@@ -240,8 +241,34 @@ test('negative: a spawn that returns no pid is a failure, not a restart', async 
   assert.equal((await stateOf(root)).childPid, null);
 });
 
-test('negative: a corrupt state file is treated as empty rather than crashing the tick', async (t) => {
-  const { root, ops, spawnFn } = await setup(t);
+test('negative: a corrupt state file requires recovery and never permits a restart', async (t) => {
+  const { root, ops, calls, spawnFn } = await setup(t);
   await writeFile(join(root, '.docs', 'supervisor-state.json'), '{ broken');
-  assert.equal((await tick({ ops, execute: true, now: stale(), spawnFn })).status, 'restarted');
+  const result = await tick({ ops, execute: true, now: stale(), spawnFn });
+  assert.equal(result.status, 'state-recovery-required');
+  assert.equal(result.exit, 3);
+  assert.equal(calls.length, 0);
+});
+
+test('negative: overlapping ticks cannot consume a one-restart budget twice', async (t) => {
+  const { root, ops, calls } = await setup(t, {
+    supervisor: supervisorConfig({ retry: { maxRestarts: 1, minIntervalMs: 1, status: 'confirmed', source: 'synthetic test owner' } }),
+  });
+  const spawnFn = (command, args, options) => {
+    calls.push({ command, args, options });
+    return { pid: process.pid, unref() {}, on() {} };
+  };
+  const now = stale();
+  await Promise.all([tick({ ops, execute: true, now, spawnFn }), tick({ ops, execute: true, now, spawnFn })]);
+  assert.equal(calls.length, 1);
+  assert.equal((await stateOf(root)).restarts.length, 1);
+});
+
+test('negative: a held state-write lock prevents launch instead of losing the attempt', async (t) => {
+  const { root, ops, calls, spawnFn } = await setup(t);
+  await writeFile(join(root, '.docs', 'supervisor-state.json.lock'), JSON.stringify({ pid: process.pid, host: os.hostname(), owner: 'other writer' }));
+  const result = await tick({ ops, execute: true, now: stale(), spawnFn });
+  assert.equal(calls.length, 0);
+  assert.notEqual(result.status, 'restarted');
+  assert.notEqual(result.exit, 0);
 });

@@ -55,3 +55,36 @@ export async function installWorkspace(t, config = {}, { board = headingBoard } 
     stop: (payload = {}) => runNode(join(root, '.github', 'tools', 'stop-gate.mjs'), [], { input: JSON.stringify(payload), cwd: root }),
   };
 }
+
+export async function installProductWorkspace(t, config = {}, { board = headingBoard } = {}) {
+  const root = await tempDir(t, 'adhd product-');
+  const recordsDir = join(root, '.docs');
+  const configPath = join(root, '.github', 'hooks', 'factory-ops.json');
+  const hookScript = join(repoRoot, '.github', 'hooks', 'pre-tool-policy.mjs');
+  await mkdir(recordsDir, { recursive: true });
+  await mkdir(dirname(configPath), { recursive: true });
+  await writeFile(join(recordsDir, 'kanban.md'), board);
+  await writeFile(
+    configPath,
+    JSON.stringify({
+      version: 1,
+      boardPaths: ['.docs/kanban.md'],
+      approvalsPath: '.docs/approvals.jsonl',
+      approvalQueuePath: '.docs/queue.jsonl',
+      progressPath: '.docs/progress.jsonl',
+      ...config,
+    }),
+  );
+  const binding = ['--root', root, '--config', configPath];
+  return {
+    root,
+    configPath,
+    hookScript,
+    referenceRoot: repoRoot,
+    docs: (name) => join(recordsDir, name),
+    hook: (event, input, { args = [], cwd = repoRoot } = {}) =>
+      runNode(hookScript, [event, ...binding, ...args], { input: JSON.stringify(input), cwd }),
+    tool: (name, args = [], input) => runNode(toolPath(name), [...args, ...binding], { input, cwd: repoRoot }),
+    stop: (payload = {}) => runNode(toolPath('stop-gate.mjs'), binding, { input: JSON.stringify(payload), cwd: repoRoot }),
+  };
+}
