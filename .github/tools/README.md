@@ -7,7 +7,7 @@ None of these tools grants authority or approves anything. Only `supervisor.mjs`
 | Tool | Purpose | Status |
 |---|---|---|
 | `capability-preflight.mjs` | Read-only report of capabilities the Factory depends on (nested delegation, approval availability, hook health, network, records write access, supervisor), each with its effect and the owner decision that would restore it. | Ready |
-| `hook-health.mjs` | Exercises the workspace hook as the runtime would: registration, script resolution from the workspace root, allow/ask/fail-closed behavior, latency against the configured timeout. Never changes the policy. | Ready |
+| `hook-health.mjs` | Exercises the workspace hook as the runtime would: registration, script resolution from the workspace root, host-permission inheritance, invalid-input denial, latency against the configured timeout. Never changes the policy or queues probe actions. | Ready |
 | `approval-queue.mjs` | Append-only queue of blocked non-read actions with exact (secret-redacted) parameters, purpose, and card, so a human can decide them together. A denied action cannot be re-queued without changed evidence. Recording a request or decision never executes or approves anything. | Ready |
 | `revision-lock.mjs` | Revision-checked writes with an advisory lock. A held lock or moved revision returns the proposed change instead of mutating. | Ready |
 | `baseline-calc.mjs` | Computes a median or nearest-rank percentile baseline from observed samples, with n, range, exclusions, and optional seeded random sampling, and drafts the Yes/No/replace request for the owner. | Ready |
@@ -17,18 +17,18 @@ None of these tools grants authority or approves anything. Only `supervisor.mjs`
 
 ## Workspace configuration: `.github/hooks/factory-ops.json`
 
-One reviewed file configures the hook, stop gate, and supervisor for a workspace. It ships empty, so nothing is allowed or resumed until the owner fills it in through the normal reviewed change process (the hooks directory is a protected path).
+One reviewed file configures Factory records, the stop gate, and the supervisor for a workspace. It ships without boards or supervisor configuration, so those operations are inert until configured. Tool approval always follows the invoker's effective host/session permissions; this file does not grant or revoke it.
 
 | Field | Meaning |
 |---|---|
-| `boardPaths` | Exact board files (`.md`, inside the workspace) whose structurally valid edits and reads need no prompt. Entries under agent, skill, hook, tool, `.vscode`, secret, or key paths, or that collide with the approvals, queue, progress, or config files, are dropped with a reason. |
+| `boardPaths` | Exact board files (`.md`, inside the workspace) for Factory operations and structural checks, not a tool-approval allowlist. Entries under agent, skill, hook, tool, `.vscode`, secret, or key paths, or that collide with the approvals, queue, progress, or config files, are dropped with a reason. |
 | `approvalsPath` | Human approval records (`factory-shutdown-approval`, `stoppage-approval`). Keep it where agents cannot write. |
 | `approvalQueuePath` | Approval queue file. |
 | `progressPath` | Optional progress ledger (JSONL with `ts`) for the supervisor. Board modification time also counts as progress. |
-| `unattended` | When `true`, an `ask` that no human can answer becomes an explicit `deny` and the exact action is parked in the queue. It only turns `ask` into `deny`; it never allows anything. |
+| `unattended` | Declares that no interactive human is present for capability reporting. Host-permitted calls still proceed. Host-blocked requests can be recorded explicitly with the approval-queue tool when permitted; the pre-tool hook cannot observe host approval results and does not automatically queue calls. |
 | `supervisor` | `null` until configured. Requires `owner`, `authorizedBy`, `resume` (`command`, `args`, `cwd`), `restartPacketPath`, `statePath`, `logPath`, `inhibitPath`, and `deadline` and `retry` values, each with a `status` (`provisional` or `confirmed`) and a `source`. There are no defaults. |
 
-Scoped board writes validate **structure, not meaning**: after the edit the board must still have To Do and In Progress and no Done/Archive bucket. They apply only to the `edit` and `create` tools, and anything else still asks.
+The board helper validates **structure, not meaning or authority**: after an `edit` or `create`, a valid board must still have To Do and In Progress and no Done/Archive bucket. A successful helper result never pre-approves a tool call. Board edits, protected-path edits, reads, shell commands, web calls, MCP calls, and delegation all use host permissions.
 
 ## Usage
 
@@ -57,7 +57,7 @@ node .github/tools/liveness-check.mjs --board <kanban.md> --progress <progress.j
 - **Board format.** The board parser counts cards under `To Do` and `In Progress` headings as nested headings, table rows, or column-0 list items, and ignores `None` placeholders. It reports `parsed: false` rather than guessing when a bucket is missing.
 - **Approval records** (`factory-shutdown-approval`, `stoppage-approval`) must name a human approver, a source, and a timestamp. The tools cannot verify authorship; keep the file in a path agents cannot write to (for example CODEOWNERS-protected).
 - **Stop hook.** Verified against the GitHub Copilot hooks reference: `agentStop` (VS Code `Stop`) takes `stop_hook_active` and `cwd`, honors `{"decision":"block","reason":"..."}`, and the runtime overrides after 8 consecutive blocks. The script accepts both documented payload shapes. A live end-to-end block has not been observed in a Factory workspace; confirm it the first time a board is configured.
-- **Supervisor.** `supervisor.mjs tick` is meant to be run by an external scheduler that you install; this repository does not install one. Use the full path to the resume executable (no shell is used, so `.cmd` shims may not run). The resumed run inherits the scheduler user's environment and the supervisor stores no credentials. A resumed run is still subject to the hook: with `unattended` on, non-allowlisted actions are denied and queued, not performed. A stalled resumed run is reported as `child-stalled`, never killed.
+- **Supervisor.** `supervisor.mjs tick` is meant to be run by an external scheduler that you install; this repository does not install one. Use the full path to the resume executable (no shell is used, so `.cmd` shims may not run). The resumed run inherits the scheduler user's environment and the supervisor stores no credentials. The resume command must use the owner's intended host permissions; the supervisor and hooks never add an autonomy grant. Unattended mode does not replace host approvals with blanket denials. A stalled resumed run is reported as `child-stalled`, never killed.
 
 ## Tests and the quality gate
 
@@ -86,7 +86,7 @@ Run a single file while developing with `node --test <file>`. `run-tests.mjs` is
 | AC-5 Session ends or a call returns | Machine-tested: a real resumed process, duplicate-run prevention, retry bound, and disclosure when no supervisor exists |
 | AC-7 Voluntary stop, revocation, safety | Machine-tested: inhibit file, agent-forged approvals rejected, human approval honored |
 | AC-8 Queue exhaustion without invoker approval | Machine-tested: an empty board is still not a shutdown |
-| AC-10 Approval pending, timed out, or denied | Machine-tested: ask, unattended deny-and-queue, yield on a pending decision, no retry after denial, scoped board writes |
+| AC-10 Approval pending, timed out, or denied | Machine-tested: permission-neutral hooks, explicit secret-redacted queue requests, yield on a pending decision, no re-queue after denial, no board-based approval bypass; active host permission behavior also requires manual verification |
 | AC-11 Engagement term missing | Machine-tested: measured proposal, no-data, and refusal to run on unsourced values |
 | AC-12 Writer unavailable | Machine-tested: a held lock returns a proposal and no mutation |
 | AC-13 Runtime capability missing | Machine-tested: preflight degradation with owner decisions; settings never edited |

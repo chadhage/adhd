@@ -140,7 +140,7 @@ Based on the eight definitions in this directory.
 
 ## Security Defaults
 
-All agents inherit the workspace trust-boundary rules in [Copilot instructions](../copilot-instructions.md). Review [Agent Security Controls](../SECURITY.md) before enabling a tool or using another session harness. Workspace hooks allow only the explicit read/search allowlist without confirmation; other and unknown tools require per-action approval. Instructions and skills are guidance, not a substitute for VS Code approval, sandbox, network, or repository branch-protection controls.
+All agents inherit the workspace trust-boundary rules in [Copilot instructions](../copilot-instructions.md). Review [Agent Security Controls](../SECURITY.md) before enabling a tool or using another session harness. All tools and nested subagents follow the invoker's effective host/session permissions: manual approval remains manual, while host-granted autonomy is not replaced by repository-forced per-call prompts. The hook never grants approval itself, including for reads and configured board edits. Delegation preserves the authorized task scope and cannot widen permissions. Instructions and skills are guidance, not a substitute for host approvals, sandbox, network, or repository branch-protection controls.
 
 ## Features and intended benefits
 

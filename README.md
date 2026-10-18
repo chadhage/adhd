@@ -74,3 +74,9 @@ Availability does not imply unrestricted access. Each MCP server or extension co
 The framework's agent definitions and operating guide live in [`.github/agents/`](.github/agents/README.md). Reusable methods and policies live in [`.github/skills/`](.github/skills/).
 
 Workspace security controls for agent tool approvals, trust boundaries, and prompt-injection regression tests are documented in [`.github/SECURITY.md`](.github/SECURITY.md). Review the selected VS Code session harness and its effective sandbox policy; repository hooks and settings do not enforce controls in unsupported or untrusted workspaces.
+
+### Invoker-controlled permissions
+
+Choose the permission level in the active VS Code/Copilot session. All tools and nested subagents follow the host's effective permissions: manual approvals stay manual, while an invoker-granted autonomous mode does not encounter extra repository-forced per-call prompts. The hooks leave valid tool approval decisions unset rather than auto-approving calls themselves.
+
+The workspace enables hooks and nested delegation without pinning approval, browser, network, or sandbox settings. User and organizational controls still apply, and sandboxing remains independent of the permission level. A tool grant does not expand the authorized task or authorize unrelated spending, customer contact, deployment, release, or secret disclosure. See [Manage approvals and permissions](https://code.visualstudio.com/docs/agents/run/approvals) and the [security verification guide](.github/SECURITY.md) for setup and harness-specific checks.

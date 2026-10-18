@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -50,18 +51,20 @@ test('positive: nested delegation enabled, records writable, and a valid supervi
   assert.deepEqual(report.degraded, []);
 });
 
-test('positive: a listed board file is reported as prompt-free', async (t) => {
+test('positive: configured board files are reported without promising prompt-free approval', async (t) => {
   const { ws, settingsPath } = await withSettings(t, {});
   const entry = find(runPreflight({ root: ws.root, settingsPath }), 'scoped-board-writes');
   assert.equal(entry.status, 'ok');
-  assert.match(entry.evidence, /1 allowlisted/);
+  assert.match(entry.evidence, /1 configured/);
+  assert.match(entry.effect, /do not grant tool approval/);
 });
 
-test('positive: an unattended run with a queue is reported as parking actions', async (t) => {
+test('negative: unattended mode with a queue does not imply that host-permitted calls are blocked', async (t) => {
   const { ws, settingsPath } = await withSettings(t, {}, { unattended: true });
   const entry = find(runPreflight({ root: ws.root, settingsPath }), 'approval-availability');
-  assert.equal(entry.status, 'degraded');
-  assert.match(entry.effect, /parked in the approval queue/);
+  assert.equal(entry.status, 'unknown');
+  assert.match(entry.effect, /Host-permitted actions can proceed unattended/);
+  assert.match(entry.effect, /agents can record those requests in the approval queue/);
 });
 
 test('positive: an explicit supervisor config file is accepted', async (t) => {
@@ -78,9 +81,27 @@ test('positive: the markdown report has one row per capability', async (t) => {
   assert.equal(status(report, 'network-access'), 'info');
 });
 
-test('positive: with global auto-approve on, approvals are not a halt vector but the gate is flagged', async (t) => {
+test('negative: a global auto-approve workspace setting does not prove the active session permission level', async (t) => {
   const { ws, settingsPath } = await withSettings(t, { 'chat.tools.global.autoApprove': true });
-  assert.match(find(runPreflight({ root: ws.root, settingsPath }), 'approval-availability').effect, /gate is weakened/);
+  const entry = find(runPreflight({ root: ws.root, settingsPath }), 'approval-availability');
+  assert.equal(entry.status, 'unknown');
+  assert.match(entry.evidence, /global auto-approve=true/);
+  assert.match(entry.effect, /effective host permissions/);
+});
+
+test('negative: workspace permission defaults cannot be mistaken for an active autonomy grant', async (t) => {
+  const { ws, settingsPath } = await withSettings(t, { 'chat.permissions.default': 'autopilot' });
+  const entry = find(runPreflight({ root: ws.root, settingsPath }), 'approval-availability');
+  assert.equal(entry.status, 'unknown');
+  assert.match(entry.evidence, /Workspace permission default=autopilot/);
+  assert.match(entry.ownerDecision, /workspace defaults alone do not prove approval/);
+});
+
+test('negative: an absent workspace sandbox setting does not prove network access', async (t) => {
+  const { ws, settingsPath } = await withSettings(t, {});
+  const entry = find(runPreflight({ root: ws.root, settingsPath }), 'network-access');
+  assert.equal(entry.status, 'unknown');
+  assert.match(entry.effect, /independently of tool approval/);
 });
 
 test('negative: nested delegation disabled is degraded with an owner decision', async (t) => {
@@ -101,10 +122,10 @@ test('negative: unreadable settings are reported as unknown rather than ignored'
   assert.equal(status(report, 'settings'), 'unknown');
 });
 
-test('negative: an unattended run with no approval queue is degraded and says actions are denied untracked', async (t) => {
+test('negative: an unattended run without a queue cannot claim host approval or automatic queueing', async (t) => {
   const { ws, settingsPath } = await withSettings(t, {}, { approvalQueuePath: null });
   const entry = find(runPreflight({ root: ws.root, settingsPath, unattended: true }), 'approval-availability');
-  assert.equal(entry.status, 'degraded');
+  assert.equal(entry.status, 'unknown');
   assert.match(entry.effect, /no approval queue/);
 });
 
@@ -139,11 +160,11 @@ test('negative: a config problem degrades scoped board writes and names the prob
   assert.match(entry.evidence, /escapes the workspace/);
 });
 
-test('negative: no allowlisted board is info and says every board write asks', async (t) => {
+test('negative: an empty board configuration does not force an approval prompt', async (t) => {
   const { ws, settingsPath } = await withSettings(t, {}, { boardPaths: [] });
   const entry = find(runPreflight({ root: ws.root, settingsPath }), 'scoped-board-writes');
   assert.equal(entry.status, 'info');
-  assert.match(entry.effect, /every board write asks/);
+  assert.match(entry.effect, /every board write follows the effective host permissions/);
 });
 
 test('negative: concurrency is never asserted from the workspace', async (t) => {
@@ -164,6 +185,7 @@ test('negative: a broken hook degrades the preflight', async (t) => {
 const readHook = `let s='';for await (const c of process.stdin) s+=c;`;
 const hooks = {
   allowAll: `${readHook}console.log(JSON.stringify({permissionDecision:'allow'}));`,
+  askAll: `${readHook}console.log(JSON.stringify({permissionDecision:'ask'}));`,
   failOpen: `${readHook}try{const e=JSON.parse(s);console.log(JSON.stringify({permissionDecision:/read/i.test(e.toolName)?'allow':'ask'}));}catch{console.log('{}');}`,
   stopBlocks: `${readHook}console.log(JSON.stringify({decision:'block',reason:'always'}));`,
   stopCrashes: 'process.exit(3);',
@@ -218,8 +240,28 @@ test('negative: a hook script that does not exist from the workspace root is rep
 
 test('negative: a hook that allows non-read tools fails the policy check', async (t) => {
   const ws = await brokenWorkspace(t, async (w) => writeFile(join(w.root, '.github', 'hooks', 'pre-tool-policy.mjs'), hooks.allowAll));
-  assert.ok(failed(checkHookHealth({ root: ws.root })).includes('asks-for-non-read'));
+  assert.ok(failed(checkHookHealth({ root: ws.root })).includes('inherits-non-read-permissions'));
 });
+
+test('negative: a hook that forces every call to ask also fails host permission inheritance', async (t) => {
+  const ws = await brokenWorkspace(t, async (w) => writeFile(join(w.root, '.github', 'hooks', 'pre-tool-policy.mjs'), hooks.askAll));
+  assert.ok(failed(checkHookHealth({ root: ws.root })).includes('inherits-non-read-permissions'));
+});
+
+for (const [label, output] of [
+  ['malformed JSON', 'not-json'],
+  ['a null output', 'null'],
+  ['an array output', '[]'],
+  ['a scalar output', '1'],
+  ['a stop decision', '{"continue":false}'],
+  ['a nested approval', '{"hookSpecificOutput":{"permissionDecision":"allow"}}'],
+]) {
+  test(`negative: health probes reject ${label} instead of mistaking it for inheritance`, async (t) => {
+    const ws = await brokenWorkspace(t, async (w) =>
+      writeFile(join(w.root, '.github', 'hooks', 'pre-tool-policy.mjs'), `${readHook}console.log(${JSON.stringify(output)});`));
+    assert.ok(failed(checkHookHealth({ root: ws.root })).includes('inherits-read-permissions'));
+  });
+}
 
 test('negative: a hook that fails open on malformed input is caught', async (t) => {
   const ws = await brokenWorkspace(t, async (w) => writeFile(join(w.root, '.github', 'hooks', 'pre-tool-policy.mjs'), hooks.failOpen));
@@ -261,4 +303,25 @@ test('negative: an invalid factory-ops config is surfaced by the health check', 
   const ws = await installWorkspace(t, { boardPaths: ['.vscode/board.md'] });
   const report = checkHookHealth({ root: ws.root });
   assert.ok(failed(report).includes('factory-ops-config-valid'));
+});
+
+test('negative: unattended health probes never create an operational approval queue', async (t) => {
+  const ws = await installWorkspace(t, { unattended: true });
+  assert.equal(existsSync(ws.docs('queue.jsonl')), false);
+  checkHookHealth({ root: ws.root });
+  assert.equal(existsSync(ws.docs('queue.jsonl')), false);
+});
+
+test('positive: a healthy unattended policy is not mistaken for an attended policy failure', async (t) => {
+  const ws = await installWorkspace(t, { unattended: true });
+  const report = checkHookHealth({ root: ws.root });
+  assert.equal(report.ok, true, JSON.stringify(failed(report)));
+});
+
+test('negative: preflight does not append probes to an existing operational queue', async (t) => {
+  const { ws, settingsPath } = await withSettings(t, {}, { unattended: true });
+  const initial = `${JSON.stringify({ type: 'request', id: 'EXISTING', purpose: 'synthetic fixture' })}\n`;
+  await writeFile(ws.docs('queue.jsonl'), initial);
+  runPreflight({ root: ws.root, settingsPath });
+  assert.equal(await readFile(ws.docs('queue.jsonl'), 'utf8'), initial);
 });

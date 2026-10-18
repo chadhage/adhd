@@ -156,17 +156,30 @@ test('negative: [AC-8] an empty board is reported ok by the supervisor but never
 });
 
 // AC-10: a non-read tool approval is pending, timed out, or denied
-test('negative: [AC-10] a non-read tool is asked about, never silently allowed', async (t) => {
+const queueBlocked = (ws, event) => ws.tool('approval-queue.mjs', [
+  'enqueue', '--queue', ws.docs('queue.jsonl'), '--requester', 'Fullstacker',
+  '--tool', event.toolName, '--target', 'synthetic-shell',
+  '--params', JSON.stringify(event.toolArgs), '--purpose', 'Synthetic host approval pending', '--card', 'CARD-1',
+]);
+
+test('negative: [AC-10] a non-read hook cannot pre-approve a call or force an extra prompt', async (t) => {
   const ws = await installWorkspace(t);
   const run = ws.hook('preToolUse', { toolName: 'powershell', toolArgs: { command: 'npm test' } });
-  assert.equal(json(run).permissionDecision, 'ask');
+  assert.deepEqual(json(run), {});
 });
 
-test('negative: [AC-10] when unattended the action is denied explicitly and parked in the queue with its exact parameters', async (t) => {
+test('negative: [AC-10] unattended mode does not deny or queue a call before the host permission decision', async (t) => {
   const ws = await installWorkspace(t, { unattended: true });
   const run = ws.hook('preToolUse', { toolName: 'powershell', toolArgs: { command: 'npm test', token: 'sk-secretsecretsecret1' } });
-  assert.equal(json(run).permissionDecision, 'deny');
-  assert.match(json(run).permissionDecisionReason, /AQ-1/);
+  assert.deepEqual(json(run), {});
+  await assert.rejects(readFile(ws.docs('queue.jsonl'), 'utf8'), { code: 'ENOENT' });
+});
+
+test('negative: [AC-10] an explicitly queued host-blocked action does not retain credentials', async (t) => {
+  const ws = await installWorkspace(t, { unattended: true });
+  const run = queueBlocked(ws, { toolName: 'powershell', toolArgs: { command: 'npm test', token: 'sk-secretsecretsecret1' } });
+  assert.equal(run.status, 0, run.stderr);
+  assert.equal(json(run).id, 'AQ-1');
   const queued = await readFile(ws.docs('queue.jsonl'), 'utf8');
   assert.match(queued, /npm test/);
   assert.equal(queued.includes('secretsecret'), false);
@@ -174,35 +187,34 @@ test('negative: [AC-10] when unattended the action is denied explicitly and park
 
 test('positive: [AC-10] a pending human decision lets the agent yield instead of being forced to continue', async (t) => {
   const ws = await installWorkspace(t, { unattended: true });
-  ws.hook('preToolUse', { toolName: 'powershell', toolArgs: { command: 'npm test' } });
+  assert.equal(queueBlocked(ws, { toolName: 'powershell', toolArgs: { command: 'npm test' } }).status, 0);
   assert.deepEqual(json(ws.stop(stopEvent(ws.root))), {});
 });
 
 test('negative: [AC-10] a human-denied action is not retried without changed evidence', async (t) => {
   const ws = await installWorkspace(t, { unattended: true });
   const event = { toolName: 'powershell', toolArgs: { command: 'npm test' } };
-  ws.hook('preToolUse', event);
+  assert.equal(queueBlocked(ws, event).status, 0);
   const denied = ws.tool('approval-queue.mjs', ['resolve', '--queue', ws.docs('queue.jsonl'), '--id', 'AQ-1', '--decision', 'denied', '--approver', 'Chad', '--source', 'chat']);
   assert.equal(denied.status, 0, denied.stderr);
-  const retry = ws.hook('preToolUse', event);
-  assert.equal(json(retry).permissionDecision, 'deny');
-  assert.match(json(retry).permissionDecisionReason, /already denied/);
+  const retry = queueBlocked(ws, event);
+  assert.equal(retry.status, 1);
+  assert.equal(json(retry).reason, 'denied-without-changed-evidence');
 });
 
-test('positive: [AC-10] other authorized work continues: a scoped board edit needs no prompt while a shell command still asks', async (t) => {
+test('negative: [AC-10] a configured board edit and a shell command both leave host approval intact', async (t) => {
   const ws = await installWorkspace(t);
   const edit = ws.hook('preToolUse', { toolName: 'edit', toolArgs: { path: ws.docs('kanban.md'), old_str: '### CARD-1 First', new_str: '### CARD-1 First (refined)' } });
-  assert.equal(json(edit).permissionDecision, 'allow');
-  assert.equal(json(ws.hook('preToolUse', { toolName: 'powershell', toolArgs: { command: 'x' } })).permissionDecision, 'ask');
+  assert.deepEqual(json(edit), {});
+  assert.deepEqual(json(ws.hook('preToolUse', { toolName: 'powershell', toolArgs: { command: 'x' } })), {});
 });
 
-test('negative: [AC-10] a board edit that adds a Done bucket, or touches a protected path, still asks', async (t) => {
+test('negative: [AC-10] board content and protected paths cannot manufacture a tool approval', async (t) => {
   const ws = await installWorkspace(t);
   const done = ws.hook('preToolUse', { toolName: 'edit', toolArgs: { path: ws.docs('kanban.md'), old_str: '## In Progress', new_str: '## Done\n\n## In Progress' } });
-  assert.equal(json(done).permissionDecision, 'ask');
+  assert.deepEqual(json(done), {});
   const protectedEdit = ws.hook('preToolUse', { toolName: 'edit', toolArgs: { path: '.github/agents/factory.agent.md', old_str: 'a', new_str: 'b' } });
-  assert.equal(json(protectedEdit).permissionDecision, 'ask');
-  assert.match(json(protectedEdit).permissionDecisionReason, /protected/);
+  assert.deepEqual(json(protectedEdit), {});
 });
 
 test('negative: [AC-10] a malformed hook payload fails closed with exit 2', async (t) => {

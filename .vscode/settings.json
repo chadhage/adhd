@@ -1,32 +1,4 @@
 {
-  "chat.permissions.default": "default",
-  "chat.tools.global.autoApprove": false,
-  "chat.tools.terminal.enableAutoApprove": false,
-  "chat.tools.urls.autoApprove": {},
-  "chat.tools.edits.autoApprove": {
-    "**/.github/agents/**": false,
-    "**/.github/skills/**": false,
-    "**/.github/hooks/**": false,
-    "**/.github/copilot-instructions.md": false,
-    "**/.vscode/**": false,
-    "**/.docs/**": false,
-    "**/CODEOWNERS": false,
-    "**/.env*": false,
-    "**/*credentials*": false,
-    "**/*secret*": false
-  },
-  "workbench.browser.enableChatTools": false,
-  "chat.agent.networkFilter": true,
-  "chat.agent.allowedNetworkDomains": [],
   "chat.useHooks": true,
-  "chat.subagents.allowInvocationsFromSubagents": true,
-  "chat.agent.sandbox.enabled": "on",
-  "chat.agent.sandbox.network.allowNetwork": false,
-  "chat.agent.sandbox.network.allowLocalNetwork": false,
-  "chat.agent.sandbox.allowUnsandboxedCommands": false,
-  "chat.agent.sandbox.fileSystem.allowDevToolAccess": false,
-  "chat.agent.sandbox.credentials.authenticategit": false,
-  "chat.agent.sandbox.credentials.authenticategh": false,
-  "chat.agent.sandbox.mcpServers": true,
-  "chat.agent.sandbox.lspServers": true
+  "chat.subagents.allowInvocationsFromSubagents": true
 }

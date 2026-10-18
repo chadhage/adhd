@@ -17,12 +17,13 @@ function runHook(root, scriptPath, eventName, input) {
   return { ...result, elapsedMs: performance.now() - started };
 }
 
-function decisionOf(result) {
+function inheritsPermissions(result) {
+  if (result.status !== 0) return false;
   try {
     const output = JSON.parse(result.stdout);
-    return output.permissionDecision ?? output.hookSpecificOutput?.permissionDecision;
+    return output !== null && !Array.isArray(output) && typeof output === 'object' && Object.keys(output).length === 0;
   } catch {
-    return undefined;
+    return false;
   }
 }
 
@@ -60,17 +61,24 @@ export function checkHookHealth({ root = process.cwd(), configPath = '.github/ho
   if (!scriptPath || !existsSync(scriptPath)) return { ok: false, checks };
 
   const read = runHook(root, scriptPath, 'preToolUse', JSON.stringify({ toolName: 'read', toolArgs: {} }));
-  add('allows-read-only', read.status === 0 && decisionOf(read) === 'allow', `decision=${decisionOf(read)}`);
+  add('inherits-read-permissions', inheritsPermissions(read), 'Valid calls must return an empty JSON object, leaving approval to the host.');
 
   const write = runHook(root, scriptPath, 'preToolUse', JSON.stringify({ toolName: 'powershell', toolArgs: { command: 'x' } }));
-  add('asks-for-non-read', write.status === 0 && decisionOf(write) === 'ask', `decision=${decisionOf(write)}`);
+  add('inherits-non-read-permissions', inheritsPermissions(write), 'Execution must neither be pre-approved nor forced to ask by this hook.');
+
+  const protectedEdit = runHook(root, scriptPath, 'preToolUse', JSON.stringify({
+    hook_event_name: 'PreToolUse',
+    tool_name: 'edit',
+    tool_input: { path: '.github/agents/example.agent.md' },
+  }));
+  add('inherits-protected-path-permissions', inheritsPermissions(protectedEdit), 'Protected-path approvals also follow the invoker-selected host permissions.');
 
   const malformed = runHook(root, scriptPath, 'preToolUse', 'not-json');
   add('fails-closed-on-malformed-input', malformed.status === 2, `exit=${malformed.status}`);
 
   const timeoutSec = preToolUse.timeoutSec;
   const limitMs = typeof timeoutSec === 'number' ? timeoutSec * 1000 : undefined;
-  const slowest = Math.max(read.elapsedMs, write.elapsedMs);
+  const slowest = Math.max(read.elapsedMs, write.elapsedMs, protectedEdit.elapsedMs);
   add(
     'latency-within-configured-timeout',
     limitMs !== undefined && slowest < limitMs,

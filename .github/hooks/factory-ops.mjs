@@ -7,7 +7,7 @@ const hooksDir = dirname(fileURLToPath(import.meta.url));
 export const defaultRoot = resolve(hooksDir, '..', '..');
 export const defaultConfigPath = resolve(hooksDir, 'factory-ops.json');
 
-// Instruction, policy, and secret locations may never be made writable without a prompt.
+// Instruction, policy, and secret locations cannot serve as Factory board records.
 // `.docs/` is deliberately absent: exact board files there can be allowlisted.
 const forbiddenBoardTarget =
   /(?:\.github[\\/](?:agents|skills|hooks|tools)[\\/]|\.github[\\/]copilot-instructions\.md|\.vscode[\\/]|\bCODEOWNERS\b|\.env(?:$|[./\\])|(?:^|[./\\])(?:secrets?|credentials?|tokens?|private[-_ ]?keys?)(?:$|[./\\_-])|\.(?:pem|p12|pfx|key)$)/i;
@@ -136,7 +136,7 @@ export function validateBoardContent(content) {
 
 /**
  * Decides whether a tool call is a scoped, structurally valid access to an
- * allowlisted board file. Anything else falls back to the normal gate (ask).
+ * configured board file. This is a structural check, not a host tool approval.
  */
 export function scopedBoardDecision(toolName, toolInput, ops, kind) {
   if (!ops?.boardPaths?.length) return { allow: false };

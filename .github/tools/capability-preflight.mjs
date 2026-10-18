@@ -69,14 +69,17 @@ export function runPreflight({
     add('nested-delegation', 'unknown', 'Setting not present; the runtime default applies.', 'Unverified until a delegation is observed.', 'Confirm the effective runtime value.');
   }
 
-  const humanRequired = settings['chat.tools.global.autoApprove'] !== true;
-  if (humanRequired && isUnattended) {
-    add('approval-availability', 'degraded', 'Non-read tools ask for approval and the run is unattended.', ops.approvalQueuePath ? 'No human can answer, so non-read actions are denied and parked in the approval queue; only allowlisted board writes proceed.' : 'No human can answer and no approval queue is configured, so non-read actions are denied untracked.', 'Decide how non-read approvals are handled when no human is present; do not weaken the gate without approval.');
-  } else if (humanRequired) {
-    add('approval-availability', 'info', 'Non-read tools ask for approval; a human is assumed present.', 'Pending approvals block only the exact action; queue them with approval-queue.mjs.', 'Stay reachable for approvals or declare the run unattended.');
-  } else {
-    add('approval-availability', 'info', 'Global auto-approve is enabled.', 'Approvals are not a halt vector, but the security gate is weakened.', 'Review whether global auto-approve is intended.');
-  }
+  const permissionDefault = settings['chat.permissions.default'];
+  const globalAutoApprove = settings['chat.tools.global.autoApprove'];
+  add(
+    'approval-availability',
+    'unknown',
+    `The active host/session permission level is not observable from workspace settings. Workspace permission default=${permissionDefault ?? 'inherited'}; global auto-approve=${globalAutoApprove ?? 'inherited'}.`,
+    isUnattended
+      ? `Host-permitted actions can proceed unattended. Actions the host still requires a human to approve remain blocked; ${ops.approvalQueuePath ? 'agents can record those requests in the approval queue' : 'no approval queue is configured'}. The pre-tool hook does not invent a denial or queue a permitted call.`
+      : 'All tools and subagents follow the effective host permissions. Ask only when the host requires confirmation or the authorized task scope changes.',
+    'Confirm the invoker-selected permission level and any tool-specific or managed restrictions in the active session; workspace defaults alone do not prove approval.',
+  );
 
   const health = checkHookHealth({ root });
   add(
@@ -89,6 +92,8 @@ export function runPreflight({
 
   if (settings['chat.agent.sandbox.network.allowNetwork'] === false) {
     add('network-access', 'info', 'chat.agent.sandbox.network.allowNetwork=false', 'Work needing external network access is blocked; offline work continues.', 'Approve a narrowly scoped network exception only if a card needs it.');
+  } else {
+    add('network-access', 'unknown', 'The effective host sandbox and network policy is not observable from workspace settings.', 'Sandbox and network limits are inherited independently of tool approval permissions.', 'Inspect the active harness sandbox/network policy; do not infer network access from an autonomy grant.');
   }
 
   if (recordsDir) {
@@ -108,9 +113,9 @@ export function runPreflight({
   add(
     'scoped-board-writes',
     ops.problems.length ? 'degraded' : ops.boardPaths.length ? 'ok' : 'info',
-    ops.problems.length ? ops.problems.join('; ') : `${ops.boardPaths.length} allowlisted board file(s)`,
-    ops.boardPaths.length ? 'Structurally valid edits of the listed boards need no prompt.' : 'No board is allowlisted, so every board write asks for approval.',
-    ops.problems.length ? 'Fix factory-ops.json through the reviewed change process.' : 'List the exact board file(s) in .github/hooks/factory-ops.json to enable prompt-free board writes.',
+    ops.problems.length ? ops.problems.join('; ') : `${ops.boardPaths.length} configured board file(s)`,
+    'Board paths and structural checks do not grant tool approval; every board write follows the effective host permissions.',
+    ops.problems.length ? 'Fix factory-ops.json through the reviewed change process.' : 'Configure exact board files for Factory operations; choose tool permissions in the host.',
   );
 
   if (supervisorConfig && existsSync(resolve(supervisorConfig))) {
