@@ -70,15 +70,16 @@ export function runPreflight({
   }
 
   const permissionDefault = settings['chat.permissions.default'];
+  const agentHostApprovalDefault = settings['chat.defaultConfiguration']?.approvals;
   const globalAutoApprove = settings['chat.tools.global.autoApprove'];
   add(
     'approval-availability',
     'unknown',
-    `The active host/session permission level is not observable from workspace settings. Workspace permission default=${permissionDefault ?? 'inherited'}; global auto-approve=${globalAutoApprove ?? 'inherited'}.`,
+    `The active host/session permission level is not observable from workspace settings. Workspace permission default=${permissionDefault ?? 'inherited'}; Agent Host approval default=${agentHostApprovalDefault ?? 'inherited'}; global auto-approve=${globalAutoApprove ?? 'inherited'}.`,
     isUnattended
-      ? `Host-permitted actions can proceed unattended. Actions the host still requires a human to approve remain blocked; ${ops.approvalQueuePath ? 'agents can record those requests in the approval queue' : 'no approval queue is configured'}. The pre-tool hook does not invent a denial or queue a permitted call.`
-      : 'All tools and subagents follow the effective host permissions. Ask only when the host requires confirmation or the authorized task scope changes.',
-    'Confirm the invoker-selected permission level and any tool-specific or managed restrictions in the active session; workspace defaults alone do not prove approval.',
+      ? `Host-permitted actions can proceed unattended. Actions the host still requires a human to approve remain blocked; ${ops.approvalQueuePath ? 'agents can record those requests in the approval queue' : 'no approval queue is configured'}. The pre-tool hook does not invent a denial or queue a permitted call. Authentication requiring human input remains blocked until the human completes it.`
+      : 'All tools and subagents follow the effective host permissions. Reuse one session grant across every participating role and nested subagent without per-agent, per-card, or per-tool reapproval. Ask only for chosen prompt exceptions, host-required confirmation, or genuinely missing task authority.',
+    'For session-autonomous operation, select Allow all (Bypass Approvals in older/Local hosts) once in the active session permissions picker. Use the native confirmation as the single initial tool-authorization gate; do not also request a chat approval. Choose Manual permissions for per-invocation or selective session tool approvals. Device authentication, CLI authentication, and other authentication requiring human input remain human-only. Verify parent and nested calls; workspace defaults alone do not prove approval. For a session-only choice, do not change workspace defaults or global auto-approval.',
   );
 
   const health = checkHookHealth({ root });

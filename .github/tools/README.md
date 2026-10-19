@@ -6,7 +6,7 @@ None of these tools grants authority or approves anything. Only `supervisor.mjs`
 
 | Tool | Purpose | Status |
 |---|---|---|
-| `capability-preflight.mjs` | Read-only report of capabilities the Factory depends on (nested delegation, approval availability, hook health, network, records write access, supervisor), each with its effect and the owner decision that would restore it. | Ready |
+| `capability-preflight.mjs` | Read-only report of capabilities the Factory depends on (nested delegation, approval availability, hook health, network, records write access, supervisor), each with its effect and the owner decision that would restore it. Reports Local and Agent Host approval defaults separately and explains the single native session grant, manual/selective alternatives, and human-only authentication exceptions. | Ready |
 | `hook-health.mjs` | Exercises the workspace hook as the runtime would: registration, script resolution from the workspace root, host-permission inheritance, invalid-input denial, latency against the configured timeout. Never changes the policy or queues probe actions. | Ready |
 | `approval-queue.mjs` | Append-only queue of blocked non-read actions with exact (secret-redacted) parameters, purpose, and card, so a human can decide them together. A denied action cannot be re-queued without changed evidence. Recording a request or decision never executes or approves anything. | Ready |
 | `revision-lock.mjs` | Revision-checked writes with an advisory lock. A held lock or moved revision returns the proposed change instead of mutating. | Ready |
@@ -29,6 +29,12 @@ One reviewed file configures Factory records, the stop gate, and the supervisor 
 | `supervisor` | `null` until configured. Requires `owner`, `authorizedBy`, `resume` (`command`, `args`, `cwd`), `restartPacketPath`, `statePath`, `logPath`, `inhibitPath`, and `deadline` and `retry` values, each with a `status` (`provisional` or `confirmed`) and a `source`. There are no defaults. |
 
 The board helper validates **structure, not meaning or authority**: after an `edit` or `create`, a valid board must still have To Do and In Progress and no Done/Archive bucket. A successful helper result never pre-approves a tool call. Board edits, protected-path edits, reads, shell commands, web calls, MCP calls, and delegation all use host permissions.
+
+## Session tool authorization
+
+The preflight reports `approval-availability` as `unknown` until the active host is checked; it never treats `chat.permissions.default`, Agent Host's `chat.defaultConfiguration.approvals`, or global auto-approval as proof of a live grant. For session-only autonomy, the human selects **Allow all** / **Bypass Approvals** once in the current permissions picker. The native confirmation is the single initial gate; do not add a chat confirmation or change workspace/global defaults. Reuse the live grant for all parent and nested agents. Human-selected manual/selective prompting and device/CLI/interactive authentication remain exceptions. See [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#single-tool-authorization).
+
+This report diagnoses setup; it does not select the mode, verify live inheritance, or enforce a prompt budget. Count actual initial and subsequent routine confirmations in the selected harness before claiming session-autonomous readiness. Repeated host-required prompts remain a visible configuration limitation, never permission to bypass the host.
 
 ## Usage
 

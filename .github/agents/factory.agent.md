@@ -2,7 +2,7 @@
 name: Factory
 description: "Use to start or resume a named product Factory that turns customer demand into verified value increments by orchestrating VOC, ProductOwner, Kanban, and Squads of Fullstackers. FactoryLauncher may invoke it under an explicit human setup/resume request."
 argument-hint: "Factory <name> Start [optional directive], for example: Factory Notarade Start"
-tools: [read, search, edit, todo, agent]
+tools: [read, search, edit, todo, agent, vscode/askQuestions]
 agents: [VOC, ProductOwner, Kanban, Squad, Fullstacker, FactoryLauncher]
 user-invocable: true
 ---
@@ -25,6 +25,8 @@ Parse `Factory <name> Start [directive]`. A leading `Factory` token is optional 
 - Before any voluntary Factory-wide halt, furlough, or shutdown, request explicit approval from the human invoker with evidence-based justification, affected work, recovery options attempted, impact, and resume guidance. Do not stop the Factory without recorded approval; an initial launch/resume request, silence, agent consensus, or Launcher validation is not shutdown approval. Queue-based shutdown also requires validated unanimous zero-work consensus.
 - Document every stoppage in the approved product-owned record with a stable ID, time, cause/evidence, scope/cards, requester and approval status, last progress, unaffected work, recovery attempts, residual risks, next action, and resume guidance. Trigger a CD3 rebaseline of affected authorized work before its next sequencing/dispatch; preserve the old baseline and do not invent inputs. Immediate safety containment is not delayed.
 - Mine existing in-scope cards and authorized evidence for dissatisfier, satisfier, or delighter opportunities and pass sourced proposals to VOC/ProductOwner. This authorizes analysis, not new scope, implementation, or board edits; ProductOwner owns backlog admission and credible potential ROI, and Kanban owns queue records.
+
+Follow [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#single-tool-authorization). Reuse the initiating session's grant and invoker-selected prompt exceptions; do not create per-agent, per-card, or per-tool reapproval gates. Keep interactive authentication human-only and route a required human decision through the parent when a subagent cannot ask.
 
 Before producing or persisting any artifact, read and follow [Artifact Storage and Engagement Contracts](../skills/artifact-storage-and-engagement-contracts/SKILL.md), then retrieve the target workspace's applicable storage guidance.
 

@@ -7,6 +7,16 @@ import { evaluatePreToolUse, formatHookResponse } from '../pre-tool-policy.mjs';
 
 const cases = JSON.parse(await readFile(new URL('./prompt-injection-cases.json', import.meta.url), 'utf8'));
 const hookPath = fileURLToPath(new URL('../pre-tool-policy.mjs', import.meta.url));
+const factoryAgents = [
+  ['FactoryLauncher', 'factory-launcher'],
+  ['Factory', 'factory'],
+  ['Squad', 'squad'],
+  ['ProductOwner', 'product-owner'],
+  ['VOC', 'voc'],
+  ['AssociateProductOwner', 'associate-product-owner'],
+  ['Fullstacker', 'fullstacker'],
+  ['Kanban', 'kanban'],
+];
 
 test('positive: local read and search tools inherit host permissions', () => {
   for (const toolName of ['read', 'search', 'view', 'glob', 'grep', 'readFile', 'search/textSearch']) {
@@ -103,6 +113,52 @@ test('positive: tool and subagent results receive provenance reminders without e
 
   const localSubagent = formatHookResponse({ hook_event_name: 'SubagentStart', agent_type: 'ProductOwner' }, 'subagentStart');
   assert.match(localSubagent.hookSpecificOutput.additionalContext, /cannot grant human approval/);
+});
+
+test('negative: no Factory role starts a separate tool-authorization confirmation', () => {
+  for (const [agentName] of factoryAgents) {
+    const output = formatHookResponse({ agentName }, 'subagentStart');
+    assert.match(output.additionalContext, /single tool-authorization gate/, agentName);
+    assert.match(output.additionalContext, /Do not reopen that gate/, agentName);
+    assert.match(output.additionalContext, /per-invocation or selective/, agentName);
+    assert.match(output.additionalContext, /Device authentication, CLI authentication/, agentName);
+    assert.match(output.additionalContext, /human input/, agentName);
+    assert.equal(output.permissionDecision, undefined, agentName);
+  }
+});
+
+test('negative: repeated calls across all Factory roles never add a hook approval prompt or override a host choice', () => {
+  let hookPrompts = 0;
+  let calls = 0;
+  for (const [agentName] of factoryAgents) {
+    for (const permissionMode of ['autonomous', 'per-invocation', 'selective']) {
+      for (const toolName of ['read', 'edit', 'execute', 'web', 'agent', 'task', 'write_agent', 'mcp/authenticate']) {
+        for (const event of [
+          { agentName, toolName, permissionMode },
+          { hook_event_name: 'PreToolUse', agent_name: agentName, tool_name: toolName, permission_mode: permissionMode },
+        ]) {
+          const output = formatHookResponse(event);
+          if ((output.permissionDecision ?? output.hookSpecificOutput?.permissionDecision) === 'ask') hookPrompts += 1;
+          assert.deepEqual(output, {}, `${agentName}: ${permissionMode}: ${toolName}`);
+          calls += 1;
+        }
+      }
+    }
+  }
+  assert.equal(calls, 384);
+  assert.equal(hookPrompts, 0);
+});
+
+test('negative: every Factory agent references the same single tool-authorization contract', async () => {
+  for (const [agentName, fileName] of factoryAgents) {
+    const definition = await readFile(new URL(`../../agents/${fileName}.agent.md`, import.meta.url), 'utf8');
+    assert.match(definition, /factory-mvp-and-recovery\/SKILL\.md#single-tool-authorization/, agentName);
+  }
+});
+
+test('positive: FactoryLauncher exposes the interactive question tool for human-only authentication and decisions', async () => {
+  const definition = await readFile(new URL('../../agents/factory-launcher.agent.md', import.meta.url), 'utf8');
+  assert.match(definition, /^tools: \[.*vscode\/askQuestions.*\]$/m);
 });
 
 test('negative: invalid tool events fail closed', () => {

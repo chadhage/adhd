@@ -2,7 +2,7 @@
 name: Squad
 description: "Use to mobilize and coordinate a named squad of N Fullstacker agents as a swarm, with atomic ownership, governed Kanban flow, integrated validation, and empirical Done Done evidence. Invoke as: <name> <n> [directive]."
 argument-hint: "<name> <n> [directive], for example: Aqua 3 deliver CARD-42"
-tools: [read, search, edit, todo, agent]
+tools: [read, search, edit, todo, agent, vscode/askQuestions]
 agents: [Fullstacker, Kanban, ProductOwner]
 user-invocable: true
 ---
@@ -14,6 +14,8 @@ Coordinate a named, fixed-size swarm of Fullstacker agents against authorized wo
 Read and follow [Factory MVP and Recovery](../skills/factory-mvp-and-recovery/SKILL.md). When deputized to resolve a Factory impasse, represent delivery feasibility, propose the smallest safe technical path to a measurable value increment, and report evidence and constraints to the one ProductOwner, one VOC, and one Kanban on the panel. Do not stop at a recommendation; execute the authorized recovery and verify resumed progress.
 
 Mine existing in-scope cards and authorized evidence for dissatisfiers that could be eliminated and satisfiers/delighters that could be added. Return source IDs, technical feasibility, dependencies, effort/cost evidence, and counterevidence to ProductOwner/VOC; do not create cards, set priority, or begin unqueued scope. Exhaust unblocking within the Squad's current authorization before requesting escalation for missing authority or card-enrichment input.
+
+Follow [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#single-tool-authorization). Reuse the initiating session's grant and invoker-selected prompt exceptions; do not create per-agent, per-card, or per-tool reapproval gates. Keep interactive authentication human-only and route a required human decision through the parent when a subagent cannot ask.
 
 Before producing or persisting any artifact, read and follow [Artifact Storage and Engagement Contracts](../skills/artifact-storage-and-engagement-contracts/SKILL.md), then retrieve the target workspace's applicable storage guidance.
 

@@ -97,6 +97,36 @@ test('negative: workspace permission defaults cannot be mistaken for an active a
   assert.match(entry.ownerDecision, /workspace defaults alone do not prove approval/);
 });
 
+test('negative: an Agent Host approval default is reported but never treated as a live session grant', async (t) => {
+  const { ws, settingsPath } = await withSettings(t, {
+    'chat.defaultConfiguration': { mode: 'interactive', approvals: 'allowAll' },
+  });
+  const entry = find(runPreflight({ root: ws.root, settingsPath }), 'approval-availability');
+  assert.equal(entry.status, 'unknown');
+  assert.match(entry.evidence, /Agent Host approval default=allowAll/);
+  assert.match(entry.ownerDecision, /active session permissions picker/);
+});
+
+test('positive: preflight explains one native session grant and the user-selected prompting alternatives', async (t) => {
+  const { ws, settingsPath } = await withSettings(t, {});
+  const entry = find(runPreflight({ root: ws.root, settingsPath }), 'approval-availability');
+  assert.match(entry.ownerDecision, /Allow all/);
+  assert.match(entry.ownerDecision, /Bypass Approvals/);
+  assert.match(entry.ownerDecision, /single initial tool-authorization gate/);
+  assert.match(entry.ownerDecision, /do not also request a chat approval/);
+  assert.match(entry.ownerDecision, /per-invocation or selective/);
+  assert.match(entry.ownerDecision, /do not change workspace defaults/);
+});
+
+test('negative: autonomous approval guidance does not automate authentication requiring a human', async (t) => {
+  const { ws, settingsPath } = await withSettings(t, {}, { unattended: true });
+  const entry = find(runPreflight({ root: ws.root, settingsPath }), 'approval-availability');
+  assert.equal(entry.status, 'unknown');
+  assert.match(entry.ownerDecision, /Device authentication, CLI authentication/);
+  assert.match(entry.ownerDecision, /human-only/);
+  assert.match(entry.effect, /Authentication requiring human input remains blocked/);
+});
+
 test('negative: an absent workspace sandbox setting does not prove network access', async (t) => {
   const { ws, settingsPath } = await withSettings(t, {});
   const entry = find(runPreflight({ root: ws.root, settingsPath }), 'network-access');
