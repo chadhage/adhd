@@ -1,7 +1,7 @@
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
-import { loadFactoryOps } from './factory-ops.mjs';
+import { defaultConfigPath, defaultRoot, loadFactoryOps } from './factory-ops.mjs';
 
 const maxInputBytes = 1024 * 1024;
 
@@ -137,6 +137,16 @@ function parseHookArguments(args) {
   return { event, ...parsed.values };
 }
 
+export function resolveHookWorkspace({ root, config } = {}, cwd = process.cwd()) {
+  const selectedRoot = root === undefined ? defaultRoot : resolve(cwd, root);
+  return {
+    root: selectedRoot,
+    configPath: config === undefined
+      ? (root === undefined ? defaultConfigPath : resolve(selectedRoot, '.github', 'hooks', 'factory-ops.json'))
+      : resolve(cwd, config),
+  };
+}
+
 async function runHook() {
   let args;
   try {
@@ -146,13 +156,20 @@ async function runHook() {
     process.exitCode = 2;
     return;
   }
+  const ops = loadFactoryOps(resolveHookWorkspace(args));
+  if (!ops.configurationLoaded) {
+    process.stderr.write(`Hook configuration invalid: ${ops.problems.join('; ')}\n`);
+    process.exitCode = 2;
+    return;
+  }
+  if (ops.problems.length) process.stderr.write(`Hook configuration warning: ${ops.problems.join('; ')}\n`);
   let input = '';
   for await (const chunk of process.stdin) {
     input += chunk;
     if (Buffer.byteLength(input, 'utf8') > maxInputBytes) break;
   }
 
-  const result = await handleHookInput(input, args.event);
+  const result = await handleHookInput(input, args.event, ops);
   if (result.stdout) process.stdout.write(result.stdout);
   if (result.stderr) process.stderr.write(result.stderr);
   process.exitCode = result.exitCode;

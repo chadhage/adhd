@@ -15,6 +15,7 @@ const extraBucketNames = new Set(['done', 'completed', 'complete', 'archive', 'a
 const pathKeys = ['path', 'filePath', 'file_path'];
 
 const emptyOps = (problems = []) => ({
+  configurationLoaded: false,
   root: defaultRoot,
   boardPaths: [],
   approvalsPath: null,
@@ -95,6 +96,7 @@ export function loadFactoryOps({ root = defaultRoot, configPath = defaultConfigP
   }
 
   return {
+    configurationLoaded: true,
     root,
     boardPaths,
     approvalsPath,

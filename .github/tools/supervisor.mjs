@@ -74,6 +74,18 @@ function isAlive(pid) {
 
 const readIfPresent = (path) => (path && existsSync(path) ? readFileSync(path, 'utf8') : '');
 
+function validAttempt(attempt) {
+  if (!attempt || typeof attempt !== 'object' || Array.isArray(attempt)
+    || typeof attempt.ts !== 'string' || !Number.isFinite(Date.parse(attempt.ts))
+    || !positiveInteger(attempt.attempt)
+    || !(attempt.pid === null || positiveInteger(attempt.pid))) return false;
+  if (attempt.phase === undefined) return attempt.error === undefined || nonEmpty(attempt.error);
+  if (attempt.phase === 'reserved') return attempt.pid === null && attempt.error === undefined;
+  if (attempt.phase === 'started') return positiveInteger(attempt.pid) && attempt.error === undefined;
+  if (attempt.phase === 'failed') return attempt.pid === null && nonEmpty(attempt.error);
+  return false;
+}
+
 async function readSupervisorState(path) {
   const snapshot = await readWithRevision(path);
   if (!snapshot.exists) return { ok: true, state: { restarts: [], childPid: null }, revision: snapshot.revision };
@@ -87,9 +99,8 @@ async function readSupervisorState(path) {
   const validPid = (pid) => pid === null || positiveInteger(pid);
   if (!state || typeof state !== 'object' || Array.isArray(state)
     || !Array.isArray(state.restarts) || !validPid(state.childPid)
-    || !state.restarts.every((attempt) => attempt && typeof attempt === 'object'
-      && typeof attempt.ts === 'string' && Number.isFinite(Date.parse(attempt.ts))
-      && positiveInteger(attempt.attempt) && validPid(attempt.pid))) {
+    || !state.restarts.every((attempt, index) => validAttempt(attempt) && attempt.attempt === index + 1)
+    || state.childPid !== (state.restarts.at(-1)?.pid ?? null)) {
     return { ok: false, reason: 'Supervisor state has an invalid history or child PID; preserve it for explicit recovery.' };
   }
   return { ok: true, state, revision: snapshot.revision };
@@ -106,7 +117,22 @@ export async function tick({ ops = loadFactoryOps(), execute = false, now = Date
   const finish = async (result) => {
     const entry = { ts: new Date(now).toISOString(), execute, ...result };
     if (supervisor && nonEmpty(supervisor.logPath) && result.status !== 'invalid-config') {
-      await appendLine(resolve(ops.root, supervisor.logPath), entry);
+      let audit;
+      try {
+        audit = await appendLine(resolve(ops.root, supervisor.logPath), entry);
+      } catch (error) {
+        if (typeof error.code !== 'string') throw error;
+        audit = { ok: false, reason: error.code };
+      }
+      if (!audit.ok) {
+        return {
+          ...entry,
+          status: 'audit-write-failed',
+          operationStatus: entry.status,
+          exit: 3,
+          reason: `Supervisor audit write failed: ${audit.reason}. The observed operation and durable state remain authoritative; do not replay a launch to repair its audit.`,
+        };
+      }
     }
     return entry;
   };
@@ -129,6 +155,15 @@ export async function tick({ ops = loadFactoryOps(), execute = false, now = Date
   const loaded = await readSupervisorState(statePath);
   if (!loaded.ok) return finish({ status: 'state-recovery-required', exit: 3, reason: loaded.reason });
   const { state } = loaded;
+  const unresolved = state.restarts.find((attempt) => attempt.phase === 'reserved'
+    || (attempt.pid === null && attempt.error === undefined));
+  if (unresolved) {
+    return finish({
+      status: 'state-recovery-required',
+      exit: 3,
+      reason: `Restart attempt ${unresolved.attempt} has an unknown launch outcome. Reconcile its reserved state against the actual process and effects before any retry; progress or elapsed cooldown cannot resolve it.`,
+    });
+  }
   const liveness = checkLiveness({
     boardText: boards.map((path) => readFileSync(path, 'utf8')).join('\n'),
     progressText: readIfPresent(ops.progressPath),
@@ -186,7 +221,10 @@ export async function tick({ ops = loadFactoryOps(), execute = false, now = Date
     child.unref?.();
     attempt.pid = child.pid ?? null;
     // spawn reports a missing executable asynchronously; no pid means nothing started.
-    if (!Number.isInteger(attempt.pid)) attempt.error = 'no-pid';
+    if (!positiveInteger(attempt.pid)) {
+      attempt.pid = null;
+      attempt.error = 'no-pid';
+    }
   } catch (error) {
     attempt.error = error.code ?? error.message;
   }

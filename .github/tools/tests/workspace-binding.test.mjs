@@ -4,11 +4,32 @@ import { readFile, realpath, writeFile } from 'node:fs/promises';
 import { isAbsolute, join, relative } from 'node:path';
 import test from 'node:test';
 import { loadFactoryOps } from '../../hooks/factory-ops.mjs';
+import { resolveHookWorkspace } from '../../hooks/pre-tool-policy.mjs';
 import { installProductWorkspace, repoRoot, runNode } from './helpers.mjs';
 
 const edit = (path) => ({
   tool_name: 'edit',
   tool_input: { path, old_str: 'First', new_str: 'Refined' },
+});
+
+test('positive: explicit relative hook paths resolve from the invoking product workspace', async (t) => {
+  const ws = await installProductWorkspace(t);
+  assert.deepEqual(resolveHookWorkspace({ root: '.', config: join('.github', 'hooks', 'factory-ops.json') }, ws.root), {
+    root: ws.root,
+    configPath: ws.configPath,
+  });
+  assert.deepEqual(resolveHookWorkspace({ root: ws.root }, repoRoot), {
+    root: ws.root,
+    configPath: ws.configPath,
+  });
+});
+
+test('negative: invocation cwd alone cannot silently replace the reference hook configuration', async (t) => {
+  const ws = await installProductWorkspace(t);
+  assert.deepEqual(resolveHookWorkspace({}, ws.root), {
+    root: repoRoot,
+    configPath: join(repoRoot, '.github', 'hooks', 'factory-ops.json'),
+  });
 });
 
 test('positive: a separate product fixture binds real reference scripts and paths containing spaces', async (t) => {
@@ -217,3 +238,15 @@ test('negative: malformed explicitly selected config fails without producing a p
   assert.equal(run.stdout, '');
   assert.match(run.stderr, /Hook configuration invalid:.*Could not read/);
 });
+
+for (const content of ['null', '[]', '{}', '{"version":2}', '42']) {
+  test(`negative: selected configuration ${content} cannot silently become an empty valid configuration`, async (t) => {
+    const ws = await installProductWorkspace(t);
+    await writeFile(ws.configPath, content);
+    const run = ws.hook('preToolUse', { toolName: 'read', cwd: repoRoot, approved: true });
+    assert.equal(run.status, 2, run.stderr);
+    assert.equal(run.stdout, '');
+    assert.match(run.stderr, /Hook configuration invalid:/);
+    assert.equal(existsSync(ws.docs('queue.jsonl')), false);
+  });
+}
