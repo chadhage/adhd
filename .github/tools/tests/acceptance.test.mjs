@@ -9,6 +9,7 @@
  * machine-testable.
  */
 import assert from 'node:assert/strict';
+import { spawn, spawnSync } from 'node:child_process';
 import { readFile, utimes, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import { join } from 'node:path';
@@ -92,6 +93,117 @@ test('positive: [AC-5] a stalled Factory is resumed by a real process and a dupl
     if (alive(pid)) process.kill(pid);
   }
 });
+
+test('negative: [AC-5] synchronized independent supervisor processes cannot launch twice from a one-restart budget', { timeout: 30_000 }, async (t) => {
+  const dir = await tempDir(t);
+  const release = join(dir, 'release');
+  const ws = await installWorkspace(t, { supervisor: resume(['-e', holdUntilReleased, release], { deadlineMs: 600_000 }) });
+  await stall(ws);
+  const script = `
+    import { pathToFileURL } from 'node:url';
+    const { tick } = await import(pathToFileURL(process.argv[1]));
+    process.once('message', async () => {
+      try { console.log(JSON.stringify(await tick({ execute: true }))); }
+      catch (error) { console.error(error.stack); process.exitCode = 2; }
+      finally { process.disconnect(); }
+    });
+    process.send('ready');
+  `;
+  const runners = [0, 1].map(() => {
+    const child = spawn(process.execPath, ['--input-type=module', '-e', script, join(ws.root, '.github', 'tools', 'supervisor.mjs')], {
+      cwd: ws.root,
+      stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+    });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', (chunk) => { stdout += chunk; });
+    child.stderr.on('data', (chunk) => { stderr += chunk; });
+    const ready = new Promise((resolve, reject) => {
+      child.once('message', resolve);
+      child.once('error', reject);
+      child.once('exit', () => reject(new Error('Supervisor exited before its start barrier.')));
+    });
+    const completed = new Promise((resolve, reject) => {
+      child.once('error', reject);
+      child.once('close', (code) => {
+        try { resolve({ code, result: JSON.parse(stdout), stderr }); }
+        catch (error) { reject(new Error(`Supervisor output invalid: ${stdout} ${stderr}`, { cause: error })); }
+      });
+    });
+    return { child, ready, completed };
+  });
+  let resumedPid;
+  try {
+    await Promise.all(runners.map((runner) => runner.ready));
+    for (const runner of runners) runner.child.send('start');
+    const results = await Promise.all(runners.map((runner) => runner.completed));
+    const started = results.filter(({ result }) => result.status === 'restarted'
+      || (result.status === 'audit-write-failed' && result.operationStatus === 'restarted'));
+    if (started.length) resumedPid = started[0].result.attempt.pid;
+    assert.equal(started.length, 1, JSON.stringify(results));
+    const state = JSON.parse(await readFile(ws.docs('state.json'), 'utf8'));
+    assert.equal(state.restarts.length, 1);
+    assert.equal(state.childPid, resumedPid);
+    assert.equal(alive(resumedPid), true);
+  } finally {
+    for (const runner of runners) if (runner.child.exitCode === null) runner.child.kill();
+    await writeFile(release, 'done');
+    if (resumedPid) {
+      await waitForExit(resumedPid);
+      if (alive(resumedPid)) process.kill(resumedPid);
+    }
+  }
+});
+
+for (const point of ['before-spawn', 'after-spawn']) {
+  test(`negative: [AC-5] a supervisor process exiting ${point} leaves a reservation that cannot be blindly replayed`, { timeout: 30_000 }, async (t) => {
+    const dir = await tempDir(t);
+    const release = join(dir, 'release');
+    const marker = join(dir, 'observed-child');
+    const config = resume(['-e', holdUntilReleased, release], { deadlineMs: 600_000 });
+    config.retry.maxRestarts = 2;
+    const ws = await installWorkspace(t, { supervisor: config });
+    await stall(ws);
+    const script = `
+      import { spawn } from 'node:child_process';
+      import { writeFileSync } from 'node:fs';
+      import { pathToFileURL } from 'node:url';
+      const { tick } = await import(pathToFileURL(process.argv[1]));
+      await tick({ execute: true, spawnFn: (...args) => {
+        if (process.argv[2] === 'after-spawn') {
+          const child = spawn(...args);
+          child.unref();
+          writeFileSync(process.argv[3], String(child.pid));
+        }
+        process.exit(77);
+      }});
+    `;
+    const pids = new Set();
+    try {
+      const interrupted = spawnSync(process.execPath, [
+        '--input-type=module', '-e', script,
+        join(ws.root, '.github', 'tools', 'supervisor.mjs'), point, marker,
+      ], { cwd: ws.root, encoding: 'utf8', timeout: 15_000 });
+      if (point === 'after-spawn') pids.add(Number(await readFile(marker, 'utf8')));
+      assert.equal(interrupted.status, 77, interrupted.stdout + interrupted.stderr);
+      const original = await readFile(ws.docs('state.json'), 'utf8');
+      assert.equal(JSON.parse(original).restarts[0].phase, 'reserved');
+      const resumed = ws.tool('supervisor.mjs', ['tick', '--execute']);
+      const result = json(resumed);
+      if (result.attempt?.pid) pids.add(result.attempt.pid);
+      assert.equal(result.status, 'state-recovery-required');
+      assert.equal(resumed.status, 3);
+      assert.equal(await readFile(ws.docs('state.json'), 'utf8'), original);
+      for (const pid of pids) assert.equal(alive(pid), true);
+    } finally {
+      await writeFile(release, 'done');
+      for (const pid of pids) {
+        await waitForExit(pid);
+        if (alive(pid)) process.kill(pid);
+      }
+    }
+  });
+}
 
 test('negative: [AC-5] with no supervisor the interruption is disclosed and nothing is started or promised', async (t) => {
   const ws = await installWorkspace(t);

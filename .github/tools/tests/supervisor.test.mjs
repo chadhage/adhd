@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import { join } from 'node:path';
@@ -248,7 +249,33 @@ test('negative: a corrupt state file requires recovery and never permits a resta
   assert.equal(result.status, 'state-recovery-required');
   assert.equal(result.exit, 3);
   assert.equal(calls.length, 0);
+  assert.equal(await readFile(join(root, '.docs', 'supervisor-state.json'), 'utf8'), '{ broken');
 });
+
+for (const [label, content] of [
+  ['empty', ''],
+  ['null', 'null'],
+  ['an array', '[]'],
+  ['missing history', '{"childPid":null}'],
+  ['non-array history', '{"restarts":{},"childPid":null}'],
+  ['missing child PID', '{"restarts":[]}'],
+  ['invalid child PID', '{"restarts":[],"childPid":-1}'],
+  ['invalid history timestamp', '{"restarts":[{"ts":"invalid","attempt":1,"pid":null}],"childPid":null}'],
+  ['invalid attempt number', '{"restarts":[{"ts":"2026-10-19T00:00:00Z","attempt":0,"pid":null}],"childPid":null}'],
+  ['invalid history PID', '{"restarts":[{"ts":"2026-10-19T00:00:00Z","attempt":1,"pid":"123"}],"childPid":null}'],
+]) {
+  test(`negative: supervisor state that is ${label} is preserved and cannot reset restart limits`, async (t) => {
+    const { root, ops, calls, spawnFn } = await setup(t);
+    const path = join(root, '.docs', 'supervisor-state.json');
+    await writeFile(path, content);
+    const result = await tick({ ops, execute: true, now: stale(), spawnFn });
+    assert.equal(result.status, 'state-recovery-required');
+    assert.equal(result.exit, 3);
+    assert.equal(calls.length, 0);
+    assert.equal(await readFile(path, 'utf8'), content);
+    assert.match(result.reason, /state/i);
+  });
+}
 
 test('negative: overlapping ticks cannot consume a one-restart budget twice', async (t) => {
   const { root, ops, calls } = await setup(t, {
@@ -272,3 +299,125 @@ test('negative: a held state-write lock prevents launch instead of losing the at
   assert.notEqual(result.status, 'restarted');
   assert.notEqual(result.exit, 0);
 });
+
+test('positive: the attempt is durably reserved before the configured process is started', async (t) => {
+  const { root, ops } = await setup(t);
+  let observed;
+  const spawnFn = () => {
+    observed = JSON.parse(readFileSync(join(root, '.docs', 'supervisor-state.json'), 'utf8'));
+    return { pid: deadPid, unref() {}, on() {} };
+  };
+  const result = await tick({ ops, execute: true, now: stale(), spawnFn });
+  assert.equal(result.status, 'restarted');
+  assert.equal(observed.restarts.length, 1);
+  assert.equal(observed.restarts[0].phase, 'reserved');
+  assert.equal(observed.restarts[0].pid, null);
+  assert.equal((await stateOf(root)).restarts[0].phase, 'started');
+});
+
+test('negative: a reservation that cannot be persisted never starts a process', async (t) => {
+  const { ops, calls, spawnFn } = await setup(t, {
+    supervisor: supervisorConfig({ statePath: '.docs/missing/state.json' }),
+  });
+  const result = await tick({ ops, execute: true, now: stale(), spawnFn });
+  assert.equal(result.status, 'state-reservation-failed');
+  assert.equal(result.exit, 3);
+  assert.equal(calls.length, 0);
+  assert.match(result.reason, /ENOENT/);
+});
+
+test('negative: a held audit lock cannot turn an unrecorded launch event into a successful tick', async (t) => {
+  const { root, ops, calls, spawnFn } = await setup(t);
+  await writeFile(join(root, '.docs', 'supervisor-log.jsonl.lock'), JSON.stringify({ pid: process.pid, host: os.hostname() }));
+  const result = await tick({ ops, execute: true, now: stale(), spawnFn });
+  assert.equal(result.status, 'audit-write-failed');
+  assert.equal(result.operationStatus, 'restarted');
+  assert.equal(result.exit, 3);
+  assert.equal(result.attempt.pid, deadPid);
+  assert.equal(calls.length, 1);
+  assert.equal((await stateOf(root)).restarts.length, 1);
+  assert.equal((await stateOf(root)).restarts[0].phase, 'started');
+  assert.match(result.reason, /locked/);
+});
+
+test('negative: an audit filesystem failure exposes the observed launch and never blindly replays it', async (t) => {
+  const { root, ops, calls } = await setup(t, { supervisor: supervisorConfig({ logPath: '.docs/missing/audit.jsonl' }) });
+  const spawnFn = (...args) => {
+    calls.push(args);
+    return { pid: process.pid, unref() {}, on() {} };
+  };
+  const first = await tick({ ops, execute: true, now: stale(), spawnFn });
+  assert.equal(first.status, 'audit-write-failed');
+  assert.equal(first.operationStatus, 'restarted');
+  assert.equal(first.exit, 3);
+  assert.match(first.reason, /ENOENT/);
+  const second = await tick({ ops, execute: true, now: stale(), spawnFn });
+  assert.equal(second.status, 'audit-write-failed');
+  assert.equal(second.operationStatus, 'child-running');
+  assert.equal(calls.length, 1);
+  assert.equal((await stateOf(root)).childPid, process.pid);
+});
+
+for (const phase of ['reserved', undefined]) {
+  test(`negative: an unresolved ${phase ?? 'legacy'} attempt cannot be replayed after the cooldown or new progress`, async (t) => {
+    const { root, ops, calls, spawnFn } = await setup(t);
+    const state = {
+      restarts: [{ ts: new Date(Date.now() - hour).toISOString(), attempt: 1, pid: null, ...(phase ? { phase } : {}) }],
+      childPid: null,
+    };
+    const path = join(root, '.docs', 'supervisor-state.json');
+    const original = JSON.stringify(state);
+    await writeFile(path, original);
+    await writeFile(join(root, '.docs', 'progress.jsonl'), JSON.stringify({ ts: new Date().toISOString() }));
+    const result = await tick({ ops, execute: true, now: stale(), spawnFn });
+    assert.equal(result.status, 'state-recovery-required');
+    assert.equal(result.exit, 3);
+    assert.equal(calls.length, 0);
+    assert.equal(await readFile(path, 'utf8'), original);
+  });
+}
+
+test('negative: a launch whose final state write fails stays reserved and requires explicit recovery', async (t) => {
+  const { root, ops, calls } = await setup(t);
+  const spawnFn = (...args) => {
+    calls.push(args);
+    writeFileSync(join(root, '.docs', 'supervisor-state.json.lock'), JSON.stringify({ pid: process.pid, host: os.hostname() }));
+    return { pid: process.pid, unref() {}, on() {} };
+  };
+  const result = await tick({ ops, execute: true, now: stale(), spawnFn });
+  assert.equal(result.status, 'state-recovery-required');
+  assert.equal(result.attempt.pid, process.pid);
+  assert.equal((await stateOf(root)).restarts[0].phase, 'reserved');
+  const next = await tick({ ops, execute: true, now: stale() + hour, spawnFn });
+  assert.equal(next.status, 'state-recovery-required');
+  assert.equal(calls.length, 1);
+});
+
+for (const [phase, pid, error] of [
+  ['unknown', null, undefined],
+  ['started', null, undefined],
+  ['failed', null, undefined],
+  ['reserved', 123, undefined],
+  ['failed', null, ''],
+]) {
+  test(`negative: contradictory attempt state ${phase}/${pid}/${error ?? 'no-error'} requires recovery`, async (t) => {
+    const { root, ops, calls, spawnFn } = await setup(t);
+    await writeFile(join(root, '.docs', 'supervisor-state.json'), JSON.stringify({
+      restarts: [{ ts: new Date().toISOString(), attempt: 1, pid, phase, ...(error !== undefined ? { error } : {}) }],
+      childPid: null,
+    }));
+    assert.equal((await tick({ ops, execute: true, now: stale(), spawnFn })).status, 'state-recovery-required');
+    assert.equal(calls.length, 0);
+  });
+}
+
+for (const pid of [0, -1, 1.5, '123']) {
+  test(`negative: a spawn with invalid PID ${pid} is recorded as failure, never a started attempt`, async (t) => {
+    const { root, ops } = await setup(t);
+    const result = await tick({ ops, execute: true, now: stale(), spawnFn: () => ({ pid }) });
+    assert.equal(result.status, 'spawn-failed');
+    assert.equal(result.attempt.pid, null);
+    assert.equal(result.attempt.phase, 'failed');
+    assert.equal((await stateOf(root)).childPid, null);
+  });
+}
