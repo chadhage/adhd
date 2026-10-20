@@ -9,6 +9,7 @@
  * machine-testable.
  */
 import assert from 'node:assert/strict';
+import { spawn } from 'node:child_process';
 import { readFile, utimes, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import { join } from 'node:path';
@@ -90,6 +91,66 @@ test('positive: [AC-5] a stalled Factory is resumed by a real process and a dupl
     await writeFile(release, 'done');
     await waitForExit(pid);
     if (alive(pid)) process.kill(pid);
+  }
+});
+
+test('negative: [AC-5] synchronized independent supervisor processes cannot launch twice from a one-restart budget', { timeout: 30_000 }, async (t) => {
+  const dir = await tempDir(t);
+  const release = join(dir, 'release');
+  const ws = await installWorkspace(t, { supervisor: resume(['-e', holdUntilReleased, release], { deadlineMs: 600_000 }) });
+  await stall(ws);
+  const script = `
+    import { pathToFileURL } from 'node:url';
+    const { tick } = await import(pathToFileURL(process.argv[1]));
+    process.once('message', async () => {
+      try { console.log(JSON.stringify(await tick({ execute: true }))); }
+      catch (error) { console.error(error.stack); process.exitCode = 2; }
+      finally { process.disconnect(); }
+    });
+    process.send('ready');
+  `;
+  const runners = [0, 1].map(() => {
+    const child = spawn(process.execPath, ['--input-type=module', '-e', script, join(ws.root, '.github', 'tools', 'supervisor.mjs')], {
+      cwd: ws.root,
+      stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+    });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', (chunk) => { stdout += chunk; });
+    child.stderr.on('data', (chunk) => { stderr += chunk; });
+    const ready = new Promise((resolve, reject) => {
+      child.once('message', resolve);
+      child.once('error', reject);
+      child.once('exit', () => reject(new Error('Supervisor exited before its start barrier.')));
+    });
+    const completed = new Promise((resolve, reject) => {
+      child.once('error', reject);
+      child.once('close', (code) => {
+        try { resolve({ code, result: JSON.parse(stdout), stderr }); }
+        catch (error) { reject(new Error(`Supervisor output invalid: ${stdout} ${stderr}`, { cause: error })); }
+      });
+    });
+    return { child, ready, completed };
+  });
+  let resumedPid;
+  try {
+    await Promise.all(runners.map((runner) => runner.ready));
+    for (const runner of runners) runner.child.send('start');
+    const results = await Promise.all(runners.map((runner) => runner.completed));
+    const started = results.filter(({ result }) => result.status === 'restarted');
+    if (started.length) resumedPid = started[0].result.attempt.pid;
+    assert.equal(started.length, 1, JSON.stringify(results));
+    const state = JSON.parse(await readFile(ws.docs('state.json'), 'utf8'));
+    assert.equal(state.restarts.length, 1);
+    assert.equal(state.childPid, resumedPid);
+    assert.equal(alive(resumedPid), true);
+  } finally {
+    for (const runner of runners) if (runner.child.exitCode === null) runner.child.kill();
+    await writeFile(release, 'done');
+    if (resumedPid) {
+      await waitForExit(resumedPid);
+      if (alive(resumedPid)) process.kill(resumedPid);
+    }
   }
 });
 

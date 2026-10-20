@@ -53,11 +53,12 @@ async function appendLine(path, entry) {
   }
 }
 
-async function writeState(path, state) {
-  for (;;) {
-    const snapshot = await readWithRevision(path);
-    const result = await applyIfRevision(path, snapshot.revision, `${JSON.stringify(state, null, 2)}\n`, { owner: 'supervisor' });
-    if (result.ok || result.reason !== 'revision-mismatch') return result;
+async function writeState(path, state, expectedRevision) {
+  try {
+    return await applyIfRevision(path, expectedRevision, `${JSON.stringify(state, null, 2)}\n`, { owner: 'supervisor' });
+  } catch (error) {
+    if (typeof error.code !== 'string') throw error;
+    return { ok: false, reason: error.code };
   }
 }
 
@@ -72,6 +73,27 @@ function isAlive(pid) {
 }
 
 const readIfPresent = (path) => (path && existsSync(path) ? readFileSync(path, 'utf8') : '');
+
+async function readSupervisorState(path) {
+  const snapshot = await readWithRevision(path);
+  if (!snapshot.exists) return { ok: true, state: { restarts: [], childPid: null }, revision: snapshot.revision };
+  let state;
+  try {
+    state = JSON.parse(snapshot.content);
+  } catch (error) {
+    if (!(error instanceof SyntaxError)) throw error;
+    return { ok: false, reason: 'Supervisor state is not valid JSON; preserve it for explicit recovery.' };
+  }
+  const validPid = (pid) => pid === null || positiveInteger(pid);
+  if (!state || typeof state !== 'object' || Array.isArray(state)
+    || !Array.isArray(state.restarts) || !validPid(state.childPid)
+    || !state.restarts.every((attempt) => attempt && typeof attempt === 'object'
+      && typeof attempt.ts === 'string' && Number.isFinite(Date.parse(attempt.ts))
+      && positiveInteger(attempt.attempt) && validPid(attempt.pid))) {
+    return { ok: false, reason: 'Supervisor state has an invalid history or child PID; preserve it for explicit recovery.' };
+  }
+  return { ok: true, state, revision: snapshot.revision };
+}
 
 /**
  * One supervisor pass, meant to be run by an external scheduler. It resumes a
@@ -104,13 +126,9 @@ export async function tick({ ops = loadFactoryOps(), execute = false, now = Date
   }
 
   const statePath = resolve(ops.root, supervisor.statePath);
-  const state = (() => {
-    try {
-      return { restarts: [], childPid: null, ...JSON.parse(readIfPresent(statePath) || '{}') };
-    } catch {
-      return { restarts: [], childPid: null };
-    }
-  })();
+  const loaded = await readSupervisorState(statePath);
+  if (!loaded.ok) return finish({ status: 'state-recovery-required', exit: 3, reason: loaded.reason });
+  const { state } = loaded;
   const liveness = checkLiveness({
     boardText: boards.map((path) => readFileSync(path, 'utf8')).join('\n'),
     progressText: readIfPresent(ops.progressPath),
@@ -145,7 +163,17 @@ export async function tick({ ops = loadFactoryOps(), execute = false, now = Date
     return finish({ status: 'would-restart', exit: 1, incident: liveness.incident, reason: 'Dry run: pass --execute to resume the Factory.' });
   }
 
-  const attempt = { ts: new Date(now).toISOString(), attempt: state.restarts.length + 1, pid: null };
+  const attempt = { ts: new Date(now).toISOString(), attempt: state.restarts.length + 1, pid: null, phase: 'reserved' };
+  state.restarts.push(attempt);
+  state.childPid = null;
+  const reservation = await writeState(statePath, state, loaded.revision);
+  if (!reservation.ok) {
+    return finish({
+      status: 'state-reservation-failed',
+      exit: 3,
+      reason: `Could not reserve the restart attempt: ${reservation.reason}. No process was started.`,
+    });
+  }
   try {
     const child = spawnFn(supervisor.resume.command, supervisor.resume.args, {
       cwd: resolve(ops.root, supervisor.resume.cwd ?? '.'),
@@ -162,9 +190,17 @@ export async function tick({ ops = loadFactoryOps(), execute = false, now = Date
   } catch (error) {
     attempt.error = error.code ?? error.message;
   }
-  state.restarts.push(attempt);
+  attempt.phase = attempt.error ? 'failed' : 'started';
   state.childPid = attempt.pid;
-  await writeState(statePath, state);
+  const recorded = await writeState(statePath, state, reservation.revision);
+  if (!recorded.ok) {
+    return finish({
+      status: 'state-recovery-required',
+      exit: 3,
+      reason: `Could not record the launch result: ${recorded.reason}. Reconcile the reserved attempt before any retry.`,
+      attempt,
+    });
+  }
   return finish({
     status: attempt.error ? 'spawn-failed' : 'restarted',
     exit: attempt.error ? 1 : 0,

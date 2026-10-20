@@ -1,0 +1,32 @@
+name: Factory quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Factory quality gate
+    runs-on: windows-latest
+    steps:
+      - name: Check out the tested revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22.21.0
+      - name: Record tested revision and runtime
+        shell: pwsh
+        run: |
+          git rev-parse HEAD
+          node --version
+      - name: Run the existing quality gate
+        shell: pwsh
+        run: node .github\tools\run-tests.mjs

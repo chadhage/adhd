@@ -32,6 +32,8 @@ The board helper validates **structure, not meaning or authority**: after an `ed
 
 ## Session tool authorization
 
+The pre-tool hook CLI accepts one optional event (`preToolUse`, `postToolUse`, or `subagentStart`, case-insensitive) and at most one non-empty `--root` and `--config` value. Unknown options, missing/blank values, duplicate options, and extra/unsupported events exit `2` with an argument diagnostic and no permission response.
+
 The preflight reports `approval-availability` as `unknown` until the active host is checked; it never treats `chat.permissions.default`, Agent Host's `chat.defaultConfiguration.approvals`, or global auto-approval as proof of a live grant. For session-only autonomy, the human selects **Allow all** / **Bypass Approvals** once in the current permissions picker. The native confirmation is the single initial gate; do not add a chat confirmation or change workspace/global defaults. Reuse the live grant for all parent and nested agents. Human-selected manual/selective prompting and device/CLI/interactive authentication remain exceptions. See [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#single-tool-authorization).
 
 This report diagnoses setup; it does not select the mode, verify live inheritance, or enforce a prompt budget. Count actual initial and subsequent routine confirmations in the selected harness before claiming session-autonomous readiness. Repeated host-required prompts remain a visible configuration limitation, never permission to bypass the host.
@@ -82,6 +84,8 @@ One command runs every suite under `.github/tools/tests/` and `.github/hooks/tes
 
 Run a single file while developing with `node --test <file>`. `run-tests.mjs` is the pass/fail authority.
 
+The [Factory quality workflow](../workflows/factory-quality.yml) runs that exact gate for every pull request and pushes to `main`, on Windows with Node `22.21.0`. It records the tested revision and runtime, uses commit-pinned actions with read-only repository permissions, and does not ignore gate failures. The stable check name is `Factory quality gate`; making it required is a separately verified repository-owner setting. A local workflow file is not evidence that GitHub has run the check.
+
 ### Acceptance tests
 
 [`acceptance.test.mjs`](tests/acceptance.test.mjs) drives the shipped hook and tools as real processes in a temporary product-like workspace, one group per Continuity Acceptance Scenario that tooling can verify. Scenarios that depend on agent judgment are not machine-testable and need an authorized product test engagement.
@@ -109,3 +113,7 @@ node .github/tools/supervisor.mjs tick --execute  # resumes the Factory when eve
 ```
 
 Exit codes: `0` nothing to do or restarted, `1` halt suspected without a restart (dry run, restart limit reached, spawn failed, stalled child), `3` needs input (not configured, invalid config, unverifiable board). To stop all restarts immediately, create the file named by `supervisor.inhibitPath` or record a human `factory-shutdown-approval`.
+
+Only an absent supervisor state file starts a new history. Empty, malformed, or structurally invalid existing state produces `state-recovery-required` (exit `3`), preserves the file, and never launches a child. Reconcile the state with the actual run and approval history before explicitly repairing it; do not delete it to reset retry limits.
+
+Before spawning, the supervisor revision-checks and durably writes a `reserved` attempt. A held lock, changed base revision, or write failure returns `state-reservation-failed` without launching. After spawning it records `started` or `failed` against that reservation's revision. An unrecordable launch result returns `state-recovery-required` with the observed attempt instead of claiming success or overwriting a newer state.

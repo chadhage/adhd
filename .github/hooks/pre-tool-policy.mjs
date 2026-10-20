@@ -1,5 +1,6 @@
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
+import { parseArgs } from 'node:util';
 import { loadFactoryOps } from './factory-ops.mjs';
 
 const maxInputBytes = 1024 * 1024;
@@ -114,14 +115,44 @@ export async function handleHookInput(input, configuredEvent, ops = loadFactoryO
   }
 }
 
+function parseHookArguments(args) {
+  const parsed = parseArgs({
+    args,
+    allowPositionals: true,
+    tokens: true,
+    options: { root: { type: 'string' }, config: { type: 'string' } },
+  });
+  const seen = new Set();
+  for (const token of parsed.tokens) {
+    if (token.kind !== 'option') continue;
+    if (seen.has(token.name)) throw new Error(`--${token.name} must be specified only once.`);
+    seen.add(token.name);
+    if (parsed.values[token.name].trim() === '') throw new Error(`--${token.name} must not be empty.`);
+  }
+  if (parsed.positionals.length > 1) throw new Error('Supply at most one hook event.');
+  const event = parsed.positionals[0];
+  if (event && !['pretooluse', 'posttooluse', 'subagentstart'].includes(event.toLowerCase())) {
+    throw new Error('Unsupported hook event.');
+  }
+  return { event, ...parsed.values };
+}
+
 async function runHook() {
+  let args;
+  try {
+    args = parseHookArguments(process.argv.slice(2));
+  } catch (error) {
+    process.stderr.write(`Hook arguments invalid: ${error.message}\n`);
+    process.exitCode = 2;
+    return;
+  }
   let input = '';
   for await (const chunk of process.stdin) {
     input += chunk;
     if (Buffer.byteLength(input, 'utf8') > maxInputBytes) break;
   }
 
-  const result = await handleHookInput(input, process.argv[2]);
+  const result = await handleHookInput(input, args.event);
   if (result.stdout) process.stdout.write(result.stdout);
   if (result.stderr) process.stderr.write(result.stderr);
   process.exitCode = result.exitCode;
