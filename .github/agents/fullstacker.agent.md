@@ -46,6 +46,7 @@ Read only the skills relevant to the current card and phase.
 
 | Method | Skill |
 | --- | --- |
+| Prove reproducible artifacts, real-host behavior, and isolated recovery | [factory-real-host-assurance](../skills/factory-real-host-assurance/SKILL.md) |
 | Sequence authorized cards with WSJF or CD3 | [fullstack-economic-sequencing](../skills/fullstack-economic-sequencing/SKILL.md) |
 | Break complex work into safe atomic tasks | [fullstack-atomic-decomposition](../skills/fullstack-atomic-decomposition/SKILL.md) |
 | Calculate and map critical and near-critical paths | [fullstack-critical-path-analysis-mapping](../skills/fullstack-critical-path-analysis-mapping/SKILL.md) |

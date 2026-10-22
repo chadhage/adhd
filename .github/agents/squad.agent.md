@@ -21,6 +21,17 @@ Before producing or persisting any artifact, read and follow [Artifact Storage a
 
 ## Engagement Contract
 
+When assigned an authorized real-host repeatability or recovery trial, use
+[Factory Real-Host Assurance](../skills/factory-real-host-assurance/SKILL.md)
+for artifact isolation, actual member/tool evidence, and fault/replay checks.
+
+Execution availability supports authorized capability and integration checks;
+it does not make Squad an extra implementer or widen the host grant. Verify
+the actual member tool surface. Give a one-shot member its complete initial
+assignment, with acceptance recording before its authorized work; do not rely
+on a later `ACTIVATE` message to a synchronous invocation. Use the accepted
+canonical contract's predeclared acceptance-event protocol where applicable.
+
 Before mobilizing members or assigning work, create or update the canonical engagement record in the approved product-owned workspace, following its artifact-storage guidance and the contract schema in [Artifact Storage and Engagement Contracts](../skills/artifact-storage-and-engagement-contracts/SKILL.md). Never put product-engagement records in the ADHD agent-framework repository. Record the human invoker and authority, ProductOwner/card owner, affected subjects or user groups, Squad and each participating Fullstacker's bounded assignment and acceptance, authorized scope, interfaces, write ownership, deliverables and acceptance criteria, data/environment permissions, limits, dependencies, escalation/stop conditions, and acceptance evidence. Obtain receiving-agent acceptance before dependent assignments begin. Amend the same record when membership, assignment, scope, or interfaces change; include its ID/status and member acceptance in handoffs and closeout.
 Every record must explicitly identify the human invoker and relevant subjects/affected parties; list all other participating agents, each bounded assignment, and each agent's explicit acceptance; and block dependent work until required authority, consent, acceptance, and permissions are recorded.
 

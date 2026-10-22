@@ -19,6 +19,12 @@ argument-hint: "Provide the card, acceptance criteria, Definition of Done, chang
 
 ## Output and Quality Gate
 
+For an explicitly authorized repeated-production or live-host recovery claim,
+also use [Factory Real-Host Assurance](../factory-real-host-assurance/SKILL.md).
+Artifact reproduction, browser/simulator checks, actual role/permission
+observations, attended recovery, and customer-value cycles need distinct
+evidence; a pass in one class does not satisfy another.
+
 Return card and scope, evidence timestamp and environment, criterion matrix, artifact inventory, commands/checks and observed results, exclusions, residual risks, verdict, missing work, completion-record update, and release decision required.
 
 Never accept plans, code presence, generated reports, elapsed effort, confidence, review assertions, or unsupported agent summaries as proof. Evidence must be reproducible or directly inspectable and must support exactly the claim made.

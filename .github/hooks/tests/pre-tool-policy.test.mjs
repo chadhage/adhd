@@ -161,6 +161,42 @@ test('positive: FactoryLauncher exposes the interactive question tool for human-
   assert.match(definition, /^tools: \[.*vscode\/askQuestions.*\]$/m);
 });
 
+test('positive: one-shot orchestration contracts require complete bounded assignments', async () => {
+  for (const fileName of ['factory', 'squad']) {
+    const definition = await readFile(new URL(`../../agents/${fileName}.agent.md`, import.meta.url), 'utf8');
+    assert.match(definition, /complete initial\s+assignment/, fileName);
+    assert.match(definition, /predeclared acceptance-event protocol/, fileName);
+  }
+});
+
+test('negative: coordinating roles do not acquire unverified execution tooling', async () => {
+  for (const fileName of ['factory', 'squad']) {
+    const definition = await readFile(new URL(`../../agents/${fileName}.agent.md`, import.meta.url), 'utf8');
+    const tools = /^tools: \[([^\]]+)\]$/m.exec(definition)?.[1].split(',').map((tool) => tool.trim());
+    assert.ok(tools && !tools.includes('execute'), fileName);
+  }
+});
+
+test('negative: execution availability does not turn orchestrators into product implementers', async () => {
+  const factory = await readFile(new URL('../../agents/factory.agent.md', import.meta.url), 'utf8');
+  const squad = await readFile(new URL('../../agents/squad.agent.md', import.meta.url), 'utf8');
+  assert.match(factory, /do not research customers, set product priority, administer the board, or write product code yourself/i);
+  assert.match(factory, /does not authorize product\s+implementation by Factory or widen the host grant/);
+  assert.match(squad, /does not make Squad an extra implementer or widen the host grant/);
+});
+
+test('negative: one-shot acceptance cannot manufacture terms or depend on an unsupported activation', async () => {
+  const contract = await readFile(new URL('../../skills/artifact-storage-and-engagement-contracts/SKILL.md', import.meta.url), 'utf8');
+  assert.match(contract, /before\s+invocation, its designated writer specifies the exact event path/i);
+  assert.match(contract, /records explicit acceptance there before its authorized work/);
+  assert.match(contract, /cannot change terms, grant host\s+permissions, replace human acceptance, or constitute another contract/);
+  for (const fileName of ['factory', 'squad']) {
+    const definition = await readFile(new URL(`../../agents/${fileName}.agent.md`, import.meta.url), 'utf8');
+    assert.match(definition, /complete initial\s+assignment/);
+    assert.match(definition, /do not (?:plan|rely\s+on) a later `ACTIVATE`/);
+  }
+});
+
 test('negative: invalid tool events fail closed', () => {
   for (const event of [null, {}, { tool_name: {} }, { toolName: 7 }, { toolName: '' }, { tool_name: '  ' }]) {
     assert.equal(evaluatePreToolUse(event).decision, 'deny');

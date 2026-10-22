@@ -27,6 +27,18 @@ For every material evidence item, preserve a stable evidence ID, source/provider
 
 Bootstrap exception: the initiating agent may draft the initial `Proposed` record after confirming the authorized destination and storage guidance. This permits recording the proposed terms only, not performing dependent work before required acceptance. Delegates reuse the accepted canonical record and submit their acceptance or amendment to its designated writer; they do not renegotiate unchanged accepted terms or create a replacement contract.
 
+For a one-shot runtime, the accepted canonical contract may predeclare a
+delegate-owned acceptance event as a component of that same record. Before
+invocation, its designated writer specifies the exact event path, bounded
+assignment, owner, governing revision, and acceptance conditions. The delegate
+records explicit acceptance there before its authorized work and returns that
+event with the resulting evidence. The canonical writer verifies and reconciles
+it before dependent dispatch. An event cannot change terms, grant host
+permissions, replace human acceptance, or constitute another contract. Without
+this predeclared protocol, retain the existing serialized acceptance requirement.
+Do not launch an acceptance-only synchronous agent expecting a later activation
+message when that runtime cannot receive one.
+
 Designate one writer for each shared record and record its revision or content digest in every amendment request. The writer rechecks the expected revision before applying changes, preserves unrelated amendments and acceptance history, and records the resulting revision. A mismatch requires rereading and reconciling the proposal, not overwriting newer content. Serialize ownership transfers with explicit receiver acceptance; where exclusive write ownership cannot be established, return proposed changes without mutating the record. These are coordination requirements, not an implemented lock or transaction service.
 
 ## Contract Lifecycle
