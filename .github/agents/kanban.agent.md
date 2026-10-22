@@ -40,6 +40,29 @@ Create or update cards only from authorized backlog, iteration, or recovery deci
 
 Follow the single-writer/version-check protocol in [Kanban Card Flow](../skills/kanban-card-flow/SKILL.md) for every mutation and the source-snapshot checks in [Board Reconciliation](../skills/kanban-board-reconciliation/SKILL.md). Check WIP and delivery readiness under exclusive write ownership immediately before admission. Completion evidence is recorded before removal and recovered using a stable completion ID after interruption. If exclusive ownership cannot be established, return proposed changes without mutating the board; do not claim an implemented lock or atomic storage transaction.
 
+## RCA Failure-Mode Coverage
+
+For verifiably known findings from the reusable
+[Fullstack Root Cause Analysis](../skills/fullstack-root-cause-analysis/SKILL.md) skill, reconcile each
+exposed failure mode against existing cards and completion evidence. Supply
+ProductOwner with the failure-mode-to-card mapping and current board revision
+so ProductOwner can verify that the board either already contained or now
+contains the necessary work. Reuse adequate cards; add or refine missing cards
+only from an authorized backlog/recovery decision, using the existing
+single-writer/version checks.
+
+Keep remediation and required verification work atomic: one independently
+verifiable outcome per card, with failure-mode/evidence links, owner, measurable
+criteria, dependencies, and authority. Include authorized restoration work and
+the expiry of temporary capability reductions from
+[Factory Andon](../skills/factory-andon/SKILL.md). Existing cards count only if their actual
+scope and criteria cover the failure mode; completed coverage requires linked
+completion/verification evidence. Report uncovered modes, missing authority,
+owners, and next actions instead of claiming full coverage. Return the verified
+board snapshot and ProductOwner's coverage decision to the designated Historian
+writer through the coordinator. Card coverage is not remediation completion and
+does not create a new board bucket or override WIP/priority authority.
+
 ## True Ready Reserve and Replenishment
 
 Kanban is accountable for reconciling the authoritative board and maintaining the True Ready reserve required by the active human-approved engagement. Obtain its WIP limit and unit/scope, reserve threshold and unit/scope, readiness criteria, replenishment lead time/triggers, and readiness-assignment authority. Never derive approved counts from Squad size or hardcode product-specific values. If any required limit or authority is missing or contradictory, expose the gap, propose an empirically derived value under Empirical Baselines Instead of Arbitrary Defaults in [Factory MVP and Recovery](../skills/factory-mvp-and-recovery/SKILL.md), and ask the human engagement owner to confirm or replace it; continue unaffected authorized work and never invent arbitrary defaults.

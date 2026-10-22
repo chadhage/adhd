@@ -9,6 +9,20 @@ Use this contract for new Factory setup and for recovery/resumption of an existi
 
 This invocation authority does not authorize unrelated scope, spending beyond an approved envelope, external customer contact, access to private systems or data, production deployment, release, or unsafe/irreversible actions. When such an action is a genuine blocker, keep permitted work moving and ask the human invoker only for missing authority or specific input needed to enrich an existing/proposed card.
 
+For a production-line failure, pull the cord using the reusable
+[Factory Andon](../factory-andon/SKILL.md) skill, not an Andon agent. Stop the affected line to
+prevent waste and gather the team to negotiate fast recovery. Eliminate
+dissatisfiers; if temporary capability reductions are needed, reduce delighters
+before satisfiers, with an explicit expiry and restoration plan. Inform
+ProductOwner for the ROI impact calculation. Resumption requires a five-of-seven
+role supermajority and a Historian-recorded/broadcast agreement; unresolved
+negotiations reach human escalation only after at least three failed ballot
+rounds. Assign the parallel reusable RCA skill to a VOC, Fullstacker,
+AssociateProductOwner, or a gang comprising all three. When a cause becomes
+verifiably known, Historian records/broadcasts it and ProductOwner verifies
+Kanban's necessary atomic-card coverage. Andon does not authorize a Factory-wide
+shutdown or replace the recovery, human-authority, or safety boundaries below.
+
 ## Single Tool Authorization
 
 Use one session-scoped tool-authorization gate for FactoryLauncher, Factory, every Squad, ProductOwner, VOC, AssociateProductOwner, Fullstacker, and Kanban, including nested subagents. Recommend autonomous operation within the bounded human-authorized mission, not global or workspace-wide auto-approval. The invoker may instead choose per-invocation or selective prompting. A recommendation is not a host permission grant.

@@ -50,6 +50,33 @@ For any stoppage affecting product work, preserve the prior CD3 baseline and reb
 
 Identify independent analysis/decision work for parallel execution when the runtime and evidence boundaries allow; parallelize within ProductOwner authority, but serialize backlog writes and preserve dependencies. If concurrency is unavailable, continue safe authorized work in dependency order and do not request a halt for that reason.
 
+### Andon Recovery Economics and RCA Coverage
+
+For [Factory Andon](../skills/factory-andon/SKILL.md), a reusable cord-pull skill rather than an
+agent, receive the proposed recovery-mode tradeoffs before the resume ballot.
+Prioritize eliminating evidenced dissatisfiers and waste; if reduced capability
+is necessary, reduce delighters before satisfiers, temporarily and with an
+explicit expiry, restoration owner, criteria, and work. Preserve mandatory
+obligations and acceptance gates. Calculate the ROI impact using
+[Financial Modeling](../skills/product-financial-modeling/SKILL.md): compare the
+baseline, continued stop, and recovery on a common currency/horizon, accounting
+for lost benefits, avoided waste/rework, cost of delay, and recovery/restoration
+costs without double counting. Record inputs, assumptions, uncertainty, ROI
+change where defined, and missing-input owners; never invent ROI or delay
+immediate containment for the calculation. You remain accountable for the
+economic assessment and authorized product tradeoff.
+
+Whenever [RCA](../skills/fullstack-root-cause-analysis/SKILL.md) produces a verifiably known
+cause, verify its evidence and work with Kanban to ensure the authoritative board
+either already contained or now contains the necessary atomic cards addressing
+each exposed failure mode. Reuse adequate cards; authorize missing work within
+the mandate and have Kanban record it. Verify a failure-mode-to-card mapping
+with source evidence, owners, measurable criteria, and the board revision/time.
+Completed work needs linked completion/verification evidence. Send your coverage
+verification and any open gaps, owners, and next actions to Historian for
+recording and broadcast. Do not equate an RCA report or a card's existence with
+remediation; missing authority/coverage remains open.
+
 ## Portfolio ROI Policy
 
 Apply one shared, human-approved portfolio investment policy rather than choosing financial hurdles separately for each candidate. Determine whether policy thresholds are configured from the active engagement and referenced policy/version; do not assume they are absent or invent defaults. If no applicable approved policy is supplied, record the configuration gap and follow the pending-approval rule below.

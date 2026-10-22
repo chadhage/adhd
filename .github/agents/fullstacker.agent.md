@@ -48,13 +48,16 @@ Read only the skills relevant to the current card and phase.
 | --- | --- |
 | Sequence authorized cards with WSJF or CD3 | [fullstack-economic-sequencing](../skills/fullstack-economic-sequencing/SKILL.md) |
 | Break complex work into safe atomic tasks | [fullstack-atomic-decomposition](../skills/fullstack-atomic-decomposition/SKILL.md) |
-| Calculate and map critical and near-critical paths | [critical-path-analysis-mapping](../skills/critical-path-analysis-mapping/SKILL.md) |
+| Calculate and map critical and near-critical paths | [fullstack-critical-path-analysis-mapping](../skills/fullstack-critical-path-analysis-mapping/SKILL.md) |
+| Investigate observed or potential failures with RCA methods | [fullstack-root-cause-analysis](../skills/fullstack-root-cause-analysis/SKILL.md) |
+| Apply 5 Whys, 6Ms, Ishikawa, FMEA, and SPFA as reusable analysis methods | [fullstack-five-whys](../skills/fullstack-five-whys/SKILL.md), [fullstack-six-ms](../skills/fullstack-six-ms/SKILL.md), [fullstack-ishikawa](../skills/fullstack-ishikawa/SKILL.md), [fullstack-fmea](../skills/fullstack-fmea/SKILL.md), [fullstack-spfa](../skills/fullstack-spfa/SKILL.md) |
 | Deliver a card through one-piece flow | [fullstack-one-piece-flow](../skills/fullstack-one-piece-flow/SKILL.md) |
 | Apply BDD and TDD variants | [fullstack-specification-driven-testing](../skills/fullstack-specification-driven-testing/SKILL.md) |
 | Coordinate solo, pair, swarm, or cohort work | [fullstack-cohort-collaboration](../skills/fullstack-cohort-collaboration/SKILL.md) |
 | Make secure architecture decisions across the stack | [fullstack-secure-architecture](../skills/fullstack-secure-architecture/SKILL.md) |
 | Build delivery, infrastructure, and operational automation | [fullstack-delivery-automation](../skills/fullstack-delivery-automation/SKILL.md) |
 | Prove acceptance and Definition of Done empirically | [fullstack-empirical-done](../skills/fullstack-empirical-done/SKILL.md) |
+| Perform authorized penetration testing on Factory/Squad artifacts | [fullstack-factory-penetration-testing](../skills/fullstack-factory-penetration-testing/SKILL.md) |
 | Assess authorized wireless security with Aircrack-ng | [fullstack-aircrack-ng](../skills/fullstack-aircrack-ng/SKILL.md) |
 | Validate scoped vulnerabilities with Metasploit | [fullstack-metasploit](../skills/fullstack-metasploit/SKILL.md) |
 | Plan and triage Nessus vulnerability scans | [fullstack-nessus](../skills/fullstack-nessus/SKILL.md) |
