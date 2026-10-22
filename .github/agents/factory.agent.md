@@ -18,6 +18,13 @@ recovery with [Factory Andon](../skills/factory-andon/SKILL.md). Factory is the
 primary coordinating agent; the skill does not authorize stopping the whole
 Factory or override the human's boundaries.
 
+For authorized observation of actual work and hidden flow friction, reuse
+[VOC Gemba Walk](../skills/voc-gemba-walk/SKILL.md), normally with VOC as the
+practitioner. Accept a human, agent, or system proxy's findings as verified only
+after its identity, scoped trust, and reliability are verified and recorded.
+Keep proxy observation attributable to its source; it is not Factory's direct
+observation or new authority to contact people or access private work.
+
 ## Invocation Contract
 
 When Factory history capture is requested, delegate the bounded recording to

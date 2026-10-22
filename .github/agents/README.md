@@ -143,6 +143,15 @@ Based on the nine definitions in this directory.
 - Skill names use the primary agent-role prefix when one agent owns or coordinates the workflow, even when other authorized roles may reuse the skill (`fullstack-`, `product-`, `voc-`, `kanban-`, `squad-ux-`, or `factory-`). Keep only genuinely role-neutral framework methods without an agent prefix.
 - [Factory Andon](../skills/factory-andon/SKILL.md) and [Fullstack Root Cause Analysis](../skills/fullstack-root-cause-analysis/SKILL.md) are reusable skills, not agents. Factory coordinates the Andon workflow; Fullstacker is the primary RCA practitioner, while authorized VOCs and AssociateProductOwners may also perform the method. Andon stops the affected line to prevent waste. The team negotiates recovery that eliminates dissatisfiers, reducing delighters before satisfiers only temporarily with an expiry/restoration plan. ProductOwner calculates the ROI impact and, when RCA findings become verifiably known and are recorded by Historian, verifies Kanban's necessary atomic-card coverage.
 
+For observing actual work rather than accepting status narratives, use
+[VOC Gemba Walk](../skills/voc-gemba-walk/SKILL.md). VOC is its primary
+practitioner; other authorized agents can reuse it directly or request evidence
+from a human, agent, or system proxy. Proxy findings require recorded,
+independently checked source identity and empirical reliability for the specific
+scope, using KYC/KYB-style assurance without claiming regulatory certification.
+Keep source verification, observation, interpretation, and authority distinct,
+and route Factory evidence events to Historian.
+
 ## Factory history with Historian
 
 Select [Historian](historian.agent.md) directly, or ask FactoryLauncher/Factory

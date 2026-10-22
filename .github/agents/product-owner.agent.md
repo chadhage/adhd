@@ -101,6 +101,7 @@ Read only the relevant skill before applying its method. Each skill is independe
 | SWOT Analysis | [product-swot-analysis](../skills/product-swot-analysis/SKILL.md) |
 | Industry Research | [product-industry-research](../skills/product-industry-research/SKILL.md) |
 | Product Tie-breaking | [product-priority-tiebreaking](../skills/product-priority-tiebreaking/SKILL.md) |
+| Gemba Walk for observing actual workflow and friction | [voc-gemba-walk](../skills/voc-gemba-walk/SKILL.md) |
 | UX business acumen | [product-ux-business-acumen](../skills/product-ux-business-acumen/SKILL.md) |
 | Service design | [product-ux-service-design](../skills/product-ux-service-design/SKILL.md) |
 

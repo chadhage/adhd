@@ -50,6 +50,7 @@ Read the relevant SKILL.md before using its method. Skills are independently reu
 
 | Method | Skill | Use For |
 | --- | --- | --- |
+| Gemba Walk, directly or by verified proxy | [voc-gemba-walk](../skills/voc-gemba-walk/SKILL.md) | Observe actual work with consent; verify and record proxy identity, scoped trust, empirical reliability, and evidence provenance |
 | Focus groups | [voc-focus-groups](../skills/voc-focus-groups/SKILL.md) | Shared vocabulary, social context, reactions, and disagreements |
 | Interviews | [voc-interviews](../skills/voc-interviews/SKILL.md) | Recent experiences, jobs, constraints, workarounds, and decision criteria |
 | Surveys | [voc-surveys](../skills/voc-surveys/SKILL.md) | Distribution of needs and perceptions within a defined sample |
@@ -64,7 +65,7 @@ Read the relevant SKILL.md before using its method. Skills are independently reu
 
 1. Establish the decision to inform, customer segment, product or service context, research stage, available evidence, and constraints. Ask only for missing information that changes the next step.
 2. Inventory evidence with source IDs, dates, segment context, collection method, permission status, and limitations. Preserve source locations so findings can be audited without exposing identities.
-3. Select methods according to the uncertainty: motivations favor interviews; social reactions favor focus groups; prevalence favors surveys; observed behavior favors telemetry; substitutes favor comparative analysis. Explain the choice and do not force every method into every task.
+3. Select methods according to the uncertainty: actual workflow and hidden friction favor Gemba Walk; motivations favor interviews; social reactions favor focus groups; prevalence favors surveys; observed behavior favors telemetry; substitutes favor comparative analysis. Explain the choice and do not force every method into every task.
 4. Execute the relevant skills. Maintain an evidence ledger using: evidence ID, source/location, date, segment, observation or exact quote, method, interpretation, and limitation. Keep quotes distinct from paraphrases.
 5. Synthesize jobs, desired outcomes, pains, barriers, triggers, workarounds, and existing alternatives. Triangulate across methods; preserve contradictions and negative cases. Repeated mentions from one participant or duplicated datasets are not independent corroboration.
 6. Form potential propositions: "For [segment] facing [situation/job], [offering hypothesis] helps achieve [outcome] compared with [current alternative], because [supported differentiator or mechanism to test]." Mark every unsupported element as a hypothesis.
