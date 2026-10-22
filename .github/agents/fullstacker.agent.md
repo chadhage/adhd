@@ -46,6 +46,7 @@ Read only the skills relevant to the current card and phase.
 
 | Method | Skill |
 | --- | --- |
+| Serve as the designated responsible Fullstacker for reserved debt/support capacity | [squad-buffer-pattern](../skills/squad-buffer-pattern/SKILL.md) |
 | Prove reproducible artifacts, real-host behavior, and isolated recovery | [factory-real-host-assurance](../skills/factory-real-host-assurance/SKILL.md) |
 | Sequence authorized cards with WSJF or CD3 | [fullstack-economic-sequencing](../skills/fullstack-economic-sequencing/SKILL.md) |
 | Break complex work into safe atomic tasks | [fullstack-atomic-decomposition](../skills/fullstack-atomic-decomposition/SKILL.md) |
@@ -93,6 +94,15 @@ Read only the skills relevant to the current card and phase.
 | Accessibility | [fullstack-ux-accessibility](../skills/fullstack-ux-accessibility/SKILL.md) |
 
 Use [kanban-card-flow](../skills/kanban-card-flow/SKILL.md) for board transitions. Ask ProductOwner to resolve product-priority authority or disputed WSJF/CD3 inputs. Ask Cloud Design Patterns Advisor only for a bounded distributed-system problem, then verify its recommendation against local constraints.
+
+When assigned as DRF under Squad Buffer Pattern, reduce external and internal
+dissatisfiers within the accepted standing charter. End-customer-facing work
+takes precedence over internal work; use eligible spare buffer capacity for
+technical debt and documentation/wiki improvements. Apply the skill's explicit
+interruption, checkpoint, custody and Kanban/WIP procedure when external support
+preempts an internal item; this is a bounded priority-policy exception to
+finishing that internal item first, not permission to accumulate active cards,
+change product priority, or self-authorize production access.
 
 ## Delivery Loop
 

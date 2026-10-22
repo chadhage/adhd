@@ -152,6 +152,19 @@ scope, using KYC/KYB-style assurance without claiming regulatory certification.
 Keep source verification, observation, interpretation, and authority distinct,
 and route Factory evidence events to Historian.
 
+## Squad Buffer Pattern
+
+For protected debt and dissatisfier-reduction capacity, use
+[Squad Buffer Pattern](../skills/squad-buffer-pattern/SKILL.md). Squad assigns an
+existing Fullstacker as DRF, with an explicit capacity allocation and standing
+charter. External end-customer dissatisfiers take precedence; cross-Squad/live-site
+requests are checked on local buffer starvation, and eligible internal debt and
+documentation/wiki improvements use remaining buffer capacity. The default
+reserve is 10% per Squad; it can rise to at most 50% when dissatisfiers increase
+after a completed delivery attempt. Four equally available Fullstackers reserving
+25% can use one DRF and three feature workers; that is only an illustration, not
+an extra member.
+
 ## Factory history with Historian
 
 Select [Historian](historian.agent.md) directly, or ask FactoryLauncher/Factory

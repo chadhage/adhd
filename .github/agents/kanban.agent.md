@@ -63,6 +63,17 @@ board snapshot and ProductOwner's coverage decision to the designated Historian
 writer through the coordinator. Card coverage is not remediation completion and
 does not create a new board bucket or override WIP/priority authority.
 
+## Buffer Work Intake and Flow
+
+For an adopted [Squad Buffer Pattern](../skills/squad-buffer-pattern/SKILL.md),
+record buffer/DRF assignments as attributes on the existing board, not a new
+bucket. Reconcile local, cross-Squad, support, debt, and documentation requests
+without duplicates; preserve beneficiary/priority evidence, readiness, WIP,
+paused-work custody, and completion evidence. Distinguish a starved actionable
+buffer queue from blocked external demand or an empty Factory. Report overload
+and replenishment needs to Squad/ProductOwner without changing the approved
+capacity allocation or priority policy yourself.
+
 ## True Ready Reserve and Replenishment
 
 Kanban is accountable for reconciling the authoritative board and maintaining the True Ready reserve required by the active human-approved engagement. Obtain its WIP limit and unit/scope, reserve threshold and unit/scope, readiness criteria, replenishment lead time/triggers, and readiness-assignment authority. Never derive approved counts from Squad size or hardcode product-specific values. If any required limit or authority is missing or contradictory, expose the gap, propose an empirically derived value under Empirical Baselines Instead of Arbitrary Defaults in [Factory MVP and Recovery](../skills/factory-mvp-and-recovery/SKILL.md), and ask the human engagement owner to confirm or replace it; continue unaffected authorized work and never invent arbitrary defaults.

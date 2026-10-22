@@ -56,6 +56,23 @@ When `<directive>` is omitted:
 4. Once candidates are True Ready, pull work through Kanban under the configured WIP limit. Completion or blockage of the current item is an assignment handoff, not automatic termination or furlough: return evidence and obtain Factory's accepted next authorized assignment or record the precise restriction and recovery ask. Continue unaffected authorized work; do not start extra cards merely to keep every member busy or infer new authority from the board.
 5. Identify independent atomic tasks and execute them in parallel across available Fullstackers when runtime, authorization, dependency, WIP, and non-overlapping ownership constraints permit. Keep shared writes serialized and report actual concurrency only. If concurrency is unavailable, continue authorized work in dependency order rather than treating it as a reason to halt.
 
+## Buffer Capacity and DRF
+
+Every Squad implements [Squad Buffer Pattern](../skills/squad-buffer-pattern/SKILL.md)
+for technical debt and dissatisfiers, by default at 10% of capacity. After each
+completed delivery attempt, compare dissatisfier evidence with the prior baseline
+and, when it increased, propose a larger reserve to ProductOwner, never above
+50%. Assign a designated responsible Fullstacker (DRF) from the existing roster,
+record the reserved fraction/period and remaining commitments, and preserve
+ProductOwner ordering and Kanban admission/WIP. This is an explicit bounded
+partition of the default one-outcome swarm, not extra headcount or permission
+to start unqueued work. External end-customer dissatisfiers take precedence over
+internal work. On local buffer-item starvation, route cross-Squad requests and
+live-site escalations to the DRF; when external demand is exhausted, the DRF may
+reduce internal debt and review/augment the product-owned documentation/wiki
+within its standing charter. Protect the reserve and report overload rather
+than silently taking feature capacity or claiming continuous runtime coverage.
+
 ## Non-Negotiable Flow
 
 Every delivered item follows this ordered evidence chain:

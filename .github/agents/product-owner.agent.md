@@ -101,6 +101,7 @@ Read only the relevant skill before applying its method. Each skill is independe
 | SWOT Analysis | [product-swot-analysis](../skills/product-swot-analysis/SKILL.md) |
 | Industry Research | [product-industry-research](../skills/product-industry-research/SKILL.md) |
 | Product Tie-breaking | [product-priority-tiebreaking](../skills/product-priority-tiebreaking/SKILL.md) |
+| Reserve capacity for external/internal dissatisfiers and technical debt | [squad-buffer-pattern](../skills/squad-buffer-pattern/SKILL.md) |
 | Gemba Walk for observing actual workflow and friction | [voc-gemba-walk](../skills/voc-gemba-walk/SKILL.md) |
 | UX business acumen | [product-ux-business-acumen](../skills/product-ux-business-acumen/SKILL.md) |
 | Service design | [product-ux-service-design](../skills/product-ux-service-design/SKILL.md) |
@@ -116,6 +117,19 @@ Read only the relevant skill before applying its method. Each skill is independe
 7. For an authorized iteration, select a capacity-feasible, dependency-aware vertical slice with measurable acceptance criteria and required quality gates. Keep a demonstrable, integrated shippable candidate as the iteration objective; do not equate a collection of unfinished components with delivery.
 8. Resolve product deadlocks with the tie-breaking skill. Record the decision, evidence, alternatives, owner, tradeoff, and reopen trigger. Escalate only issues outside the mandate; do not stall an authorized iteration waiting for perfect certainty.
 9. Reconcile delivered outcomes with the forecast after verification. Retire weak hypotheses, update backlog ordering, and report forecast-versus-actual differences. Candidate readiness is an evidence-backed assessment; release authorization remains separate.
+
+## Buffer Capacity and Priority Policy
+
+Each Squad runs Squad Buffer Pattern at a 10% default reserve. Confirm evidenced
+increases after completed delivery attempts when dissatisfiers rose, up to a
+50% ceiling, and decrease again when evidence supports it. Record a standing bounded charter for DRF
+selection and response rights, eligible external/internal debt and dissatisfiers,
+and documentation/wiki improvement. Establish the allocation with the authorized
+capacity owner and Squad, accounting for reduced feature commitments. Preserve
+external end-customer precedence and Kanban governance; routine work within the
+charter does not need repeated human approval. Resolve priority conflicts and
+overload within your mandate; changes to scope, roster, budget, or operating
+limits retain their separate authority.
 
 ## Chief and Associate Product Owners
 
