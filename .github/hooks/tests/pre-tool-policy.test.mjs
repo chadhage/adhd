@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { evaluatePreToolUse, formatHookResponse } from '../pre-tool-policy.mjs';
@@ -154,6 +154,113 @@ test('negative: every Factory agent references the same single tool-authorizatio
     const definition = await readFile(new URL(`../../agents/${fileName}.agent.md`, import.meta.url), 'utf8');
     assert.match(definition, /factory-mvp-and-recovery\/SKILL\.md#single-tool-authorization/, agentName);
   }
+});
+
+test('positive: every agent declares a nonempty mandate and charter', async () => {
+  const files = (await readdir(new URL('../../agents/', import.meta.url))).filter((name) => name.endsWith('.agent.md'));
+  assert.ok(files.includes('historian.agent.md'));
+  for (const fileName of files) {
+    const definition = await readFile(new URL(`../../agents/${fileName}`, import.meta.url), 'utf8');
+    for (const heading of ['Mandate', 'Charter']) {
+      assert.equal([...definition.matchAll(new RegExp(`^## ${heading}\\r?$`, 'gm'))].length, 1, `${fileName}: ${heading}`);
+      const section = definition.split(new RegExp(`^## ${heading}\\r?$`, 'm'))[1].split(/^## /m)[0].trim();
+      assert.ok(section.length > 0, `${fileName}: empty ${heading}`);
+    }
+  }
+});
+
+test('positive: associate charter owns scaling evidence and subproduct lifecycle', async () => {
+  const definition = await readFile(new URL('../../agents/associate-product-owner.agent.md', import.meta.url), 'utf8');
+  const mandate = definition.split(/^## Mandate\r?$/m)[1]?.split(/^## /m)[0];
+  const charter = definition.split(/^## Charter\r?$/m)[1]?.split(/^## /m)[0];
+  assert.ok(mandate);
+  assert.ok(charter);
+  assert.match(mandate, /Help ProductOwner scale and maintain scale/);
+  assert.match(mandate, /value-creation velocity/);
+  for (const responsibility of [
+    /product roadmap/i,
+    /demand/,
+    /`To Do`/,
+    /`In Progress`/,
+    /Done/,
+    /completion/,
+    /vertical slices/,
+    /theme|subsystem|component/,
+    /accelerate, decelerate, or remain unchanged/,
+    /negotiate with ProductOwner/,
+    /product direction/,
+    /viability/,
+    /ROI/,
+    /product-market fit/,
+  ]) {
+    assert.match(charter, responsibility);
+  }
+});
+
+test('negative: subproduct scaling rejects probabilities at or below 80 percent', async () => {
+  const definition = await readFile(new URL('../../agents/associate-product-owner.agent.md', import.meta.url), 'utf8');
+  const gate = /`P\(acceleration\)\s*(>=|>)\s*(\d+(?:\.\d+)?)`/.exec(definition);
+  assert.ok(gate, 'Missing explicit acceleration probability comparison');
+  assert.equal(gate[1], '>');
+  const threshold = Number(gate[2]);
+  assert.equal(threshold, 0.80);
+  const examples = [...definition.matchAll(/^\| `(\d+\.\d+)` \| (Blocked|Eligible) \|/gm)]
+    .map((match) => [Number(match[1]), match[2]]);
+  assert.deepEqual(examples, [[0.79, 'Blocked'], [0.80, 'Blocked'], [0.81, 'Eligible']]);
+  for (const [probability, decision] of examples) {
+    assert.equal(probability > threshold, decision === 'Eligible');
+  }
+  assert.match(definition, /Unknown, unsupported, non-finite, or out-of-range/);
+});
+
+test('negative: scaling cannot bypass chief agreement, agent limits, or completion-record governance', async () => {
+  const definition = await readFile(new URL('../../agents/associate-product-owner.agent.md', import.meta.url), 'utf8');
+  assert.match(definition, /^agents: \[\]$/m);
+  assert.match(definition, /Do not add a Done bucket/);
+  assert.match(definition, /Passing the gate does not authorize scaling/);
+  assert.match(definition, /ProductOwner agreement/);
+  assert.match(definition, /Do not recursively delegate/);
+  for (const fileName of ['product-owner', 'factory-launcher']) {
+    const caller = await readFile(new URL(`../../agents/${fileName}.agent.md`, import.meta.url), 'utf8');
+    assert.match(caller, /associate-product-owner\.agent\.md#scaling-assessment-and-decomposition/, fileName);
+  }
+});
+
+test('positive: FactoryLauncher owns startup investigation and ongoing working conditions', async () => {
+  const definition = await readFile(new URL('../../agents/factory-launcher.agent.md', import.meta.url), 'utf8');
+  const mandate = definition.split(/^## Mandate\r?$/m)[1]?.split(/^## /m)[0];
+  const charter = definition.split(/^## Charter\r?$/m)[1]?.split(/^## /m)[0];
+  assert.ok(mandate);
+  assert.ok(charter);
+  assert.match(mandate, /Start or resume a Factory/);
+  assert.match(mandate, /working conditions/);
+  assert.match(mandate, /unplanned and unfavorable stoppages/);
+  for (const responsibility of [
+    /Factory and product\s+already exist/,
+    /Inventory all configured ADHD agent roles/,
+    /authorizations/,
+    /Hand operational control to Factory/,
+    /Factory health at periodic checkpoints/,
+    /resources and capacity/,
+    /extrinsic impediments/,
+  ]) {
+    assert.match(charter, responsibility);
+  }
+});
+
+test('negative: Launcher health oversight cannot renew authority or pretend to run in the background', async () => {
+  const definition = await readFile(new URL('../../agents/factory-launcher.agent.md', import.meta.url), 'utf8');
+  const health = definition.split(/^## Operating Readiness and Factory Health\r?$/m)[1]?.split(/^## /m)[0];
+  assert.ok(health);
+  assert.match(health, /Never silently renew or extend/);
+  assert.match(health, /expired, revoked, stale, or out-of-scope/);
+  assert.match(health, /continue unaffected\s+authorized work/);
+  assert.match(health, /does not install a scheduler/);
+  assert.match(health, /health-only assignment/);
+  assert.match(health, /do not invoke Factory again/);
+  const factory = await readFile(new URL('../../agents/factory.agent.md', import.meta.url), 'utf8');
+  assert.match(factory, /Factory retains operational control/);
+  assert.match(factory, /factory-launcher\.agent\.md#operating-readiness-and-factory-health/);
 });
 
 test('positive: FactoryLauncher exposes the interactive question tool for human-only authentication and decisions', async () => {

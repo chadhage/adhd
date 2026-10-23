@@ -7,6 +7,8 @@
 - [Getting Started with FactoryLauncher](#getting-started-with-factorylauncher)
 	- [Start a New Factory](#start-a-new-factory)
 	- [Resume an Existing Factory](#resume-an-existing-factory)
+- [Agent mandates and charters](#agent-mandates-and-charters)
+- [Product and subproduct scaling](#product-and-subproduct-scaling)
 - [Agent feature truth table](#agent-feature-truth-table)
 - [Important distinctions](#important-distinctions)
 - [Shared statistical analysis](#shared-statistical-analysis)
@@ -115,6 +117,47 @@ mobilization; producing a package alone does not mean a Factory has started.
 Future iterations, spending beyond the mandate, deployment, and release retain
 their separate approval requirements.
 
+## Agent mandates and charters
+
+Every agent definition contains an explicit **Mandate** (the outcome and
+accountability the role exists to fulfill) and **Charter** (its responsibilities,
+decision boundaries, interfaces, and exclusions). These role definitions guide
+work; they do not replace an accepted engagement, grant tools, or authorize
+spending, new scope, release, or indefinite operation.
+
+[FactoryLauncher](factory-launcher.agent.md) investigates whether the Factory
+and product already exist, inventories and mobilizes the necessary agents,
+and establishes and preserves authorized working conditions. After an accepted
+handoff, Factory controls production while Launcher retains ongoing readiness
+accountability within the approved operating window: authorization freshness,
+periodic health review, resources/capacity, and extrinsic impediment recovery.
+See [Operating Readiness and Factory Health](factory-launcher.agent.md#operating-readiness-and-factory-health)
+for cadence, actual execution ownership, evidence, and renewal requirements.
+
+Charters do not install a scheduler or make expired/revoked approvals valid.
+Periodic oversight requires an approved cadence and an actual capable executor;
+missing runtime support is reported honestly, not presented as unattended
+monitoring or used to stop unrelated authorized work.
+
+## Product and subproduct scaling
+
+[AssociateProductOwner](associate-product-owner.agent.md) helps ProductOwner
+scale and maintain optimal value-creation velocity. Its
+[scaling workflow](associate-product-owner.agent.md#scaling-assessment-and-decomposition)
+inspects roadmap, demand, To Do/In Progress, and completed history; groups
+vertical slices by theme/subsystem/component; and compares current versus
+dedicated-owner production, including coordination and integration costs.
+
+Dedicated subproduct scaling requires a defensible acceleration probability
+strictly greater than 80%, followed by ProductOwner negotiation/agreement and
+valid ownership/resource authority. Exactly 80% and unknown estimates do not
+pass; no probability is invented to justify scaling. A bounded assessment can
+precede the split. Approved associates own subproduct direction, viability,
+ROI, roadmap, and product-market fit within their charters, keep work aligned,
+and inform ProductOwner's overall strategic/tactical decisions. Forecasts are
+checked against actual value velocity to maintain or renegotiate effective scale.
+Completed Done work stays in the completion ledger, not a new Kanban bucket.
+
 ## Agent feature truth table
 
 Based on the nine definitions in this directory.
@@ -136,11 +179,11 @@ Based on the nine definitions in this directory.
 ## Important distinctions
 
 - VOC ranks **research opportunities**, not the authoritative product backlog.
-- AssociateProductOwner analyzes supplied VOC evidence within its charter; missing research or authority must be escalated.
+- AssociateProductOwner evaluates and maintains evidence-backed scale and owns agreed subproduct responsibilities within its charter. Dedicated scaling needs the strict acceleration gate and ProductOwner agreement; missing probability evidence, research, or authority remains a visible gap.
 - Fullstacker's economic sequencing uses agreed WSJF/CD3 inputs; it does **not** own product priority.
 - Kanban checks supplied completion evidence and records completion; it does **not** perform engineering verification itself.
 - Squad and Factory require and reconcile delivery evidence; accountable member agents perform the work.
-- FactoryLauncher owns bounded setup/resumption through the first verified value increment; Factory/Squad deliver the increment and accountable roles provide evidence.
+- FactoryLauncher owns bounded setup/resumption through the first verified value increment and ongoing working-condition readiness within the approved operating window. Factory retains operational control; Factory/Squad deliver the increment and accountable roles provide evidence.
 - Historian preserves attributable history and capture gaps; recording a decision does not grant authority or verify a product outcome.
 - Skill names use the primary agent-role prefix when one agent owns or coordinates the workflow, even when other authorized roles may reuse the skill (`fullstack-`, `product-`, `voc-`, `kanban-`, `squad-ux-`, or `factory-`). Keep only genuinely role-neutral framework methods without an agent prefix.
 - [Factory Andon](../skills/factory-andon/SKILL.md) and [Fullstack Root Cause Analysis](../skills/fullstack-root-cause-analysis/SKILL.md) are reusable skills, not agents. Factory coordinates the Andon workflow; Fullstacker is the primary RCA practitioner, while authorized VOCs and AssociateProductOwners may also perform the method. Andon stops the affected line to prevent waste. The team negotiates recovery that eliminates dissatisfiers, reducing delighters before satisfiers only temporarily with an expiry/restoration plan. ProductOwner calculates the ROI impact and, when RCA findings become verifiably known and are recorded by Historian, verifies Kanban's necessary atomic-card coverage.
@@ -265,12 +308,12 @@ Benefits below are inferred from the documented features, not measured outcomes.
 |:---|:---|:---|:---|
 | `VOC` | Focus groups, interviews, surveys, telemetry analysis, comparative analysis; evidence ledger; counterevidence; proposition hypotheses and validation plans | Helps identify genuine unmet needs and reduces investment in unsupported customer assumptions | Does not invent research, approve investments, or implement products |
 | `ProductOwner` | Backlog ownership; financial, Kano, business-model, value-proposition, SWOT and scenario analysis; priority tie-breaking; Chief Product Owner coordination | Connects customer demand to economic decisions; resolves priority deadlocks; reconciles shared costs and dependencies across subproducts | Cannot invent investment thresholds, widen authorized scope, or override quality gates |
-| `AssociateProductOwner` | Bounded subproduct analysis; VOC assessment; incremental economics; dispositions and ordering recommendations; explicit escalation and return contract | Scales product analysis while preserving centralized strategy, consistent assumptions, and portfolio accountability | Delegate-only; no recursive delegation, independent portfolio authority, or delivery |
+| `AssociateProductOwner` | Roadmap/demand/work-history inspection; vertical-slice what-if scaling assessment; strict acceleration gate; negotiated parallel subproducts; subproduct direction, viability, ROI, roadmap and market-fit ownership; ongoing chief reporting | Helps ProductOwner scale and maintain integrated value-creation velocity rather than just increasing owner or card counts | Chief-chartered; no recursive delegation, unsupported probabilities, unapproved splits, independent portfolio authority, or implementation |
 | `Kanban` | Complete unfinished-work inventory; exactly two default buckets; evidence-backed transitions; WIP enforcement; duplicate/omission reconciliation; per-card and total-lot reporting | Makes unfinished work, blockers, ownership, and overload visible; prevents unsupported completion and misleading totals | Does not set product priority or execute card work |
 | `Fullstacker` | End-to-end vertical delivery; one-piece flow; atomic decomposition; solo/pair/cohort work; BDD/TDD; secure architecture; delivery automation; criterion-by-criterion done evidence | Produces integrated increments rather than disconnected layers; reduces regression risk and makes completion auditable | Works only on authorized cards; release and production changes require separate authority |
 | `Squad` | Named, fixed-size Fullstacker swarm; True Ready checks; ordered evidence gates; non-overlapping ownership; integration owner; handoff contracts and integrated validation | Enables coordinated delivery with fewer edit collisions; ensures member-level success becomes a verified integrated outcome | Orchestrator, not an extra implementer, board administrator, or release authority |
 | `Factory` | Continuous demand-to-value loop; VOC/ProductOwner/Kanban/Squad orchestration; cycle metrics; continuity detection; required four-role recovery panel and Yes/No human escalation | Connects discovery, prioritization, readiness, and delivery; resolves stalls through bounded evidence-based recovery | Delegates specialist work; cannot manufacture demand, bypass WIP, or self-authorize production actions |
-| `FactoryLauncher` | Adaptive setup/resume; setup-MVP ownership; required recovery-panel mobilization; first bounded value cycle; durable launch package; value and harm feedback plans | Gets a new Factory through its first verified value increment and resumes existing production work, reducing launch and continuity risk | Invocation authorizes bounded setup/first-cycle or existing-work resumption, not future iterations, unapproved spending, external actions, deployment, or release |
+| `FactoryLauncher` | Existing/new Factory investigation; agent inventory/mobilization; setup-MVP ownership; accepted Factory control handoff; authorization freshness; periodic health and resource/capacity oversight; extrinsic recovery | Starts/resumes production and preserves its authorized working conditions to reduce unplanned, unfavorable stoppages | Factory controls production; oversight stays within the approved window and actual runtime, without self-renewed authority, unapproved spending, deployment, or release |
 | `Historian` | Source-linked prompt/response, invocation, decision, and handoff records; timestamps and actor attribution; single-writer reconciliation; coverage and recovery cursors | Makes accessible Factory history traceable and exposes missing evidence | No automatic telemetry, private-session access, decision authority, or claim of complete capture without reconciliation |
 
 ## Invocation and access truth table
@@ -279,12 +322,12 @@ Benefits below are inferred from the documented features, not measured outcomes.
 |:---|:---:|:---:|:---|
 | VOC | T | — | Customer segment, research decision, and available evidence |
 | ProductOwner | T | T | Product goal, backlog/VOC evidence, economics, and decision authority |
-| AssociateProductOwner | — | — | Chief's explicit subproduct charter and output contract |
+| AssociateProductOwner | — | — | Chief's bounded scaling-assessment or accepted subproduct-ownership charter, roadmap/demand/work evidence, baseline, and output contract |
 | Kanban | T | — | Board/work sources, permitted updates, and reporting question |
 | Fullstacker | T | T | Authorized cards, iteration mandate, Definition of Done, and constraints |
 | Squad | T | T | `<name> <n> [directive]`; positive integer member count |
 | Factory | T | T | `Factory <name> Start [directive]`; FactoryLauncher can invoke it for an explicit setup/resume request |
-| FactoryLauncher | T | T | Product idea or Factory name; optionally resume an existing launch package |
+| FactoryLauncher | T | T | Factory/product identity and records; start/resume request or bounded authorized health-only assignment |
 | Historian | T | — | Factory/engagement ID, approved history destination, capture interval, and authorized event sources |
 
-**Overall operating model:** FactoryLauncher completes bounded setup or resumption through a verified value cycle → Factory sustains the loop → VOC discovers demand → ProductOwner determines value and priority → Kanban governs unfinished-work flow → Squads coordinate Fullstackers to deliver. Humans retain strategy, consequential investment, out-of-scope decisions, and release authority.
+**Overall operating model:** FactoryLauncher establishes start/resume readiness and hands operational control to Factory, while preserving external working conditions through approved health checkpoints. Factory sustains the loop → VOC discovers demand → ProductOwner determines value and priority → Kanban governs unfinished-work flow → Squads coordinate Fullstackers to deliver. Humans retain strategy, consequential investment, out-of-scope decisions, and release authority. Periodic oversight is bounded by accepted authority and verified execution capability.
