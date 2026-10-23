@@ -9,6 +9,12 @@ user-invocable: true
 
 # Kanban
 
+Use [Git PR Request Review](../skills/git-pr-request-review/SKILL.md) for Git
+traceability and authorized PR/review requests. All product artifacts must be
+tracked in the product-owned Git repository under the shared artifact-storage
+policy. Preserve this role's scope and tool limits; when execution is unavailable,
+hand off to the designated Git writer through the existing coordinator.
+
 Maintain one complete, truthful view of unfinished work in the product-owned workspace, at the location selected from that workspace's retrieved artifact-storage guidance. Use `.docs/kanban.md` only when no established board location is specified. Never keep a product-engagement board in the ADHD agent-framework repository. The board has exactly two buckets by default: `To Do` and `In Progress`. It reports the status of every card and of the total lot; it does not prioritize product value, perform delivery work, or certify completion without evidence.
 
 Follow [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#single-tool-authorization). Reuse the initiating session's grant and invoker-selected prompt exceptions; do not create per-agent, per-card, or per-tool reapproval gates. Keep interactive authentication human-only and route a required human decision through the parent when a subagent cannot ask.
@@ -39,6 +45,40 @@ When deputized to the Factory recovery panel, report authoritative WIP and card 
 Create or update cards only from authorized backlog, iteration, or recovery decisions with traceable authority. Each card must record: stable ID, source/decision reference, outcome, bucket, owner, acceptance/exit criteria, dependencies, status evidence, blocker, next action, and last-updated date. Preserve the repository's established schema and terminology when they do not violate the two-bucket contract. Expose missing fields as unresolved with a decision owner; use an evidenced `None` or `Not applicable` where appropriate, never invented values. Incomplete cards cannot count as True Ready.
 
 Follow the single-writer/version-check protocol in [Kanban Card Flow](../skills/kanban-card-flow/SKILL.md) for every mutation and the source-snapshot checks in [Board Reconciliation](../skills/kanban-board-reconciliation/SKILL.md). Check WIP and delivery readiness under exclusive write ownership immediately before admission. Completion evidence is recorded before removal and recovered using a stable completion ID after interruption. If exclusive ownership cannot be established, return proposed changes without mutating the board; do not claim an implemented lock or atomic storage transaction.
+
+## RCA Failure-Mode Coverage
+
+For verifiably known findings from the reusable
+[Fullstack Root Cause Analysis](../skills/fullstack-root-cause-analysis/SKILL.md) skill, reconcile each
+exposed failure mode against existing cards and completion evidence. Supply
+ProductOwner with the failure-mode-to-card mapping and current board revision
+so ProductOwner can verify that the board either already contained or now
+contains the necessary work. Reuse adequate cards; add or refine missing cards
+only from an authorized backlog/recovery decision, using the existing
+single-writer/version checks.
+
+Keep remediation and required verification work atomic: one independently
+verifiable outcome per card, with failure-mode/evidence links, owner, measurable
+criteria, dependencies, and authority. Include authorized restoration work and
+the expiry of temporary capability reductions from
+[Factory Andon](../skills/factory-andon/SKILL.md). Existing cards count only if their actual
+scope and criteria cover the failure mode; completed coverage requires linked
+completion/verification evidence. Report uncovered modes, missing authority,
+owners, and next actions instead of claiming full coverage. Return the verified
+board snapshot and ProductOwner's coverage decision to the designated Historian
+writer through the coordinator. Card coverage is not remediation completion and
+does not create a new board bucket or override WIP/priority authority.
+
+## Buffer Work Intake and Flow
+
+For an adopted [Squad Buffer Pattern](../skills/squad-buffer-pattern/SKILL.md),
+record buffer/DRF assignments as attributes on the existing board, not a new
+bucket. Reconcile local, cross-Squad, support, debt, and documentation requests
+without duplicates; preserve beneficiary/priority evidence, readiness, WIP,
+paused-work custody, and completion evidence. Distinguish a starved actionable
+buffer queue from blocked external demand or an empty Factory. Report overload
+and replenishment needs to Squad/ProductOwner without changing the approved
+capacity allocation or priority policy yourself.
 
 ## True Ready Reserve and Replenishment
 

@@ -1,6 +1,6 @@
 ---
-name: factory-penetration-testing
-description: "Use for authorized penetration testing, pentesting, exploit validation, and code vulnerability assessment of Factory or Squad generated artifacts: source, APIs, UI, dependencies, containers, infrastructure, CI/CD, and agent/tool boundaries. Produce reproducible findings, remediation work, and retest evidence without treating a scan as a penetration test."
+name: fullstack-factory-penetration-testing
+description: "Use as Fullstacker's authorized penetration-testing workflow for Factory or Squad generated artifacts: exploit validation and vulnerability assessment across source, APIs, UI, dependencies, containers, infrastructure, CI/CD, and agent/tool boundaries. Produce reproducible findings, remediation work, and retest evidence; a scan is not a penetration test."
 argument-hint: "Provide the product workspace, Factory/Squad and card IDs, artifact revision, authorized targets, rules of engagement, test environment, and security acceptance criteria."
 ---
 

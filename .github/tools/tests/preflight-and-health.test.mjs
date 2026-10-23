@@ -41,10 +41,16 @@ test('negative: the jsonc parser still rejects genuinely invalid JSON', () => {
 
 // ---- preflight ----
 
-test('positive: nested delegation enabled, records writable, and a valid supervisor are all ok', async (t) => {
+test('negative: enabled nesting is configuration, not live delegation or leaf-tool evidence', async (t) => {
   const { ws, settingsPath } = await withSettings(t, { 'chat.subagents.allowInvocationsFromSubagents': true }, { supervisor });
   const report = runPreflight({ root: ws.root, settingsPath, recordsDir: ws.docs('') });
-  assert.equal(status(report, 'nested-delegation'), 'ok');
+  const entry = find(report, 'nested-delegation');
+  assert.equal(entry.status, 'unknown');
+  assert.match(entry.evidence, /chat\.subagents\.allowInvocationsFromSubagents=true/);
+  assert.match(entry.evidence, /not a live capability observation/);
+  assert.match(entry.effect, /delivery-leaf command tools remain unverified/);
+  assert.match(entry.ownerDecision, /actual delivery-leaf tool surface/);
+  assert.match(toMarkdown(report), /\| nested-delegation \| unknown \|/);
   assert.equal(status(report, 'records-write-access'), 'ok');
   assert.equal(status(report, 'supervisor'), 'ok');
   assert.equal(status(report, 'tool-policy-hook'), 'ok');
@@ -138,12 +144,18 @@ test('negative: nested delegation disabled is degraded with an owner decision', 
   const { ws, settingsPath } = await withSettings(t, { 'chat.subagents.allowInvocationsFromSubagents': false });
   const entry = find(runPreflight({ root: ws.root, settingsPath }), 'nested-delegation');
   assert.equal(entry.status, 'degraded');
+  assert.match(entry.evidence, /chat\.subagents\.allowInvocationsFromSubagents=false/);
+  assert.match(entry.effect, /cannot mobilize Fullstackers beneath Factory/);
   assert.match(entry.ownerDecision, /Decide whether/);
 });
 
 test('negative: an absent nested delegation setting is unknown, not assumed', async (t) => {
   const { ws, settingsPath } = await withSettings(t, {});
-  assert.equal(status(runPreflight({ root: ws.root, settingsPath }), 'nested-delegation'), 'unknown');
+  const entry = find(runPreflight({ root: ws.root, settingsPath }), 'nested-delegation');
+  assert.equal(entry.status, 'unknown');
+  assert.match(entry.evidence, /Setting not present/);
+  assert.match(entry.effect, /Unverified/);
+  assert.match(entry.ownerDecision, /effective runtime value/);
 });
 
 test('negative: unreadable settings are reported as unknown rather than ignored', async (t) => {

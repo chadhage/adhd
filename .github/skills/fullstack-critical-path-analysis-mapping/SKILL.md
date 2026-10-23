@@ -1,10 +1,12 @@
 ---
-name: critical-path-analysis-mapping
-description: "Perform Critical Path Method (CPM) analysis and activity-network mapping. Use to model activities, durations, dependencies, milestones, earliest and latest dates, total and free float, longest and near-critical paths, schedule drag, resource constraints, crashing, fast tracking, and schedule updates."
+name: fullstack-critical-path-analysis-mapping
+description: "Use Fullstacker's Critical Path Method (CPM) and activity-network mapping to model activities, durations, dependencies, milestones, earliest/latest dates, total/free float, near-critical paths, schedule drag, resources, crashing, fast-tracking, and updates."
 argument-hint: "Provide activities, durations and units, dependency relationships, milestones or endpoint, constraints, status date, progress, resources, and uncertainty."
 ---
 
 # Critical Path Analysis and Mapping
+
+Fullstacker is the primary user of this reusable scheduling method.
 
 Use the Critical Path Method to identify the longest dependent route to a selected endpoint and the activities that govern the earliest possible completion date. This workflow is based on the concepts summarized in [Critical path method](https://en.wikipedia.org/wiki/Critical_path_method); treat the supplied schedule data and estimates, not the article, as the project evidence.
 

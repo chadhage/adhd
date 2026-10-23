@@ -6,7 +6,7 @@
 - Human invoker: current workspace user; authority evidence: request to create this skill and explicit selection of workspace scope and exhaustive relevant-link crawling through six levels.
 - Assignment: GitHub Copilot creates a reusable framework skill and its research record. No product testing, deployments, target scanning, customer contact, or agent delegation is authorized.
 - Storage guidance: framework README and artifact-storage-and-engagement-contracts SKILL.md, read 2026-10-10. Framework-maintenance assets belong in .github/skills/; no deviation. Product engagement artifacts must remain in product-owned storage.
-- Destination: .github/skills/factory-penetration-testing/. Inputs: public Wikipedia seed and relevant linked public security sources; no credentials or sensitive data.
+- Destination: .github/skills/fullstack-factory-penetration-testing/. Inputs: public Wikipedia seed and relevant linked public security sources; no credentials or sensitive data.
 - Subjects/affected parties: not applicable; public documentation research only. Participating agents: GitHub Copilot, accepted by executing the bounded request; no delegated agents.
 - Deliverables/acceptance: discoverable SKILL.md with authorization, hypothesis-led artifact assessment, evidence, remediation/retest and Factory/Squad handoff; source/depth provenance through six link levels, or explicit inaccessible/incomplete branches; frontmatter and local-link validation.
 - Limits/stop terms: do not bypass access controls, paywalls, robots restrictions or rate limits; stop affected branches on access failure and record gaps. No testing of systems discussed in sources. Research time/cost budget not specified; no paid services authorized. Escalate unresolved scope or access to the user.

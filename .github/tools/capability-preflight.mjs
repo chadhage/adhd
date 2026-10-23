@@ -64,7 +64,7 @@ export function runPreflight({
   if (nested === false) {
     add('nested-delegation', 'degraded', 'chat.subagents.allowInvocationsFromSubagents=false', 'Squad cannot mobilize Fullstackers beneath Factory; the Squad works in its recorded degraded mode.', 'Decide whether to enable nested delegation for Factory engagements.');
   } else if (nested === true) {
-    add('nested-delegation', 'ok', 'chat.subagents.allowInvocationsFromSubagents=true', 'Factory to Squad to Fullstacker delegation is permitted.', 'None.');
+    add('nested-delegation', 'unknown', 'chat.subagents.allowInvocationsFromSubagents=true; configured value only, not a live capability observation.', 'Live Factory to Squad to Fullstacker delegation and delivery-leaf command tools remain unverified.', 'Observe one authorized Factory to Squad to Fullstacker invocation and verify the actual delivery-leaf tool surface under the effective host permissions.');
   } else {
     add('nested-delegation', 'unknown', 'Setting not present; the runtime default applies.', 'Unverified until a delegation is observed.', 'Confirm the effective runtime value.');
   }

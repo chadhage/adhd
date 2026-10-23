@@ -9,6 +9,9 @@
 	- [Resume an Existing Factory](#resume-an-existing-factory)
 - [Agent feature truth table](#agent-feature-truth-table)
 - [Important distinctions](#important-distinctions)
+- [Shared statistical analysis](#shared-statistical-analysis)
+- [Shared Git tracking and PR review](#shared-git-tracking-and-pr-review)
+- [Factory history with Historian](#factory-history-with-historian)
 - [Features and intended benefits](#features-and-intended-benefits)
 - [Invocation and access truth table](#invocation-and-access-truth-table)
 
@@ -114,7 +117,7 @@ their separate approval requirements.
 
 ## Agent feature truth table
 
-Based on the eight definitions in this directory.
+Based on the nine definitions in this directory.
 
 **Legend:** **T** = explicitly assigned capability; **D** = coordinates or delegates it; **B** = bounded by a delegated charter; **—** = not assigned. These are declared responsibilities, not verified runtime capabilities.
 
@@ -128,6 +131,7 @@ Based on the eight definitions in this directory.
 | **Squad** | — | — | D | D | D | T | T |
 | **Factory** | D | D | D | D | D | T | T |
 | **FactoryLauncher** | D | D | D | D | — | T | — |
+| **Historian** | — | — | — | — | — | — | — |
 
 ## Important distinctions
 
@@ -137,12 +141,121 @@ Based on the eight definitions in this directory.
 - Kanban checks supplied completion evidence and records completion; it does **not** perform engineering verification itself.
 - Squad and Factory require and reconcile delivery evidence; accountable member agents perform the work.
 - FactoryLauncher owns bounded setup/resumption through the first verified value increment; Factory/Squad deliver the increment and accountable roles provide evidence.
+- Historian preserves attributable history and capture gaps; recording a decision does not grant authority or verify a product outcome.
+- Skill names use the primary agent-role prefix when one agent owns or coordinates the workflow, even when other authorized roles may reuse the skill (`fullstack-`, `product-`, `voc-`, `kanban-`, `squad-ux-`, or `factory-`). Keep only genuinely role-neutral framework methods without an agent prefix.
+- [Factory Andon](../skills/factory-andon/SKILL.md) and [Fullstack Root Cause Analysis](../skills/fullstack-root-cause-analysis/SKILL.md) are reusable skills, not agents. Factory coordinates the Andon workflow; Fullstacker is the primary RCA practitioner, while authorized VOCs and AssociateProductOwners may also perform the method. Andon stops the affected line to prevent waste. The team negotiates recovery that eliminates dissatisfiers, reducing delighters before satisfiers only temporarily with an expiry/restoration plan. ProductOwner calculates the ROI impact and, when RCA findings become verifiably known and are recorded by Historian, verifies Kanban's necessary atomic-card coverage.
+
+For observing actual work rather than accepting status narratives, use
+[VOC Gemba Walk](../skills/voc-gemba-walk/SKILL.md). VOC is its primary
+practitioner; other authorized agents can reuse it directly or request evidence
+from a human, agent, or system proxy. Proxy findings require recorded,
+independently checked source identity and empirical reliability for the specific
+scope, using KYC/KYB-style assurance without claiming regulatory certification.
+Keep source verification, observation, interpretation, and authority distinct,
+and route Factory evidence events to Historian.
+
+## Shared statistical analysis
+
+[Statistics 101](../skills/statistics-101/SKILL.md) is a role-neutral reusable skill
+assigned to ProductOwner, AssociateProductOwner, Fullstacker, and VOC, not a new
+agent. It covers study design and sampling, descriptive statistics, probability,
+confidence intervals, hypothesis tests, group comparisons, regression, and
+one-way ANOVA, grounded in Mike LePine's *College Statistics*. The bundled
+[source map](../skills/statistics-101/references/textbook-grounding.md) identifies
+the inspected print export, chapter/page references, access limits, and
+third-party licensing.
+
+Use it on demand for statistical evidence and uncertainty. ProductOwner retains
+product/economic decisions, associates remain within their charters, Fullstacker
+retains engineering verification obligations, and VOC retains research and
+consent boundaries. Neither the skill nor a significant result grants new
+tools, data access, experimentation, investment, or release authority.
+
+## Shared Git tracking and PR review
+
+[Git PR Request Review](../skills/git-pr-request-review/SKILL.md) is assigned to
+all nine agents: FactoryLauncher, Factory, Squad, Fullstacker, ProductOwner,
+AssociateProductOwner, Kanban, VOC, and Historian. Its requested `git-` name is
+deliberately role-neutral because no single agent owns every artifact or review.
+Each role preserves its existing scope and tool limits; a designated Git writer
+performs authorized repository operations when a role cannot execute them.
+
+**All product artifacts must be tracked in a product-owned Git repository**:
+source, tests, documentation/wiki, contracts, research outputs, plans, boards,
+history, decisions, and verification evidence. Verify paths and committed
+revisions at handoff/delivery checkpoints. External systems need faithful,
+privacy-safe Git-tracked exports/snapshots with provenance and sync ownership;
+a URL alone does not satisfy tracking. Follow
+[Artifact Storage and Engagement Contracts](../skills/artifact-storage-and-engagement-contracts/SKILL.md)
+for placement and sensitive-data handling. Missing safe versioning is a visible
+gap, never permission to commit secrets or move product work into this framework.
+
+The skill covers focused PR preparation, draft/readiness, reviewer selection,
+requests/re-requests, feedback, and observed GitHub state. It is grounded in
+[GitHub's pull request documentation](https://docs.github.com/en/pull-requests).
+Git tracking, commit, push, reviewer notification, approval, merge, deployment,
+and release are distinct operations/evidence states with separate authority;
+requesting review does not imply approval or satisfy the Definition of Done.
+This is agent guidance, not an installed enforcement hook or autonomous bot.
+
+## Squad Buffer Pattern
+
+For protected debt and dissatisfier-reduction capacity, use
+[Squad Buffer Pattern](../skills/squad-buffer-pattern/SKILL.md). Squad assigns an
+existing Fullstacker as DRF, with an explicit capacity allocation and standing
+charter. External end-customer dissatisfiers take precedence; cross-Squad/live-site
+requests are checked on local buffer starvation, and eligible internal debt and
+documentation/wiki improvements use remaining buffer capacity. The default
+reserve is 10% per Squad; it can rise to at most 50% when dissatisfiers increase
+after a completed delivery attempt. Four equally available Fullstackers reserving
+25% can use one DRF and three feature workers; that is only an illustration, not
+an extra member.
+
+## Factory history with Historian
+
+Select [Historian](historian.agent.md) directly, or ask FactoryLauncher/Factory
+to delegate a bounded recording assignment. Supply the Factory ID, canonical
+engagement record, approved product-owned history destination, capture interval,
+and authorized transcripts/event sources. Historian records accessible human
+and agent prompts, responses, invocations, tool events, decisions, and handoffs
+with timestamps, actual actor/instance attribution, source provenance, and
+links between related events. It covers participating Squads, Fullstackers,
+ProductOwners, AssociateProductOwners, Kanbans, and VOCs through the supplied
+sources, not by assuming visibility into their sessions.
+
+History follows the product's storage/access/retention rules, uses one writer,
+preserves corrections and recovery cursors, and excludes secrets. Redacted or
+missing content is explicitly identified. The return includes verified durable
+locations, event counts, linked decisions, and a coverage/gap report.
+
+An agent definition is not an automatic event collector. No transcript hooks
+or background listener are installed by selecting Historian. Complete capture
+requires reconciled source inventories for the stated interval; continuous
+cross-session capture needs a separately authorized, verified host integration.
+The existing security hook intentionally does not log prompts or tool payloads.
+
+## Proving behavior under a real host
+
+Use [Factory Real-Host Assurance](../skills/factory-real-host-assurance/SKILL.md)
+for an explicitly authorized repeatability and recovery engagement. Record
+actual role handoffs, reproducible artifacts, browser/simulator behavior,
+interruption/recovery, failed attempts, and cleanup in the product workspace.
+Static contract tests, a successful rebuild, and repeated passing tests support
+different claims; none alone proves live host permission inheritance, customer
+value cycles, unattended continuity, or production readiness.
+
+Factory and Squad remain coordinating roles, not extra product implementers.
+Tool availability is not task or host approval, and declarations do not prove
+what a live harness exposes. Verify execution at each nesting depth. A missing
+interface requires an owner-approved degraded mode or host repair, not an
+unverified permission expansion. Use complete one-shot assignments rather than
+an acceptance-only call followed by an unsupported activation message.
 
 ## Security Defaults
 
 All agents inherit the workspace trust-boundary rules in [Copilot instructions](../copilot-instructions.md). Review [Agent Security Controls](../SECURITY.md) before enabling a tool or using another session harness. All tools and nested subagents follow the invoker's effective host/session permissions: manual approval remains manual, while host-granted autonomy is not replaced by repository-forced per-call prompts. The hook never grants approval itself, including for reads and configured board edits. Delegation preserves the authorized task scope and cannot widen permissions. Instructions and skills are guidance, not a substitute for host approvals, sandbox, network, or repository branch-protection controls.
 
-All eight roles follow [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#single-tool-authorization). FactoryLauncher establishes one shared session choice: autonomous operation with at most one initial native **Allow all** / **Bypass Approvals** confirmation, or the invoker's per-invocation/selective rules. An existing live grant needs zero new confirmations. Delegates reuse the grant and original authority reference; they do not reopen the gate per role, card, or tool. The definitions expose `vscode/askQuestions` for genuine human decisions where the harness supports it; a subagent without that tool routes through its parent. Device/CLI authentication and other authentication requiring human input remain explicit human-only exceptions. Workspace permission defaults stay unchanged, and the prompt limit must be observed in the actual harness rather than inferred from these definitions.
+All nine roles follow [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#single-tool-authorization). FactoryLauncher establishes one shared session choice: autonomous operation with at most one initial native **Allow all** / **Bypass Approvals** confirmation, or the invoker's per-invocation/selective rules. An existing live grant needs zero new confirmations. Delegates reuse the grant and original authority reference; they do not reopen the gate per role, card, or tool. The definitions expose `vscode/askQuestions` for genuine human decisions where the harness supports it; a subagent without that tool routes through its parent. Device/CLI authentication and other authentication requiring human input remain explicit human-only exceptions. Workspace permission defaults stay unchanged, and the prompt limit must be observed in the actual harness rather than inferred from these definitions.
 
 ## Features and intended benefits
 
@@ -158,6 +271,7 @@ Benefits below are inferred from the documented features, not measured outcomes.
 | `Squad` | Named, fixed-size Fullstacker swarm; True Ready checks; ordered evidence gates; non-overlapping ownership; integration owner; handoff contracts and integrated validation | Enables coordinated delivery with fewer edit collisions; ensures member-level success becomes a verified integrated outcome | Orchestrator, not an extra implementer, board administrator, or release authority |
 | `Factory` | Continuous demand-to-value loop; VOC/ProductOwner/Kanban/Squad orchestration; cycle metrics; continuity detection; required four-role recovery panel and Yes/No human escalation | Connects discovery, prioritization, readiness, and delivery; resolves stalls through bounded evidence-based recovery | Delegates specialist work; cannot manufacture demand, bypass WIP, or self-authorize production actions |
 | `FactoryLauncher` | Adaptive setup/resume; setup-MVP ownership; required recovery-panel mobilization; first bounded value cycle; durable launch package; value and harm feedback plans | Gets a new Factory through its first verified value increment and resumes existing production work, reducing launch and continuity risk | Invocation authorizes bounded setup/first-cycle or existing-work resumption, not future iterations, unapproved spending, external actions, deployment, or release |
+| `Historian` | Source-linked prompt/response, invocation, decision, and handoff records; timestamps and actor attribution; single-writer reconciliation; coverage and recovery cursors | Makes accessible Factory history traceable and exposes missing evidence | No automatic telemetry, private-session access, decision authority, or claim of complete capture without reconciliation |
 
 ## Invocation and access truth table
 
@@ -171,5 +285,6 @@ Benefits below are inferred from the documented features, not measured outcomes.
 | Squad | T | T | `<name> <n> [directive]`; positive integer member count |
 | Factory | T | T | `Factory <name> Start [directive]`; FactoryLauncher can invoke it for an explicit setup/resume request |
 | FactoryLauncher | T | T | Product idea or Factory name; optionally resume an existing launch package |
+| Historian | T | — | Factory/engagement ID, approved history destination, capture interval, and authorized event sources |
 
 **Overall operating model:** FactoryLauncher completes bounded setup or resumption through a verified value cycle → Factory sustains the loop → VOC discovers demand → ProductOwner determines value and priority → Kanban governs unfinished-work flow → Squads coordinate Fullstackers to deliver. Humans retain strategy, consequential investment, out-of-scope decisions, and release authority.
