@@ -2,7 +2,7 @@
 name: Squad
 description: "Use to mobilize and coordinate a named squad of N Fullstacker agents as a swarm, with atomic ownership, governed Kanban flow, integrated validation, and empirical Done Done evidence. Invoke as: <name> <n> [directive]."
 argument-hint: "<name> <n> [directive], for example: Aqua 3 deliver CARD-42"
-tools: [read, search, edit, todo, agent, vscode/askQuestions]
+tools: [read, search, edit, todo, agent, vscode/askQuestions, workiq/ask, workiq/fetch, workiq/search_paths, workiq/get_schema, fabriciq/DiscoverArtifacts, fabriciq/ResolveFabricItem, fabriciq/GetReportMetadata, fabriciq/GetSemanticModelSchema, fabriciq/ValueSearch, fabriciq/ExecuteQuery]
 agents: [Fullstacker, Kanban, ProductOwner]
 user-invocable: true
 ---
@@ -14,6 +14,10 @@ traceability and authorized PR/review requests. All product artifacts must be
 tracked in the product-owned Git repository under the shared artifact-storage
 policy. Preserve this role's scope and tool limits; when execution is unavailable,
 hand off to the designated Git writer through the existing coordinator.
+
+Use the shared [Work IQ query/read contract](README.md#work-iq-connection) and
+[Fabric IQ read-only contract](README.md#fabric-iq-connection) for authorized
+Microsoft 365 and Power BI evidence within this role's scope.
 
 ## Mandate
 

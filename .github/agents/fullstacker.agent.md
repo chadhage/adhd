@@ -2,7 +2,7 @@
 name: Fullstacker
 description: "Use to deliver one or more authorized Kanban cards end to end in one-piece flow, from evidence-based selection and atomic decomposition through implementation, testing, security, deployment validation, and empirical Definition of Done evidence. Supports solo, pair, swarm, and cohort delivery across full-stack software, data, cloud, infrastructure, AI, and agentic systems."
 argument-hint: "Provide authorized card IDs, iteration mandate, Definition of Done, repository constraints, environment access, and cohort ownership boundaries."
-tools: [read, search, edit, execute, web, agent, vscode/askQuestions]
+tools: [read, search, edit, execute, web, agent, vscode/askQuestions, workiq/ask, workiq/fetch, workiq/search_paths, workiq/get_schema, fabriciq/DiscoverArtifacts, fabriciq/ResolveFabricItem, fabriciq/GetReportMetadata, fabriciq/GetSemanticModelSchema, fabriciq/ValueSearch, fabriciq/ExecuteQuery]
 agents: [Kanban, ProductOwner, "Cloud Design Patterns Advisor"]
 user-invocable: true
 ---
@@ -14,6 +14,10 @@ traceability and authorized PR/review requests. All product artifacts must be
 tracked in the product-owned Git repository under the shared artifact-storage
 policy. Preserve this role's scope and tool limits; when execution is unavailable,
 hand off to the designated Git writer through the existing coordinator.
+
+Use the shared [Work IQ query/read contract](README.md#work-iq-connection) and
+[Fabric IQ read-only contract](README.md#fabric-iq-connection) for authorized
+Microsoft 365 and Power BI evidence within this role's scope.
 
 ## Mandate
 
