@@ -9,6 +9,8 @@
 	- [Resume an Existing Factory](#resume-an-existing-factory)
 - [Agent feature truth table](#agent-feature-truth-table)
 - [Important distinctions](#important-distinctions)
+- [Shared statistical analysis](#shared-statistical-analysis)
+- [Shared Git tracking and PR review](#shared-git-tracking-and-pr-review)
 - [Factory history with Historian](#factory-history-with-historian)
 - [Features and intended benefits](#features-and-intended-benefits)
 - [Invocation and access truth table](#invocation-and-access-truth-table)
@@ -151,6 +153,50 @@ independently checked source identity and empirical reliability for the specific
 scope, using KYC/KYB-style assurance without claiming regulatory certification.
 Keep source verification, observation, interpretation, and authority distinct,
 and route Factory evidence events to Historian.
+
+## Shared statistical analysis
+
+[Statistics 101](../skills/statistics-101/SKILL.md) is a role-neutral reusable skill
+assigned to ProductOwner, AssociateProductOwner, Fullstacker, and VOC, not a new
+agent. It covers study design and sampling, descriptive statistics, probability,
+confidence intervals, hypothesis tests, group comparisons, regression, and
+one-way ANOVA, grounded in Mike LePine's *College Statistics*. The bundled
+[source map](../skills/statistics-101/references/textbook-grounding.md) identifies
+the inspected print export, chapter/page references, access limits, and
+third-party licensing.
+
+Use it on demand for statistical evidence and uncertainty. ProductOwner retains
+product/economic decisions, associates remain within their charters, Fullstacker
+retains engineering verification obligations, and VOC retains research and
+consent boundaries. Neither the skill nor a significant result grants new
+tools, data access, experimentation, investment, or release authority.
+
+## Shared Git tracking and PR review
+
+[Git PR Request Review](../skills/git-pr-request-review/SKILL.md) is assigned to
+all nine agents: FactoryLauncher, Factory, Squad, Fullstacker, ProductOwner,
+AssociateProductOwner, Kanban, VOC, and Historian. Its requested `git-` name is
+deliberately role-neutral because no single agent owns every artifact or review.
+Each role preserves its existing scope and tool limits; a designated Git writer
+performs authorized repository operations when a role cannot execute them.
+
+**All product artifacts must be tracked in a product-owned Git repository**:
+source, tests, documentation/wiki, contracts, research outputs, plans, boards,
+history, decisions, and verification evidence. Verify paths and committed
+revisions at handoff/delivery checkpoints. External systems need faithful,
+privacy-safe Git-tracked exports/snapshots with provenance and sync ownership;
+a URL alone does not satisfy tracking. Follow
+[Artifact Storage and Engagement Contracts](../skills/artifact-storage-and-engagement-contracts/SKILL.md)
+for placement and sensitive-data handling. Missing safe versioning is a visible
+gap, never permission to commit secrets or move product work into this framework.
+
+The skill covers focused PR preparation, draft/readiness, reviewer selection,
+requests/re-requests, feedback, and observed GitHub state. It is grounded in
+[GitHub's pull request documentation](https://docs.github.com/en/pull-requests).
+Git tracking, commit, push, reviewer notification, approval, merge, deployment,
+and release are distinct operations/evidence states with separate authority;
+requesting review does not imply approval or satisfy the Definition of Done.
+This is agent guidance, not an installed enforcement hook or autonomous bot.
 
 ## Squad Buffer Pattern
 

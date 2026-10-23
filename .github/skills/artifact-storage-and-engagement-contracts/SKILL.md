@@ -1,6 +1,6 @@
 ---
 name: artifact-storage-and-engagement-contracts
-description: "Use before an ADHD agent creates, updates, or stores any artifact or engagement contract; retrieve the target workspace's artifact-storage best practices and keep product work outside the ADHD agent framework."
+description: "Use before an ADHD agent creates, updates, or stores any artifact or engagement contract; retrieve storage guidance, require Git tracking for all product artifacts, and keep product work outside the ADHD agent framework."
 ---
 
 # Artifact Storage and Engagement Contracts
@@ -12,10 +12,11 @@ Read this skill before producing or persisting any artifact, including an engage
 1. Identify the workspace or repository that owns the work product. For an ADHD Factory engagement, the product workspace is distinct from this ADHD agent framework and its development agents.
 2. Retrieve the target workspace's applicable storage guidance before writing: inspect its instructions, existing repository conventions, and authoritative product or framework documentation. Determine the recommended locations, naming, format, access, security, and retention rules. Do not rely on memory or assume the current workspace is the destination.
 3. Record the guidance source (including version or URL where available), chosen destination, and any deviation in the engagement contract or artifact index.
-4. Store all work product for another product in its independently owned repository/workspace or another explicitly approved durable destination. This includes contracts, research, plans, backlogs, boards, source, tests, generated files, and reports. Never store product-engagement outputs alongside the ADHD agent definitions or in this framework repository.
+4. Store all work product for another product in its independently owned Git repository/workspace. All product artifacts must be tracked in Git, including contracts, research, plans, backlogs, boards, source, tests, generated deliverables, history, wiki/documentation, and verification evidence. An approved external system also requires a faithful, privacy-safe Git-tracked export/snapshot with provenance and a sync owner; a bare link is not tracking. Never store product-engagement outputs alongside the ADHD agent definitions or in this framework repository.
 5. If the product-owned destination or its guidance is unavailable or unclear, ask the owner before writing files. Do not silently fall back to the ADHD agent repository; a chat response may be returned without persisting an artifact.
 6. Changes whose purpose is to maintain the ADHD Factory framework itself belong under `.github/agents/` (agent definitions and their guide) or `.github/skills/` (reusable methods and policies). Keep framework assets distinct from artifacts for products the agents help create.
 7. Do not persist credentials. Minimize personal and sensitive data and follow the target workspace's access and retention rules.
+8. Follow [Git PR Request Review](../git-pr-request-review/SKILL.md) for artifact versioning and authorized review requests. Record repository identity/visibility, artifact paths, designated writer, branch and commit revisions. Verify tracked and committed state at handoff/delivery checkpoints; untracked, ignored, staged-only, or modified-but-uncommitted deliverables remain pending versioning. Git tracking does not authorize remote publication, reviewer notifications, merging, or release. If the repository or safe permitted artifact form is unavailable, block the affected persistence/delivery and obtain the missing owner decision rather than committing sensitive data or silently using another destination.
 
 ## Engagement Contract Purpose
 
@@ -61,6 +62,7 @@ Record the following as applicable:
 - Every participating agent: role, accountable owner, bounded assignment, decision rights, and explicit acceptance or pending status.
 - Objectives, in-scope and out-of-scope work, deliverables, format/location, acceptance criteria, and expected verification evidence.
 - Artifact-storage guidance source/version, approved workspace and destinations, deviations, inputs and sources, data/access permissions, privacy/security/safety constraints, and handling/retention requirements.
+- Product Git repository identities and visibility/access policy, artifact path mapping, designated Git writer, branch/commit provenance, external-system export/sync ownership where applicable, review policy/reviewers, and separate authority for commit, push, PR/review requests, merge, and release. Record unversioned artifacts as gaps rather than completed deliverables.
 - One shared tool-authorization entry: invoker's session-autonomous, per-invocation, or selective choice; original human authority reference; active harness/session and live grant verification status; selected tools/resources and delegation scope; human-only device/CLI/interactive authentication and other chosen prompt exceptions; validity/revocation terms; and observed initial/subsequent routine confirmation counts. Delegates reference this entry rather than seeking new human approval for unchanged tools. The record is not a host grant; see [Single Tool Authorization](../factory-mvp-and-recovery/SKILL.md#single-tool-authorization).
 - Dependencies, interfaces, timebox/cadence, resource or cost limits, escalation route, stop conditions, amendment triggers, and reopen criteria.
 - Acceptance evidence by party: who accepted what, their authority, date/time, and exact instruction or durable evidence reference. Separate proposal, approval, and observed execution.

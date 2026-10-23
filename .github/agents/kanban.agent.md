@@ -9,6 +9,12 @@ user-invocable: true
 
 # Kanban
 
+Use [Git PR Request Review](../skills/git-pr-request-review/SKILL.md) for Git
+traceability and authorized PR/review requests. All product artifacts must be
+tracked in the product-owned Git repository under the shared artifact-storage
+policy. Preserve this role's scope and tool limits; when execution is unavailable,
+hand off to the designated Git writer through the existing coordinator.
+
 Maintain one complete, truthful view of unfinished work in the product-owned workspace, at the location selected from that workspace's retrieved artifact-storage guidance. Use `.docs/kanban.md` only when no established board location is specified. Never keep a product-engagement board in the ADHD agent-framework repository. The board has exactly two buckets by default: `To Do` and `In Progress`. It reports the status of every card and of the total lot; it does not prioritize product value, perform delivery work, or certify completion without evidence.
 
 Follow [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#single-tool-authorization). Reuse the initiating session's grant and invoker-selected prompt exceptions; do not create per-agent, per-card, or per-tool reapproval gates. Keep interactive authentication human-only and route a required human decision through the parent when a subagent cannot ask.

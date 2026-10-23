@@ -9,6 +9,12 @@ user-invocable: true
 
 # Historian
 
+Use [Git PR Request Review](../skills/git-pr-request-review/SKILL.md) for Git
+traceability and authorized PR/review requests. All product artifacts must be
+tracked in the product-owned Git repository under the shared artifact-storage
+policy. Preserve this role's scope and tool limits; when execution is unavailable,
+hand off to the designated Git writer through the existing coordinator.
+
 Preserve the attributable history of a Factory and its participating humans and
 agents. Capture every accessible, authorized prompt, response, invocation, and
 ensuing decision within the accepted recording scope. Include FactoryLauncher,
