@@ -2,7 +2,7 @@
 name: Kanban
 description: "Use when reconciling the authoritative Kanban board, maintaining the engagement-approved True Ready reserve, triggering replenishment, enforcing WIP and evidence-backed transitions, or reporting every unfinished card and the total lot."
 argument-hint: "Provide the board location or work sources, permitted card updates, and the reporting period or question."
-tools: [read, search, edit, vscode/askQuestions]
+tools: [read, search, edit, vscode/askQuestions, workiq/ask, workiq/fetch, workiq/search_paths, workiq/get_schema, fabriciq/DiscoverArtifacts, fabriciq/ResolveFabricItem, fabriciq/GetReportMetadata, fabriciq/GetSemanticModelSchema, fabriciq/ValueSearch, fabriciq/ExecuteQuery]
 agents: []
 user-invocable: true
 ---
@@ -14,6 +14,10 @@ traceability and authorized PR/review requests. All product artifacts must be
 tracked in the product-owned Git repository under the shared artifact-storage
 policy. Preserve this role's scope and tool limits; when execution is unavailable,
 hand off to the designated Git writer through the existing coordinator.
+
+Use the shared [Work IQ query/read contract](README.md#work-iq-connection) and
+[Fabric IQ read-only contract](README.md#fabric-iq-connection) for authorized
+Microsoft 365 and Power BI evidence within this role's scope.
 
 ## Mandate
 

@@ -75,6 +75,30 @@ The framework's agent definitions and operating guide live in [`.github/agents/`
 
 Workspace security controls for agent tool approvals, trust boundaries, and prompt-injection regression tests are documented in [`.github/SECURITY.md`](.github/SECURITY.md). Review the selected VS Code session harness and its effective sandbox policy; repository hooks and settings do not enforce controls in unsupported or untrusted workspaces.
 
+### Work IQ
+
+The shared [`.mcp.json`](.mcp.json) connects compatible Copilot harnesses to
+Microsoft's hosted Work IQ MCP server. All ADHD agents select only its
+query/read tools for authorized Microsoft 365 evidence; write/action tools
+are not selected. No local npm installation or credentials in Git are needed.
+Start or refresh a Copilot session in this workspace and complete any required
+Microsoft sign-in and tenant consent yourself. A configured connection is not
+proof of authenticated access. See the
+[Work IQ activation and query/read contract](.github/agents/README.md#work-iq-connection).
+
+### Fabric IQ
+
+The same [`.mcp.json`](.mcp.json) configures Microsoft's hosted, read-only
+Fabric IQ MCP server for all ADHD agents. It supports Power BI report and
+semantic-model discovery, metadata/schema inspection, value search, and DAX
+queries. Work IQ is preserved; no credentials or local packages are added.
+Refresh MCP connections or start a new session, locate `fabriciq`, and complete
+Microsoft Entra sign-in and any required tenant consent yourself. Actual
+authenticated data access remains to be verified. See the
+[Fabric IQ activation and read-only contract](.github/agents/README.md#fabric-iq-connection),
+including private-link requirements and the distinction from ontology and
+published data-agent endpoints.
+
 ### Invoker-controlled permissions
 
 Choose the permission level in the active VS Code/Copilot session. All tools and nested subagents follow the host's effective permissions: manual approvals stay manual, while an invoker-granted autonomous mode does not encounter extra repository-forced per-call prompts. The hooks leave valid tool approval decisions unset rather than auto-approving calls themselves.

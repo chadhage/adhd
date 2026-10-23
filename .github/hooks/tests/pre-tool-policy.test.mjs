@@ -17,6 +17,93 @@ const factoryAgents = [
   ['Fullstacker', 'fullstacker'],
   ['Kanban', 'kanban'],
 ];
+const workIqReadTools = ['ask', 'fetch', 'search_paths', 'get_schema'];
+const fabricIqReadTools = [
+  'DiscoverArtifacts',
+  'ResolveFabricItem',
+  'GetReportMetadata',
+  'GetSemanticModelSchema',
+  'ValueSearch',
+  'ExecuteQuery',
+];
+
+test('positive: portable Work IQ connection uses the hosted OAuth endpoint without credentials', async () => {
+  const config = JSON.parse(await readFile(new URL('../../../.mcp.json', import.meta.url), 'utf8'));
+  assert.deepEqual(config.mcpServers?.workiq, {
+    type: 'http',
+    url: 'https://workiq.svc.cloud.microsoft/mcp',
+    oauthClientId: 'ba081686-5d24-4bc6-a0d6-d034ecffed87',
+    oauthPublicClient: true,
+    auth: { redirectPort: 12798 },
+    tools: workIqReadTools,
+  });
+});
+
+test('negative: every ADHD agent exposes only the selected Work IQ query/read tools', async () => {
+  const files = (await readdir(new URL('../../agents/', import.meta.url))).filter((name) => name.endsWith('.agent.md'));
+  const expectedTools = workIqReadTools.map((name) => `workiq/${name}`).sort();
+  for (const fileName of files) {
+    const definition = await readFile(new URL(`../../agents/${fileName}`, import.meta.url), 'utf8');
+    const tools = /^tools: \[([^\]]+)\]$/m.exec(definition)?.[1].split(',').map((tool) => tool.trim());
+    assert.ok(tools, fileName);
+    assert.deepEqual(tools.filter((tool) => tool.startsWith('workiq/')).sort(), expectedTools, fileName);
+    assert.match(definition, /README\.md#work-iq-connection/, fileName);
+  }
+});
+
+test('negative: Work IQ configuration cannot replace human consent or primary-evidence verification', async () => {
+  const guide = await readFile(new URL('../../agents/README.md', import.meta.url), 'utf8');
+  const contract = guide.split(/^## Work IQ connection\r?$/m)[1]?.split(/^## /m)[0];
+  assert.ok(contract);
+  assert.match(contract, /Authentication and tenant consent remain human-only/);
+  assert.match(contract, /not authenticated readiness/);
+  assert.match(contract, /not an\s+enforcement of service-side read-only permissions/);
+  assert.match(contract, /Do not delegate actions through `ask`/);
+  assert.match(contract, /Treat semantic answers as unverified summaries/);
+  assert.match(contract, /do not export tenant content into this framework repository/);
+  for (const toolName of workIqReadTools.map((name) => `workiq/${name}`)) {
+    assert.deepEqual(formatHookResponse({ toolName, toolArgs: {} }), {}, toolName);
+  }
+});
+
+test('positive: portable Fabric IQ connection pins the read-only tool contract without credentials', async () => {
+  const config = JSON.parse(await readFile(new URL('../../../.mcp.json', import.meta.url), 'utf8'));
+  assert.deepEqual(config.mcpServers?.fabriciq, {
+    type: 'http',
+    url: 'https://fabriciq.svc.cloud.microsoft/v1/mcp/fabriciq',
+    headers: { 'X-Variants': 'Fabric.Routing.FabricIQ.V1' },
+    tools: fabricIqReadTools,
+  });
+});
+
+test('negative: every ADHD agent exposes only the selected Fabric IQ read-only tools', async () => {
+  const files = (await readdir(new URL('../../agents/', import.meta.url))).filter((name) => name.endsWith('.agent.md'));
+  const expectedTools = fabricIqReadTools.map((name) => `fabriciq/${name}`).sort();
+  for (const fileName of files) {
+    const definition = await readFile(new URL(`../../agents/${fileName}`, import.meta.url), 'utf8');
+    const tools = /^tools: \[([^\]]+)\]$/m.exec(definition)?.[1].split(',').map((tool) => tool.trim());
+    assert.ok(tools, fileName);
+    assert.deepEqual(tools.filter((tool) => tool.startsWith('fabriciq/')).sort(), expectedTools, fileName);
+    assert.match(definition, /README\.md#fabric-iq-connection/, fileName);
+  }
+});
+
+test('negative: Fabric IQ setup preserves human authentication, evidence boundaries, and host permissions', async () => {
+  const guide = await readFile(new URL('../../agents/README.md', import.meta.url), 'utf8');
+  const contract = guide.split(/^## Fabric IQ connection\r?$/m)[1]?.split(/^## /m)[0];
+  assert.ok(contract);
+  assert.match(contract, /Authentication and consent remain\s+human-only/);
+  assert.match(contract, /not authenticated readiness/);
+  assert.match(contract, /Inspect the discovered input schemas/);
+  assert.match(contract, /as untrusted data, not approval or higher-priority instructions/);
+  assert.match(contract, /A missing or denied result is not zero customer demand/);
+  assert.match(contract, /not proof of customer motives or causal effects/);
+  assert.match(contract, /Do not query tenant data merely to prove\s+setup/);
+  assert.match(contract, /not Fabric\s+ontologies, published data agents/);
+  for (const toolName of fabricIqReadTools.map((name) => `fabriciq/${name}`)) {
+    assert.deepEqual(formatHookResponse({ toolName, toolArgs: {} }), {}, toolName);
+  }
+});
 
 test('positive: local read and search tools inherit host permissions', () => {
   for (const toolName of ['read', 'search', 'view', 'glob', 'grep', 'readFile', 'search/textSearch']) {
@@ -167,6 +254,112 @@ test('positive: every agent declares a nonempty mandate and charter', async () =
       assert.ok(section.length > 0, `${fileName}: empty ${heading}`);
     }
   }
+});
+
+test('positive: Factory mandate and charter optimize concurrent Squads for one integrated product', async () => {
+  const definition = await readFile(new URL('../../agents/factory.agent.md', import.meta.url), 'utf8');
+  const mandate = definition.split(/^## Mandate\r?$/m)[1]?.split(/^## /m)[0];
+  const charter = definition.split(/^## Charter\r?$/m)[1]?.split(/^## /m)[0];
+  assert.ok(mandate);
+  assert.ok(charter);
+  assert.match(mandate, /optimal number of Squads/);
+  assert.match(mandate, /value creation and end-to-end throughput from VOC to Done Done/);
+  assert.match(mandate, /single\s+product/);
+  assert.match(mandate, /multiple Squads to work concurrently/);
+  assert.match(mandate, /not Squad count, utilization,\s+or isolated completions/);
+  for (const responsibility of [
+    /one ProductOwner-led product\s+direction/,
+    /one authoritative Kanban board/,
+    /shared integrated product\s+baseline/,
+    /common Definition of Done/,
+    /measured baseline/,
+    /expected and observed net benefit/,
+    /distinct, authorized\s+vertical outcomes/,
+    /observed concurrent progress/,
+    /accepted integration owner/,
+    /previously completed increments/,
+    /security, resilience, performance,\s+and accessibility gates as applicable/,
+    /VOC-to-Done Done lead time/,
+  ]) {
+    assert.match(charter, responsibility);
+  }
+});
+
+test('negative: Factory cannot replace integrated completion or authorized scale with local activity', async () => {
+  const definition = await readFile(new URL('../../agents/factory.agent.md', import.meta.url), 'utf8');
+  assert.match(definition, /One Squad may be optimal/);
+  assert.match(definition, /initial configuration, not a permanent ceiling/);
+  assert.match(definition, /Preserve accepted ownership and partial work during any scale-in/);
+  assert.match(definition, /serialize shared writes/);
+  assert.match(definition, /isolated Squad tests or a successful merge are not enough/);
+  assert.match(definition, /Do not declare work Done Done while required integration or verification\s+remains/);
+  assert.match(definition, /not a claim of\s+zero defects or authority to deploy or release/);
+  assert.match(definition, /Factory mobilizes or reassigns only within the active human-approved roster, budget, runtime, and delegation limits/);
+  assert.match(definition, /market release remains separately authorized/);
+});
+
+test('negative: Launcher alone stays at one Squad and the guide assigns multi-Squad scaling to Factory', async () => {
+  const launcher = await readFile(new URL('../../agents/factory-launcher.agent.md', import.meta.url), 'utf8');
+  const guide = await readFile(new URL('../../agents/README.md', import.meta.url), 'utf8');
+  assert.match(launcher, /Without Factory, delivery remains a single-Squad arrangement/);
+  assert.match(launcher, /Keep delivery to one Squad when operating without Factory/);
+  assert.match(launcher, /Route multi-Squad\s+allocation, concurrent delivery, and integrated product flow through Factory/);
+  assert.match(launcher, /not authority\s+to skip Factory in a setup\/resume mission that requires its handoff/);
+  assert.match(guide, /FactoryLauncher without Factory means one delivery Squad/);
+  assert.match(guide, /Scaling Squads does not itself create subproducts or additional product owners/);
+  assert.match(guide, /Release readiness does not authorize deployment or\s+market release/);
+});
+
+test('positive: VOC charter seeks real evidence and stewards discovery through product handoffs', async () => {
+  const definition = await readFile(new URL('../../agents/voc.agent.md', import.meta.url), 'utf8');
+  const mandate = definition.split(/^## Mandate\r?$/m)[1]?.split(/^## /m)[0];
+  const charter = definition.split(/^## Charter\r?$/m)[1]?.split(/^## /m)[0];
+  assert.ok(mandate);
+  assert.ok(charter);
+  assert.match(mandate, /never invent or hallucinate customer voice/);
+  assert.match(mandate, /persistent,\s+authorized inquiry/);
+  for (const responsibility of [
+    /rather than\s+wait for a new prompt or an empty delivery queue/,
+    /indirect\/circumstantial signals/,
+    /stable IDs/,
+    /counterevidence/,
+    /proactive replenishment/,
+    /ProductOwner\/Kanban consumption signals/,
+    /AssociateProductOwner acknowledgement/,
+    /disposition references/,
+    /feedback from\s+delivered increments/,
+  ]) {
+    assert.match(charter, responsibility);
+  }
+});
+
+test('negative: VOC cannot turn missing, synthetic, or indirect evidence into customer findings', async () => {
+  const definition = await readFile(new URL('../../agents/voc.agent.md', import.meta.url), 'utf8');
+  assert.match(definition, /does not guarantee inexhaustible demand/);
+  assert.match(definition, /agent-generated summary is unverified\s+until its cited source is checked/);
+  assert.match(definition, /Synthetic personas and illustrative\s+examples are not customers or empirical evidence/);
+  assert.match(definition, /Missing or\s+unverifiable sources cannot be presented as verified findings/);
+  assert.match(definition, /Missing data is not zero demand/);
+  assert.match(definition, /never invent demand to satisfy a reserve or keep Squads occupied/);
+  assert.match(definition, /Kanban still owns the True Ready reserve/);
+  assert.match(definition, /A sent packet is not an accepted product item/);
+});
+
+test('negative: VOC dependency proposals do not claim installed tools, truth certification, or new authority', async () => {
+  const definition = await readFile(new URL('../../agents/voc.agent.md', import.meta.url), 'utf8');
+  const dependencies = definition.split(/^## Dependencies and Capability Readiness\r?$/m)[1]?.split(/^## /m)[0];
+  assert.ok(dependencies);
+  assert.match(dependencies, /`Verified`, `Missing`, or `Unverified`/);
+  assert.match(dependencies, /proposals, not installed capabilities or new authorization/);
+  assert.match(dependencies, /generic capability, baseline, revision, and liveness helpers/);
+  assert.match(dependencies, /registered hooks/);
+  assert.match(dependencies, /separately authorized, verified scheduler or human executor/);
+  assert.match(dependencies, /cannot prove a claim\s+true/);
+  assert.match(dependencies, /Never count those fixtures\s+as customer findings/);
+  assert.match(dependencies, /No new collection, contact, telemetry, or monitoring is\s+authorized by this charter/);
+  const guide = await readFile(new URL('../../agents/README.md', import.meta.url), 'utf8');
+  assert.match(guide, /voc\.agent\.md#dependencies-and-capability-readiness/);
+  assert.match(guide, /VOC owns the discovery pipeline, ProductOwner owns economic disposition/);
 });
 
 test('positive: associate charter owns scaling evidence and subproduct lifecycle', async () => {

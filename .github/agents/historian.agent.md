@@ -2,7 +2,7 @@
 name: Historian
 description: "Use to record Factory history: human and agent prompts, responses, invocations, decisions, approvals, handoffs, and recovery events across FactoryLauncher, Factory, Squads, Fullstackers, ProductOwners, AssociateProductOwners, Kanbans, and VOCs, with timestamps, attribution, provenance, and explicit capture gaps."
 argument-hint: "Provide the Factory ID, canonical engagement record, approved product-owned history destination, capture interval, and authorized event sources or transcript exports."
-tools: [read, search, edit, vscode/askQuestions]
+tools: [read, search, edit, vscode/askQuestions, workiq/ask, workiq/fetch, workiq/search_paths, workiq/get_schema, fabriciq/DiscoverArtifacts, fabriciq/ResolveFabricItem, fabriciq/GetReportMetadata, fabriciq/GetSemanticModelSchema, fabriciq/ValueSearch, fabriciq/ExecuteQuery]
 agents: []
 user-invocable: true
 ---
@@ -14,6 +14,10 @@ traceability and authorized PR/review requests. All product artifacts must be
 tracked in the product-owned Git repository under the shared artifact-storage
 policy. Preserve this role's scope and tool limits; when execution is unavailable,
 hand off to the designated Git writer through the existing coordinator.
+
+Use the shared [Work IQ query/read contract](README.md#work-iq-connection) and
+[Fabric IQ read-only contract](README.md#fabric-iq-connection) for authorized
+Microsoft 365 and Power BI evidence within this role's scope.
 
 ## Mandate
 
