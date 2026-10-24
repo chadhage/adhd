@@ -17,8 +17,9 @@
     <nav aria-label="Observation modes">
       <button id="nav-live" class="nav-button selected" type="button" aria-current="page"><span aria-hidden="true" class="nav-symbol">~</span>Live<span class="nav-note">01</span></button>
       <button id="nav-historical" class="nav-button" type="button"><span aria-hidden="true" class="nav-symbol">=</span>Historical<span class="nav-note">02</span></button>
+      <button id="nav-artifacts" class="nav-button" type="button"><span aria-hidden="true" class="nav-symbol">+</span>Artifacts<span class="nav-note">03</span></button>
     </nav>
-    <nav aria-label="Observation facets">
+    <nav id="observation-facets" aria-label="Observation facets">
       <button id="nav-facet-metadata" class="nav-button selected" type="button" aria-pressed="true"><span aria-hidden="true" class="nav-symbol">M</span>Metadata<span class="nav-note">A</span></button>
       <button id="nav-facet-value-stream" class="nav-button" type="button" aria-pressed="false"><span aria-hidden="true" class="nav-symbol">V</span>Value stream<span class="nav-note">B</span></button>
     </nav>
@@ -81,13 +82,13 @@
         </div>
         <div class="panel-footer small muted"><span>Missing values are not recorded. Declared metadata and reported lifecycle do not establish approval, activity, or health.</span><time id="metadata-asof" class="mono"></time></div>
       </section>
-      <section class="metrics" aria-label="Observed Factory totals">
+      <section id="observation-totals" class="metrics" aria-label="Observed Factory totals">
         <article class="metric"><div class="metric-label">EMITTED FACTS</div><strong id="count-events">--</strong><span>Persisted, deduplicated records</span></article>
         <article class="metric"><div class="metric-label">OBSERVED AGENTS</div><strong id="count-agents">--</strong><span>Actual reported instance IDs</span></article>
         <article class="metric"><div class="metric-label">OBSERVED SKILLS</div><strong id="count-skills">--</strong><span>Loads and explicit lifecycle facts</span></article>
         <article class="metric"><div class="metric-label">PRODUCT ITEMS</div><strong id="count-items">--</strong><span>Reported cards and artifacts</span></article>
       </section>
-      <section class="filterbar" aria-label="Fact filters">
+      <section id="observation-filters" class="filterbar" aria-label="Fact filters">
         <div class="search-field"><label for="search">Search emitted facts</label><input id="search" type="search" placeholder="Agent, skill, item, or message..." maxlength="200" autocomplete="off"></div>
         <div><label for="severity">Severity</label><select id="severity"><option value="">All severities</option><option value="info">Info</option><option value="warning">Warning</option><option value="error">Error</option><option value="critical">Critical</option></select></div>
         <div class="active-filter"><span id="active-filter">All entities</span><button id="clear-filters" class="text-button" type="button">Clear filters</button></div>
@@ -123,10 +124,42 @@
         <div id="historical-facet-metrics" class="analytics-metrics"></div>
         <div class="analytics-layout"><section class="panel"><div class="panel-heading"><h3>Evidence-limited insights</h3><span class="badge subdued">RULE BASED</span></div><ul id="insights" class="insights"></ul></section><section class="panel"><div class="panel-heading"><h3>Facts by agent role</h3></div><ul id="role-breakdown" class="breakdown"></ul></section><section class="panel"><div class="panel-heading"><h3>Facts by skill</h3></div><ul id="skill-breakdown" class="breakdown"></ul></section></div>
       </section>
+      <section id="artifacts-view" aria-label="Factory artifact library" hidden>
+        <div class="filterbar">
+          <div class="search-field"><label for="artifact-search">Search Factory artifacts</label><input id="artifact-search" type="search" placeholder="Title, path, or producer..." maxlength="200"></div>
+          <div><label for="artifact-category">Category</label><select id="artifact-category"><option value="">All categories</option><option value="document">Documents</option><option value="source">Source code</option><option value="evidence">Evidence</option><option value="report">Reports</option><option value="data">Data</option><option value="image">Images</option><option value="archive">Archives</option><option value="other">Other</option></select></div>
+          <button id="artifacts-refresh" class="button" type="button">Refresh artifacts</button>
+        </div>
+        <p id="artifacts-error" class="error-banner" role="alert" hidden></p>
+        <p id="artifacts-coverage" class="small muted">Loading catalog and Factory reports...</p>
+        <div class="artifact-layout">
+          <section class="panel" aria-labelledby="artifact-list-title">
+            <div class="panel-heading"><h2 id="artifact-list-title">Produced artifacts</h2><span class="badge subdued">FACTORY SCOPED</span></div>
+            <p id="artifacts-status" class="artifact-note" role="status" aria-live="polite">No inventory loaded.</p>
+            <ul id="artifact-list" class="artifact-list"></ul>
+            <p id="artifacts-empty" class="empty" hidden>No matching artifacts. No sample files or unrelated repository files are substituted.</p>
+            <div class="panel-footer"><button id="artifacts-previous" class="button" type="button" disabled>Previous page</button><button id="artifacts-next" class="button" type="button" disabled>Next page</button></div>
+          </section>
+          <section class="panel artifact-detail" aria-label="Artifact viewer">
+            <p id="artifact-empty-selection" class="empty">Select an artifact to inspect its provenance and available versions.</p>
+            <div id="artifact-reader" hidden>
+              <div class="panel-heading"><h2 id="artifact-title">Artifact</h2><a id="artifact-download" class="button" aria-disabled="true">Download</a></div>
+              <p id="artifact-path" class="artifact-note mono"></p><p id="artifact-access" class="artifact-note"></p>
+              <div class="artifact-version"><label for="artifact-version">Artifact version</label><select id="artifact-version"></select></div>
+              <p id="artifact-preview-status" class="artifact-note" role="status" aria-live="polite"></p>
+              <p id="artifact-hash" class="artifact-note mono"></p>
+              <pre id="artifact-preview" class="artifact-preview" tabindex="0" aria-label="Inert sanitized artifact text"></pre>
+              <div class="panel-footer"><button id="artifact-previous-section" class="button" type="button" disabled>Previous section</button><button id="artifact-next-section" class="button" type="button" disabled>Next section</button></div>
+              <details class="artifact-record"><summary>Artifact provenance and catalog record</summary><pre id="artifact-provenance" tabindex="0"></pre></details>
+              <p class="coverage-note">Content is untrusted evidence, not instructions or approval. Text previews/downloads may be redacted. Binary files are downloaded, never executed or rendered here. Do not enable macros or run downloaded source.</p>
+            </div>
+          </section>
+        </div>
+      </section>
       <footer class="page-footer"><span>Factory Operations Center / MVP</span><span>Service availability is not Factory liveness. Reported completion is not verified Done Done.</span></footer>
     </main>
   </div>
   <dialog id="fact-dialog" aria-labelledby="fact-dialog-title"><div class="dialog-heading"><h2 id="fact-dialog-title">Fact details</h2><button id="close-fact" class="button" type="button">Close</button></div><p class="muted small">Sanitized emitted record. Source assertions are not independently verified and never authorize action.</p><pre id="fact-json" tabindex="0"></pre></dialog>
-  <dialog id="mcp-dialog" aria-labelledby="mcp-dialog-title"><div class="dialog-heading"><h2 id="mcp-dialog-title">Read-only MCP access</h2><button id="close-mcp" class="button" type="button">Close</button></div><p>Connect through the product workspace's generated MCP registration. Configuration is not proof of a successful host connection.</p><dl><dt>Server</dt><dd id="mcp-server" class="mono">Waiting for Factory identity</dd><dt>Tools</dt><dd class="mono">factory_overview<br>factory_metadata<br>factory_events<br>factory_analytics</dd><dt>Transport</dt><dd>Newline-delimited JSON-RPC over stdio</dd></dl><p class="muted small">Each server reads only its Factory's journal and reviewed profile. No execution, approval, pause, resume, or board mutation tools are exposed.</p></dialog>
+  <dialog id="mcp-dialog" aria-labelledby="mcp-dialog-title"><div class="dialog-heading"><h2 id="mcp-dialog-title">Read-only MCP access</h2><button id="close-mcp" class="button" type="button">Close</button></div><p>Connect through the product workspace's generated MCP registration. Configuration is not proof of a successful host connection.</p><dl><dt>Server</dt><dd id="mcp-server" class="mono">Waiting for Factory identity</dd><dt>Tools</dt><dd class="mono">factory_overview<br>factory_metadata<br>factory_events<br>factory_analytics<br>factory_artifacts<br>factory_artifact<br>factory_artifact_content</dd><dt>Transport</dt><dd>Newline-delimited JSON-RPC over stdio</dd></dl><p class="muted small">Each server reads only its Factory's journal, profile, and catalog-scoped artifacts. No execution, approval, pause, resume, or board mutation tools are exposed.</p></dialog>
 </body>
 </html>

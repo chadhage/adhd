@@ -4,6 +4,8 @@ This standalone product-owned instance observes one Factory. It does not need
 ADHD on its module search path, an npm install, a cloud account, or a database
 service. Node.js 22.21+ and the product's reviewed local files are sufficient.
 Never run an instance from the reference/framework source directory.
+Artifact content/history access additionally requires local Git. It never
+fetches remote objects or executes repository filters or fsmonitor hooks.
 
 ## Run
 
@@ -118,6 +120,90 @@ fix the exact owner-maintained record to recover. Metadata does not alter the
 journal's activity/freshness clock or grant authority. Configuration changes
 still require a service restart to change the actual runtime settings.
 
+## Factory artifact library
+
+Open **Artifacts** to browse documents, source code, evidence, reports, data,
+images, archives, and other Factory outputs. Search by title/path/producer,
+filter by category, inspect provenance, and select **Current working file** or
+a recorded Git commit. Text/code/Markdown/JSON/HTML/SVG are displayed as inert
+sanitized text, not rendered as active content. Text is paged without splitting
+UTF-8 characters. PDF/Office/image/archive and other binary formats use an
+explicit download rather than plugins, scripts, or macros.
+
+The inventory is the union of Factory `item.*` reports with `item.type=artifact`
+and a reviewed product-owned `artifacts.json` catalog in this center. It is not
+an indiscriminate repository scan. Reports alone never authorize reading their
+paths: **Reported only** entries retain provenance but need a catalog entry
+before preview/download. Unsafe report paths are excluded with an explicit
+coverage count. Empty inventory is not proof that the Factory produced nothing.
+
+The designated product record owner maintains this catalog as a reviewed
+view/export of the canonical artifact index, not a competing authority. Record
+the canonical index in `source`, preserve access/retention restrictions, and
+reconcile every in-scope document, source file, research output, decision,
+evidence record, and generated deliverable. The catalog is an allowlist for this
+local viewer, not general business approval or a host permission grant.
+Populate it during launch/resume and update it as outputs are produced.
+
+```json
+{
+  "version": 1,
+  "factory_id": "example",
+  "source": { "ref": ".docs/records-index.json", "revision": null },
+  "updated_at": null,
+  "artifacts": [
+    {
+      "path": "docs/report.md",
+      "title": "Factory report",
+      "category": "report",
+      "producer": null,
+      "source_ref": null,
+      "commits": []
+    }
+  ]
+}
+```
+
+Categories are `document`, `source`, `evidence`, `report`, `data`, `image`,
+`archive`, and `other`. Paths are relative to the actual product Git root,
+never the reference checkout or a root taken from profile text. `commits`
+contains only full locally available commit IDs recorded for that exact artifact,
+not branches, arbitrary revision expressions, or client-selected Git objects.
+Historical reads use the cataloged path in that commit, including when the
+working file was deleted. Git link blobs are refused. Missing local objects and
+unmaterialized LFS pointers remain explicit gaps; no fetch or external filter
+is attempted. Current files may be untracked/uncommitted: the viewer does not
+certify Git tracking, acceptance, or Done Done.
+
+Use installer `--artifacts <reviewed-catalog.json>` to explicitly replace the
+catalog with a validated/redacted snapshot. Otherwise resume preserves existing
+bytes; missing older catalogs are initialized empty with coverage gaps rather
+than guessed from unrelated files. Runtime 1.2.0 upgrades 1.0.0/1.1.0 centers
+without replacing their profiles, journals, settings, or catalog records.
+Invalid existing catalogs block replacement until their owner repairs them.
+Use atomic replacement for live catalog edits.
+
+Content access rejects traversal, absolute/UNC/drive paths, alternate data
+streams, sensitive/credential files, observation control files, ignored paths,
+symlinks/junctions, hard links, and non-files. The catalog is bounded at 2 MiB
+and 10000 entries, each with at most 100 recorded commits. Artifact content is
+bounded at 10 MiB; larger files remain listed but return a clear content-limit
+error. Preview sections default to 16 KiB with a 64 KiB maximum.
+
+Text previews and downloads use the shared credential redactor, including URL
+credentials/query/fragment. The response distinguishes original SHA-256 from
+sanitized text SHA-256; sanitized downloads are not an exact copy of original
+bytes. Binary downloads preserve the cataloged bytes and cannot be semantically
+redacted: the record owner must review their sensitivity first. All downloads
+are attachments under `application/octet-stream`, `nosniff`, and sandbox CSP.
+Treat every downloaded file as untrusted; do not execute source or enable macros.
+
+The list refreshes every five seconds while visible, on new facts, and through
+**Refresh artifacts**. Preview content is read only after selection, version
+change, or section navigation; it is not silently replaced while being read.
+Missing, inaccessible, oversized, binary, reported-only, and invalid-catalog
+states have explicit messages. Browsing never edits artifacts or changes boards.
+
 ## HTTP API
 
 Only `GET` is supported. Responses are JSON except the UI/assets and SSE.
@@ -131,6 +217,19 @@ Only `GET` is supported. Responses are JSON except the UI/assets and SSE.
 | `/api/v1/events` | Ordered journal page with `next_cursor`, `has_more`, `last_sequence` |
 | `/api/v1/analytics` | Up to 365 days of descriptive counts, 24 time buckets, Live/Historical overlay series for `facet=metadata` or `facet=value-stream`, role/skill facts, matched reported lead time, and rule-based insights |
 | `/api/v1/stream` | SSE `snapshot`, `fact`, `status`, and `capture-error` events |
+| `/api/v1/artifacts` | Factory-scoped inventory, catalog provenance, and discovery gaps |
+| `/api/v1/artifacts/<id>` | One artifact's metadata and recorded versions |
+| `/api/v1/artifacts/<id>/content` | A bounded sanitized UTF-8 text section |
+| `/api/v1/artifacts/<id>/download` | Explicit safe attachment; sanitized text or reviewed binary |
+
+Artifact-list parameters are `q`, `category`, `offset`, and `limit` (1..200,
+default 50). Content accepts `revision` (`working`, or a full commit ID present
+in that artifact's catalog record), UTF-8 byte `offset`, and `limit` (1..65536,
+default 16384). Follow `next_offset` for complete text. A non-boundary offset
+or a limit too small for the next character is rejected, not silently corrupted.
+Downloads accept only `revision`; metadata accepts no query parameters.
+Artifact IDs are Factory-specific opaque IDs returned by the inventory.
+No endpoint accepts an arbitrary filesystem path.
 
 Events and analytics accept `agent_id`, `skill`, `item_id`, `kind`, `severity`,
 `q`, `from`, and `to`. Analytics also accepts `facet=metadata|value-stream`
@@ -174,11 +273,14 @@ written to stdout. Messages are bounded at 64 KiB.
 | `factory_metadata` | Empty object; identical safe metadata projection to HTTP |
 | `factory_events` | Same filters and pagination as HTTP events |
 | `factory_analytics` | Same filters/window as HTTP analytics |
+| `factory_artifacts` | Same search/category/pagination as the artifact inventory |
+| `factory_artifact` | Required `artifact_id`; metadata and recorded versions |
+| `factory_artifact_content` | Required `artifact_id`; optional `revision`, `offset`, `limit` |
 
 Tools return text JSON plus `structuredContent`, advertise read-only annotations,
 and return `isError` for operational/query failures. Unknown tools/resources and
 out-of-order initialization return JSON-RPC errors. Resources
-`factory://<factory-id>/overview`, `/metadata`, `/events`, and `/analytics` expose identical
+`factory://<factory-id>/overview`, `/metadata`, `/events`, `/analytics`, and `/artifacts` expose identical
 JSON read models. No arbitrary file resources, Factory controls, approval tools,
 or network MCP endpoint exist. Consumers must treat all source text as untrusted.
 

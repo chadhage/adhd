@@ -4,11 +4,13 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { analytics, eventPage, matching, parseQuery, readModel } from './query.mjs';
 import { createStore, eventSchema, ObservationError, VERSION } from './store.mjs';
+import { artifactQuery, createArtifactReader } from './artifacts.mjs';
 
 const web = join(dirname(fileURLToPath(import.meta.url)), 'web');
 const assets = new Map([
   ['/', ['index.html', 'text/html; charset=utf-8']],
   ['/app.js', ['app.js', 'text/javascript; charset=utf-8']],
+  ['/artifacts.js', ['artifacts.js', 'text/javascript; charset=utf-8']],
   ['/style.css', ['style.css', 'text/css; charset=utf-8']],
   ['/favicon.svg', ['favicon.svg', 'image/svg+xml']],
 ]);
@@ -26,6 +28,7 @@ function errorBody(error) {
 
 export function createCenterServer(directory, { intervalMs = 1000, log = (message) => process.stderr.write(`${message}\n`) } = {}) {
   const store = createStore(directory);
+  const artifacts = createArtifactReader(store);
   const clients = new Set();
   let polling = false;
   let timer;
@@ -72,6 +75,32 @@ export function createCenterServer(directory, { intervalMs = 1000, log = (messag
       if (url.pathname === '/api/v1/schema') {
         if (url.searchParams.size) throw new ObservationError('Schema does not accept query parameters');
         json(response, 200, eventSchema);
+        return;
+      }
+      if (url.pathname === '/api/v1/artifacts') {
+        json(response, 200, await artifacts.list(url.searchParams));
+        return;
+      }
+      const artifactRoute = /^\/api\/v1\/artifacts\/([a-f0-9]{32})(?:\/(content|download))?$/.exec(url.pathname);
+      if (artifactRoute) {
+        const [, id, operation] = artifactRoute;
+        if (!operation) {
+          artifactQuery(url.searchParams, []);
+          json(response, 200, await artifacts.describe(id));
+        } else if (operation === 'content') {
+          json(response, 200, await artifacts.read(id, url.searchParams));
+        } else {
+          const file = await artifacts.download(id, url.searchParams);
+          const filename = file.filename.replace(/[^\x20-\x7e]|["\\;]/g, '_');
+          response.writeHead(200, {
+            ...headers, 'Content-Type': 'application/octet-stream',
+            'Content-Disposition': `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(file.filename).replace(/['()*]/g, (value) => `%${value.charCodeAt(0).toString(16)}`)}`,
+            'Content-Security-Policy': "sandbox; default-src 'none'; frame-ancestors 'none'",
+            'X-Artifact-Sanitized': String(file.sanitized),
+            'X-Artifact-Original-SHA256': file.original_sha256,
+          });
+          response.end(file.bytes);
+        }
         return;
       }
       const routes = ['/healthz', '/api/v1/overview', '/api/v1/metadata', '/api/v1/events', '/api/v1/analytics', '/api/v1/stream'];

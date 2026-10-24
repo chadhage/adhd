@@ -1,3 +1,5 @@
+import { createArtifactLibrary } from './artifacts.js';
+
 const $ = (id) => document.getElementById(id);
 const state = {
   snapshot: null, events: [], filters: {}, mode: 'live', facet: 'metadata', entityTab: 'agents',
@@ -27,9 +29,15 @@ function showError(message) {
 async function api(path, query = {}) {
   const response = await fetch(`${path}${Object.keys(query).length ? `?${new URLSearchParams(query)}` : ''}`, { cache: 'no-store', headers: { Accept: 'application/json' } });
   const data = await response.json();
-  if (!response.ok) throw new Error(data.error ?? `Operations Center returned HTTP ${response.status}`);
+  if (!response.ok) {
+    const error = new Error(data.error ?? `Operations Center returned HTTP ${response.status}`);
+    error.status = response.status;
+    throw error;
+  }
   return data;
 }
+
+const artifactLibrary = createArtifactLibrary({ api, element });
 
 function connection(connected, text) {
   $('connection').classList.toggle('connected', connected);
@@ -404,27 +412,38 @@ async function loadAnalytics() {
 }
 
 function applyView() {
+  const browsing = state.mode === 'artifacts';
   const live = state.mode === 'live';
+  const historical = state.mode === 'historical';
   const metadata = state.facet === 'metadata';
+  $('artifacts-view').hidden = !browsing;
+  $('observation-facets').hidden = browsing;
+  $('observation-totals').hidden = browsing;
+  $('observation-filters').hidden = browsing;
+  document.querySelector('.overlay-heading').hidden = browsing;
+  document.querySelector('.overlay-panel').hidden = browsing;
   $('live-view').hidden = !live;
-  $('historical-view').hidden = live;
+  $('historical-view').hidden = !historical;
   $('live-internals').hidden = !live || !metadata;
   $('live-value-stream').hidden = !live || metadata;
   $('assignment-panel').hidden = !live || metadata;
-  $('factory-metadata').hidden = !metadata;
+  $('factory-metadata').hidden = browsing || !metadata;
   $('nav-live').classList.toggle('selected', live);
-  $('nav-historical').classList.toggle('selected', !live);
-  if (live) {
-    $('nav-live').setAttribute('aria-current', 'page');
-    $('nav-historical').removeAttribute('aria-current');
-  } else {
-    $('nav-historical').setAttribute('aria-current', 'page');
-    $('nav-live').removeAttribute('aria-current');
+  $('nav-historical').classList.toggle('selected', historical);
+  $('nav-artifacts').classList.toggle('selected', browsing);
+  for (const name of ['live', 'historical', 'artifacts']) {
+    if (state.mode === name) $(`nav-${name}`).setAttribute('aria-current', 'page');
+    else $(`nav-${name}`).removeAttribute('aria-current');
   }
   $('nav-facet-metadata').classList.toggle('selected', metadata);
   $('nav-facet-value-stream').classList.toggle('selected', !metadata);
   $('nav-facet-metadata').setAttribute('aria-pressed', String(metadata));
   $('nav-facet-value-stream').setAttribute('aria-pressed', String(!metadata));
+  if (browsing) {
+    $('page-title').textContent = 'Factory artifacts';
+    $('page-description').textContent = 'Browse cataloged documents, source code, evidence, reports, and other Factory outputs.';
+    return;
+  }
   const title = `${live ? 'Live' : 'Historical'} × ${metadata ? 'Metadata' : 'Value stream'}`;
   $('page-title').textContent = title;
   $('page-description').textContent = metadata
@@ -435,10 +454,12 @@ function applyView() {
 function setMode(mode) {
   state.mode = mode;
   applyView();
-  loadAnalytics();
+  if (mode === 'artifacts') artifactLibrary.refresh();
+  else loadAnalytics();
 }
 
 function setFacet(facet) {
+  if (state.mode === 'artifacts') state.mode = 'live';
   state.facet = facet;
   applyView();
   loadAnalytics();
@@ -447,7 +468,8 @@ function setFacet(facet) {
 async function refreshSnapshot() {
   try {
     renderSnapshot(await api('/api/v1/overview'));
-    loadAnalytics();
+    if (state.mode === 'artifacts') artifactLibrary.refresh();
+    else loadAnalytics();
   } catch (error) { showError(`Snapshot unavailable: ${error.message}`); metadataError(error.message); }
 }
 
@@ -498,6 +520,7 @@ function connectStream(after) {
 
 $('nav-live').addEventListener('click', () => setMode('live'));
 $('nav-historical').addEventListener('click', () => setMode('historical'));
+$('nav-artifacts').addEventListener('click', () => setMode('artifacts'));
 $('nav-facet-metadata').addEventListener('click', () => setFacet('metadata'));
 $('nav-facet-value-stream').addEventListener('click', () => setFacet('value-stream'));
 document.querySelector('a[href="#coverage"]').addEventListener('click', () => {
@@ -564,7 +587,7 @@ for (const id of ['fact-dialog', 'mcp-dialog']) {
   });
 }
 const freshnessTimer = setInterval(renderFreshness, 1000);
-window.addEventListener('pagehide', () => { state.stream?.close(); clearInterval(freshnessTimer); });
+window.addEventListener('pagehide', () => { state.stream?.close(); clearInterval(freshnessTimer); artifactLibrary.stop(); });
 
 try {
   const snapshot = await api('/api/v1/overview');

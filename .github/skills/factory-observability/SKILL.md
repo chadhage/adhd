@@ -62,10 +62,16 @@ is not authority. Product acceptance remains with the established roles.
    The installed `profile.json` is product-owned, not a generated runtime asset.
    Without `--profile`, resume preserves it byte-for-byte. Missing profiles,
    including 1.0.0 instances, are backfilled with the verified product workspace
-   and explicit nulls; runtime 1.1.0 preserves existing identity/settings/facts.
+   and explicit nulls; runtime 1.2.0 preserves existing identity/settings/facts.
    Supplying `--profile` explicitly replaces the profile with the reviewed
    normalized record. Malformed existing metadata blocks revalidation rather
    than being silently erased.
+   Reconcile the Factory's existing canonical artifact index with its designated
+   writer and supply its reviewed viewer catalog with
+   `--artifacts <reviewed-catalog.json>`. Use the
+   [artifact library contract](scripts/runtime/README.md#factory-artifact-library).
+   Without this argument, preserve the product-owned `artifacts.json` byte-for-byte;
+   initialize only a missing catalog, with explicit empty/coverage state.
 3. If the actual session ID is unavailable, omit `--session-id`, explicitly
    record the unbound capture gap, and use attributable explicit emissions.
    Do not fabricate a session ID. Re-run with the actual ID when available.
@@ -181,6 +187,33 @@ surfaces use the same validated journal and projection functions:
 - **API:** versioned read-only HTTP JSON and replayable Server-Sent Events.
 - **MCP:** read-only stdio tools and `factory://<id>/...` resources; no mutation
   tools or network MCP listener.
+
+## Factory-produced artifacts
+
+Every produced document, source file, evidence item, research output, report,
+decision record, and other deliverable must be discoverable through the
+Factory's canonical artifact index and its reviewed observation catalog.
+Coordinate additions/corrections through the designated product record writer,
+preserving canonical source location/revision and permitted access/retention.
+The viewer catalog is a scoped projection/allowlist, not a second authority.
+All participating roles use this protocol; they do not broaden tool grants or
+copy product files into ADHD.
+
+Emit `item.created`/`item.updated` with `item.type=artifact` and its product-relative
+path as `item.id`. The viewer shows these reports automatically, but report text
+alone cannot authorize content access. Reconcile reported-only entries into the
+reviewed catalog; never conceal that gap or claim exhaustive capture from hooks.
+Include full recorded commit IDs for historical versions where available.
+Do not pass branch expressions, private paths, secrets, or unreviewed binaries.
+
+The **Artifacts** view provides search, category filters, current/recorded
+version selection, inert text/code/evidence previews, provenance/hashes, and
+explicit downloads for binary documents. API `/api/v1/artifacts` and MCP
+`factory_artifacts`, `factory_artifact`, and `factory_artifact_content` use the
+same scoped reader. No arbitrary file/Git-object browser, remote fetch, artifact
+execution, or mutation is exposed. Text may be redacted; binaries require owner
+review and remain untrusted. Keep large/ignored/missing/LFS/link and
+uncataloged-content states explicit.
 
 The loopback-only HTTP origin is local OS-account scope, **not** multi-user
 authentication or a hostile-local-process security boundary. Do not port-forward

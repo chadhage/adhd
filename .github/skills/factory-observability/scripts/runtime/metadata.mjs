@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { lstat, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { MAX_EVENT_BYTES, MAX_JOURNAL_BYTES, ObservationError, redact, requireObject, sensitivePath, timestamp } from './store.mjs';
+import { MAX_ARTIFACT_BYTES, MAX_CATALOG_BYTES, MAX_PREVIEW_BYTES } from './artifacts.mjs';
 
 export const MAX_PROFILE_BYTES = 16 * 1024;
 const idPattern = /^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$/;
@@ -126,6 +127,7 @@ export function factoryMetadata(events, config, snapshot, evidence) {
       configuration: join(location, 'center.json'),
       runtime_manifest: join(location, 'manifest.json'),
       profile: join(location, 'profile.json'),
+      artifacts_catalog: join(location, 'artifacts.json'),
       journal: join(location, 'events.jsonl'),
       inbox: join(location, 'inbox'),
       session_registry: join('.factory', 'observability', 'registry.json'),
@@ -138,13 +140,14 @@ export function factoryMetadata(events, config, snapshot, evidence) {
       events_api: '/api/v1/events',
       analytics_api: '/api/v1/analytics',
       stream_api: '/api/v1/stream',
+      artifacts_api: '/api/v1/artifacts',
       http_binding: '127.0.0.1, local OS-account trust; not shared-user authentication',
       mcp_server: `factory-observability-${config.factory_id}`,
       mcp_transport: 'stdio',
-      mcp_tools: ['factory_overview', 'factory_metadata', 'factory_events', 'factory_analytics'],
+      mcp_tools: ['factory_overview', 'factory_metadata', 'factory_events', 'factory_analytics', 'factory_artifacts', 'factory_artifact', 'factory_artifact_content'],
       mcp_metadata_resource: `factory://${config.factory_id}/metadata`,
     },
-    limits: { event_bytes: MAX_EVENT_BYTES, journal_bytes: MAX_JOURNAL_BYTES, profile_bytes: MAX_PROFILE_BYTES },
+    limits: { event_bytes: MAX_EVENT_BYTES, journal_bytes: MAX_JOURNAL_BYTES, profile_bytes: MAX_PROFILE_BYTES, artifact_bytes: MAX_ARTIFACT_BYTES, artifact_catalog_bytes: MAX_CATALOG_BYTES, artifact_preview_bytes: MAX_PREVIEW_BYTES },
     capture: { ...snapshot.coverage },
     observed_inventory: { ...snapshot.counts },
     provenance: {

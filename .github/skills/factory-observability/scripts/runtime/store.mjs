@@ -3,7 +3,7 @@ import { readFileSync, realpathSync } from 'node:fs';
 import { lstat, mkdir, open, readdir, readFile, stat, unlink } from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
 
-export const VERSION = '1.1.0';
+export const VERSION = '1.2.0';
 export const MAX_EVENT_BYTES = 16 * 1024;
 export const MAX_JOURNAL_BYTES = 32 * 1024 * 1024;
 export const kinds = [
