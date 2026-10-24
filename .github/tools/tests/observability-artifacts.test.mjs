@@ -181,6 +181,17 @@ test('positive: approved current text is read and downloaded inertly with hashes
   assert.equal((await ws.reader.describe(artifact.id)).versions[0], 'working');
 });
 
+test('positive: artifact reads use canonical filesystem paths for Windows case variants', async (t) => {
+  const ws = await workspace(t);
+  const revision = await commit(ws, 'docs/result.md', 'Recorded artifact\n');
+  await file(ws, 'docs/result.md', 'Current artifact\n');
+  const [artifact] = await register(ws, [entry('docs/result.md', { commits: [revision] })]);
+  const root = process.platform === 'win32' ? ws.root.toUpperCase() : ws.root;
+  const reader = createArtifactReader(createStore(join(root, '.factory', 'observability', 'alpha')));
+  assert.equal((await reader.read(artifact.id)).content, 'Current artifact\n');
+  assert.equal((await reader.read(artifact.id, { revision })).content, 'Recorded artifact\n');
+});
+
 test('positive: UTF-8 preview sections round-trip complete source without splitting characters', async (t) => {
   const ws = await workspace(t);
   const text = 'A\u20ac\ud83d\ude03\u6f22Z';

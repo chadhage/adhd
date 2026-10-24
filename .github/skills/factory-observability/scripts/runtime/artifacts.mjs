@@ -122,8 +122,8 @@ function categoryFor(path) {
 }
 
 export function createArtifactReader(store) {
-  const directory = realpathSync(store.directory);
-  const root = realpathSync(resolve(directory, '..', '..', '..'));
+  const directory = realpathSync.native(store.directory);
+  const root = realpathSync.native(resolve(directory, '..', '..', '..'));
   const factoryId = store.config.factory_id;
   const idFor = (path) => hash(`${factoryId}\0${path.toLowerCase()}`).slice(0, 32);
 

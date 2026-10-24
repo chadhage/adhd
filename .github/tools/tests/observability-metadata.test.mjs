@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, realpath, rm, symlink, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import test from 'node:test';
 import { install, parseArgs } from '../../skills/factory-observability/scripts/install.mjs';
@@ -235,9 +235,10 @@ test('positive: live metadata updates arrive without new facts, even while the f
 
 test('positive: installer creates a product-owned metadata profile and preserves owner edits byte-for-byte on resume', async (t) => {
   const root = await product(t);
-  const first = await install({ productRoot: root, factoryId: 'alpha', sessionId: 'actual-session' });
+  const inputRoot = process.platform === 'win32' ? root.toUpperCase() : root;
+  const first = await install({ productRoot: inputRoot, factoryId: 'alpha', sessionId: 'actual-session' });
   const stored = JSON.parse(await readFile(join(first.directory, 'profile.json')));
-  assert.equal(stored.product.workspace, root);
+  assert.equal(stored.product.workspace, await realpath(root));
   assert.equal(stored.mission, null);
   const path = join(first.directory, 'profile.json');
   const content = JSON.stringify(profile(), null, 4) + '\n';
@@ -261,7 +262,7 @@ test('positive: legacy 1.0.0 centers backfill metadata and upgrade runtime while
   assert.equal(after.config.created_at, before.created_at);
   assert.equal(after.config.stale_after_ms, 30000);
   assert.ok((await readFile(join(first.directory, 'events.jsonl'), 'utf8')).startsWith(journal));
-  assert.equal((await readModel(after)).snapshot.metadata.profile.product.workspace, root);
+  assert.equal((await readModel(after)).snapshot.metadata.profile.product.workspace, await realpath(root));
 });
 
 test('positive: explicit reviewed profiles can be supplied through the installer CLI', async (t) => {

@@ -175,6 +175,10 @@ unmaterialized LFS pointers remain explicit gaps; no fetch or external filter
 is attempted. Current files may be untracked/uncommitted: the viewer does not
 certify Git tracking, acceptance, or Done Done.
 
+Repository bindings use native canonical paths so equivalent Windows path
+casing resolves to the same product root without weakening link or cross-root
+checks.
+
 Use installer `--artifacts <reviewed-catalog.json>` to explicitly replace the
 catalog with a validated/redacted snapshot. Otherwise resume preserves existing
 bytes; missing older catalogs are initialized empty with coverage gaps rather
