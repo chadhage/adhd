@@ -38,6 +38,27 @@ keyboard dismissal, and facts arriving during a history request are retained.
 Revalidation preserves the existing label/freshness configuration; amend
 `center.json` under the product owner's review rather than silently resetting it.
 
+### Responsive layout
+
+The UI supports viewports from 320 CSS pixels through desktop widths. The fixed
+desktop sidebar scrolls independently on short windows and becomes an in-flow
+navigation grid on tablets and phones. Metric grids reduce to two columns and
+then one; filters, panel actions, metadata, dialogs, and artifact panes reflow
+without page-level horizontal scrolling. Long identifiers and paths wrap.
+Artifact source previews retain their own scrollable area for unwrapped code.
+Phone and tablet controls have a minimum 44-pixel height. The comparison chart
+redraws at its actual container width so axis labels remain readable on resize.
+
+For browser regression checks, exercise Live and Historical with both facets,
+expanded metadata, fact/MCP dialogs, and the Artifacts list and reader at 320,
+375, 480, 760, 768, 1024, and 1440 CSS pixels, including a short desktop window.
+Confirm the measured viewport matches the requested width, the document's
+`scrollWidth` does not exceed `clientWidth`, controls and labels are not clipped,
+and long synthetic identifiers do not widen panels. Check keyboard navigation,
+dialog dismissal, and a 320-CSS-pixel reflow equivalent to 400% zoom on a
+1280-pixel-wide viewport. Internal code-preview scrolling is intentional;
+browser checks do not establish full assistive-technology compatibility.
+
 ## Factory metadata card and profile
 
 The **Factory metadata** card is visible on the Metadata facet in Live and
