@@ -9,6 +9,7 @@ let searchTimer;
 let refreshTimer;
 let analyticsRequest = 0;
 let metadataSignature;
+let chartData;
 const number = (value) => new Intl.NumberFormat().format(value);
 const time = (value) => new Date(value).toLocaleTimeString([], { hour12: false });
 const dateTime = (value) => new Date(value).toLocaleString([], { hour12: false });
@@ -309,29 +310,33 @@ function svgElement(tag, attributes, text) {
   return node;
 }
 
-function seriesPath(buckets, maximum) {
+function seriesPath(buckets, maximum, width) {
   return buckets.map((bucket, index) => {
-    const x = 40 + index * (910 / Math.max(1, buckets.length - 1));
+    const x = 40 + index * ((width - 50) / Math.max(1, buckets.length - 1));
     const y = 150 - (bucket.value / maximum) * 125;
     return `${index ? 'L' : 'M'}${x} ${y}`;
   }).join(' ');
 }
 
 function renderChart(data) {
+  chartData = data;
   const svg = $('overlay-chart');
+  const width = svg.clientWidth;
+  if (!width) return;
+  svg.setAttribute('viewBox', `0 0 ${width} 180`);
   const live = data.overlay?.live?.buckets ?? [];
   const historical = data.overlay?.historical?.buckets ?? [];
   const maximum = Math.max(1, ...live.map((bucket) => bucket.value), ...historical.map((bucket) => bucket.value));
   const metric = data.overlay?.metric === 'in_progress_items' ? 'In-progress cards' : 'Active agents';
   const nodes = [
     svgElement('title', {}, `${metric} with Live and Historical series superimposed`),
-    svgElement('line', { x1: 35, x2: 950, y1: 150, y2: 150 }),
-    svgElement('line', { x1: 35, x2: 950, y1: 20, y2: 20 }),
+    svgElement('line', { x1: 35, x2: width - 10, y1: 150, y2: 150 }),
+    svgElement('line', { x1: 35, x2: width - 10, y1: 20, y2: 20 }),
     svgElement('text', { x: 0, y: 25 }, String(maximum)),
     svgElement('text', { x: 10, y: 154 }, '0'),
   ];
-  if (historical.length) nodes.push(svgElement('path', { d: seriesPath(historical, maximum), class: 'historical-series' }));
-  if (live.length) nodes.push(svgElement('path', { d: seriesPath(live, maximum), class: 'live-series' }));
+  if (historical.length) nodes.push(svgElement('path', { d: seriesPath(historical, maximum, width), class: 'historical-series' }));
+  if (live.length) nodes.push(svgElement('path', { d: seriesPath(live, maximum, width), class: 'live-series' }));
   svg.replaceChildren(...nodes);
   $('chart-metric').textContent = metric;
   svg.setAttribute('aria-label', `${metric} with Live last-hour and Historical window series superimposed on 24 normalized buckets.`);
@@ -586,8 +591,10 @@ for (const id of ['fact-dialog', 'mcp-dialog']) {
     }
   });
 }
+const chartObserver = new ResizeObserver(() => { if (chartData) renderChart(chartData); });
+chartObserver.observe($('overlay-chart'));
 const freshnessTimer = setInterval(renderFreshness, 1000);
-window.addEventListener('pagehide', () => { state.stream?.close(); clearInterval(freshnessTimer); artifactLibrary.stop(); });
+window.addEventListener('pagehide', () => { state.stream?.close(); clearInterval(freshnessTimer); chartObserver.disconnect(); artifactLibrary.stop(); });
 
 try {
   const snapshot = await api('/api/v1/overview');
