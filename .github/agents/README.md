@@ -469,9 +469,18 @@ ADHD at the product's `.factory/observability/<factory-id>`. A distinct local
 browser center/API port and MCP stdio registration serve that Factory. Existing
 workspace settings and other MCP/security hooks are preserved.
 
-The UI offers real-time troubleshooting, pause/follow, filters, provenance and
-agent/skill/product-item drill-down, plus analytics/insights. Versioned read-only
-JSON/SSE API and read-only MCP tools use the identical journal/projections.
+The UI offers Live and Historical modes crossed with Metadata and Value stream
+facets, with Live and Historical series superimposed on one graph. Real-time
+troubleshooting, pause/follow, filters, provenance, and agent/skill/product-item
+drill-down remain in Live mode. Versioned read-only JSON/SSE API and read-only
+MCP tools use the identical journal/projections.
+Its comprehensive **Factory metadata** card stays visible on the Metadata facet and
+describes identity/mission, product/repository/workspace, accountable owners,
+governance, declared roster, reported lifecycle, configuration, interfaces,
+coverage, and provenance. The reviewed product-owned `profile.json` is populated
+from accepted launch records and preserved on resume. Unknown fields are explicit;
+profile-only edits stream without inventing activity. Read the same metadata at
+`/api/v1/metadata` or through MCP `factory_metadata`.
 All nine framework roles emit scoped lifecycle and product facts via an
 execution-capable writer or unique-file inbox. Optional verified product-host
 hooks capture allowlisted metadata only, not transcripts or tool payloads.

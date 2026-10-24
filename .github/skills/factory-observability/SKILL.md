@@ -47,10 +47,25 @@ is not authority. Product acceptance remains with the established roles.
    Substitute verified invocation-derived values; the example is not a default.
    Use `--label` for a safe display label. `--stale-after-ms` sets a display-only
    freshness threshold (default 60000 ms, not a production SLA or halt deadline).
+   Prepare the Factory's reviewed metadata profile from accepted product records
+   and pass `--profile <approved-profile.json>`. Include mission,
+   product/repository/workspace, accountable owner labels, canonical governance
+   references, operating/resource limits, declared agent/skill/Squad roster,
+   source revision, and update time; use the
+   [profile contract](scripts/runtime/README.md#factory-metadata-card-and-profile).
+   Do not invent missing values, infer owners from account paths, dump environment
+   variables, or re-interview the owner for facts already in accepted records.
    Reuse the same ID on resume. The installer is revision-aware and preserves
    journals, inboxes, existing settings, and local source edits (conflicts block
    upgrade rather than overwrite). It refuses a product inside or containing the
    reference tree, non-root/non-Git destinations, and linked managed paths.
+   The installed `profile.json` is product-owned, not a generated runtime asset.
+   Without `--profile`, resume preserves it byte-for-byte. Missing profiles,
+   including 1.0.0 instances, are backfilled with the verified product workspace
+   and explicit nulls; runtime 1.1.0 preserves existing identity/settings/facts.
+   Supplying `--profile` explicitly replaces the profile with the reviewed
+   normalized record. Malformed existing metadata blocks revalidation rather
+   than being silently erased.
 3. If the actual session ID is unavailable, omit `--session-id`, explicitly
    record the unbound capture gap, and use attributable explicit emissions.
    Do not fabricate a session ID. Re-run with the actual ID when available.
@@ -88,6 +103,12 @@ is not authority. Product acceptance remains with the established roles.
    Provision before claiming launch/resume ready; unsupported host capture is
    visible degraded coverage, not permission to hide the gap or halt unrelated
    authorized safe work.
+   Verify the **Factory metadata card** on the Metadata facet in Live and Historical
+   modes and read the same metadata through `/api/v1/metadata`, `factory_metadata`, or
+   `factory://<factory-id>/metadata`. Distinguish declared roster and reported
+   lifecycle from observed agents and verified health. Retain missing-field
+   warnings and source/digest provenance. Profile-only changes refresh through
+   the stream without manufacturing an activity event.
 8. Follow [Git PR Request Review](../git-pr-request-review/SKILL.md) to version
    generated sources/configuration and safe retained facts at the product's
    checkpoints. The installer does not stage, commit, publish, or initialize Git.
@@ -151,8 +172,12 @@ See the installed [runtime guide](scripts/runtime/README.md) for API, replay,
 analytics, MCP protocol, limits, recovery, and troubleshooting. All three
 surfaces use the same validated journal and projection functions:
 
-- **UI:** live stream with pause/follow, filters, history, provenance details,
-  agent/skill/item drill-down, coverage, freshness, and analytics/insights mode.
+- **UI:** two modes (Live, Historical) and two facets (Metadata, Value stream).
+  Operators switch Live×Metadata, Historical×Metadata, Live×Value stream, and
+  Historical×Value stream. A superimposed graph draws Live (last hour) over
+  Historical (1 day–1 year) for the selected facet. The Factory metadata card
+  stays on the Metadata facet. Live stream pause/follow, filters, provenance,
+  coverage, and freshness remain available in Live mode.
 - **API:** versioned read-only HTTP JSON and replayable Server-Sent Events.
 - **MCP:** read-only stdio tools and `factory://<id>/...` resources; no mutation
   tools or network MCP listener.

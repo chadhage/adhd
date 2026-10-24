@@ -132,9 +132,35 @@ test('negative: analytics does not replace unmatched completions or absent telem
 });
 
 test('negative: analytics rejects unbounded or inverted windows and excludes outside-window facts', () => {
-  assert.throws(() => analytics(events(), config, { from: '2020-01-01T00:00:00Z' }, fixedNow), /31 days/);
+  assert.throws(() => analytics(events(), config, { from: '2020-01-01T00:00:00Z' }, fixedNow), /365 days/);
   assert.throws(() => analytics(events(), config, { from: '2026-10-24T00:00:00Z' }, fixedNow), /ordered/);
   assert.equal(analytics(events(), config, { from: '2026-10-23T11:59:20Z', to: '2026-10-23T12:00:00Z' }, fixedNow).counts.reported_completions, 0);
+});
+
+test('positive: analytics accepts a 1-year window and superimposes Live and Historical stocks', () => {
+  const data = analytics(events(), config, { from: '2025-10-23T12:00:00Z', facet: 'metadata' }, fixedNow);
+  assert.equal(data.facet, 'metadata');
+  assert.equal(data.overlay.metric, 'active_agents');
+  assert.equal(data.overlay.live.buckets.length, 24);
+  assert.equal(data.overlay.historical.buckets.length, 24);
+  assert.equal(data.overlay.historical.snapshot.internals.squads_observed, null);
+  assert.ok(data.overlay.live.buckets.every((bucket) => Number.isInteger(bucket.value)));
+});
+
+test('positive: value-stream facet overlays in-progress cards and keeps assignments evidence-backed', () => {
+  const data = analytics(records([
+    fact('agent.started'),
+    fact('item.created', { item: item('CARD-9', 'todo'), occurred_at: '2026-10-23T11:00:00Z' }),
+    fact('item.updated', { item: item('CARD-9', 'in-progress'), occurred_at: '2026-10-23T11:10:00Z' }),
+  ]), config, { facet: 'value-stream' }, fixedNow);
+  assert.equal(data.overlay.metric, 'in_progress_items');
+  assert.equal(data.overlay.historical.snapshot.value_stream.in_progress, 1);
+  assert.equal(data.overlay.historical.snapshot.value_stream.assignments[0].item_id, 'CARD-9');
+});
+
+test('negative: event pages reject a mode facet instead of ignoring it', () => {
+  assert.throws(() => eventPage(events(), { facet: 'metadata' }), /facet/);
+  assert.throws(() => parseQuery({ facet: 'live' }), /facet/);
 });
 
 test('positive: even matched samples use the actual median and critical facts appear in error buckets', () => {

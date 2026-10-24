@@ -1,11 +1,12 @@
 const $ = (id) => document.getElementById(id);
 const state = {
-  snapshot: null, events: [], filters: {}, mode: 'live', entityTab: 'agents',
+  snapshot: null, events: [], filters: {}, mode: 'live', facet: 'metadata', entityTab: 'agents',
   paused: false, pending: 0, hasMore: false, request: 0, stream: null, captureError: false,
 };
 let searchTimer;
 let refreshTimer;
 let analyticsRequest = 0;
+let metadataSignature;
 const number = (value) => new Intl.NumberFormat().format(value);
 const time = (value) => new Date(value).toLocaleTimeString([], { hour12: false });
 const dateTime = (value) => new Date(value).toLocaleString([], { hour12: false });
@@ -60,6 +61,85 @@ function renderCoverage() {
   $('ingestion-errors').replaceChildren(...coverage.ingestion_errors.map((error) => element('li', `${error.file}: ${error.error}`)));
 }
 
+const metadataLabel = (key) => key.replaceAll('_', ' ').replace(/\b(api|mcp|id|ids|json|http)\b/gi, (word) => word.toUpperCase()).replace(/^./, (letter) => letter.toUpperCase());
+
+function metadataValue(value, path) {
+  if (value === null) return element('span', 'Not recorded', 'metadata-missing');
+  if (Array.isArray(value)) {
+    if (!value.length) return element('span', 'None recorded', 'metadata-missing');
+    const list = element('ul', undefined, 'metadata-list');
+    for (const [index, entry] of value.entries()) {
+      const item = element('li');
+      item.append(metadataValue(entry, `${path}.${index}`));
+      list.append(item);
+    }
+    return list;
+  }
+  if (typeof value === 'object') {
+    const list = element('dl', undefined, 'metadata-values');
+    for (const [key, entry] of Object.entries(value)) {
+      const detail = element('dd');
+      detail.dataset.metadataPath = `${path}.${key}`;
+      detail.append(metadataValue(entry, `${path}.${key}`));
+      list.append(element('dt', metadataLabel(key)), detail);
+    }
+    return list;
+  }
+  return element('span', String(value));
+}
+
+function renderMetadata(metadata) {
+  state.snapshot.metadata = metadata;
+  $('metadata-loading').hidden = true;
+  $('metadata-content').hidden = false;
+  $('metadata-warning').hidden = true;
+  const recorded = metadata.provenance.profile_status === 'recorded';
+  const incomplete = metadata.provenance.profile_missing_fields.length > 0;
+  $('metadata-state').textContent = !recorded ? 'PROFILE NOT RECORDED' : incomplete ? 'PARTIAL PROFILE' : 'PROFILE RECORDED';
+  $('metadata-state').className = `badge ${!recorded || incomplete ? 'warning' : 'recent'}`;
+  $('metadata-asof').dateTime = metadata.provenance.collected_at;
+  $('metadata-asof').textContent = `AS OF ${dateTime(metadata.provenance.collected_at)}`;
+  const collectedField = $('metadata-groups').querySelector('[data-metadata-path="provenance.collected_at"]');
+  if (collectedField) collectedField.textContent = metadata.provenance.collected_at;
+  const { collected_at: collectedAt, ...provenance } = metadata.provenance;
+  const signature = JSON.stringify({ ...metadata, provenance });
+  if (signature === metadataSignature) return;
+  metadataSignature = signature;
+  $('metadata-mission').textContent = metadata.profile.mission ?? 'Mission: Not recorded';
+  const summary = [
+    ['Factory ID', metadata.identity.factory_id], ['Product', metadata.profile.product.name],
+    ['Factory owner', metadata.profile.owners.factory], ['Operations owner', metadata.profile.owners.operations],
+    ['Last reported lifecycle', metadata.lifecycle.reported_state], ['Center runtime', metadata.configuration.runtime_version],
+    ['Product owner', metadata.profile.owners.product], ['Workspace', metadata.profile.product.workspace],
+  ];
+  $('metadata-summary').replaceChildren(...summary.map(([label, value]) => {
+    const group = element('div');
+    const detail = element('dd');
+    detail.append(metadataValue(value, label));
+    group.append(element('dt', label), detail);
+    return group;
+  }));
+  $('metadata-groups').replaceChildren(...Object.entries(metadata).map(([key, value]) => {
+    const group = element('section', undefined, 'metadata-group');
+    const title = element('h3', metadataLabel(key));
+    title.id = `metadata-group-${key}`;
+    group.setAttribute('aria-labelledby', title.id);
+    const content = element('div');
+    content.dataset.metadataPath = key;
+    content.append(metadataValue(value, key));
+    group.append(title, content);
+    return group;
+  }));
+}
+
+function metadataError(message) {
+  $('metadata-state').textContent = state.snapshot?.metadata ? 'LAST KNOWN METADATA' : 'UNAVAILABLE';
+  $('metadata-state').className = 'badge error';
+  $('metadata-loading').hidden = true;
+  $('metadata-warning').textContent = message;
+  $('metadata-warning').hidden = false;
+}
+
 function renderEntities() {
   if (!state.snapshot) return;
   const focused = document.activeElement?.dataset?.entity;
@@ -94,6 +174,34 @@ function renderEntities() {
   if (focused) [...$('entity-list').querySelectorAll('button')].find((button) => button.dataset.entity === focused)?.focus({ preventScroll: true });
 }
 
+function renderAssignments(operations) {
+  const rows = operations?.value_stream?.assignments ?? [];
+  $('assignment-list').replaceChildren(...rows.map((row) => {
+    const item = element('li');
+    item.append(element('span', `${row.role} / ${row.agent_id}`, 'entity-title'), element('span', `${row.item_id} / ${row.title} / ${row.state}`, 'entity-subtitle'));
+    return item;
+  }));
+  $('assignment-empty').hidden = rows.length > 0;
+}
+
+function renderOperations(operations) {
+  if (!operations) return;
+  const internals = operations.internals;
+  $('live-agents').textContent = number(internals.agent_count);
+  $('live-active-agents').textContent = number(internals.active_agents);
+  $('live-squads').textContent = internals.squads_observed == null ? 'Not recorded' : number(internals.squads_observed);
+  $('live-mcp').textContent = number(internals.mcp_calls);
+  $('live-tools').textContent = number(internals.tool_events);
+  $('live-hooks').textContent = number(internals.hook_facts);
+  $('live-workflows').textContent = number(internals.workflows.length);
+  $('live-uptime').textContent = internals.factory_uptime_ms == null ? 'Not recorded' : duration(internals.factory_uptime_ms);
+  $('live-todo').textContent = number(operations.value_stream.todo);
+  $('live-in-progress').textContent = number(operations.value_stream.in_progress);
+  $('live-blocked').textContent = number(operations.value_stream.blocked);
+  $('live-completed').textContent = number(operations.value_stream.completed);
+  renderAssignments(operations);
+}
+
 function renderSnapshot(snapshot) {
   const changed = state.snapshot?.last_sequence !== snapshot.last_sequence;
   state.snapshot = snapshot;
@@ -104,6 +212,8 @@ function renderSnapshot(snapshot) {
   for (const name of ['events', 'agents', 'skills', 'items']) $(`count-${name}`).textContent = number(snapshot.counts[name]);
   renderFreshness();
   renderCoverage();
+  renderMetadata(snapshot.metadata);
+  renderOperations(snapshot.operations);
   if (changed) renderEntities();
 }
 
@@ -180,7 +290,7 @@ async function loadEvents(older = false) {
 function updateFilters() {
   const labels = Object.entries(state.filters).map(([key, value]) => `${key}: ${value}`);
   $('active-filter').textContent = labels.length ? labels.join(' / ') : 'All entities';
-  if (state.mode === 'analytics') loadAnalytics();
+  loadAnalytics();
   loadEvents();
 }
 
@@ -191,30 +301,33 @@ function svgElement(tag, attributes, text) {
   return node;
 }
 
+function seriesPath(buckets, maximum) {
+  return buckets.map((bucket, index) => {
+    const x = 40 + index * (910 / Math.max(1, buckets.length - 1));
+    const y = 150 - (bucket.value / maximum) * 125;
+    return `${index ? 'L' : 'M'}${x} ${y}`;
+  }).join(' ');
+}
+
 function renderChart(data) {
-  const svg = $('volume-chart');
-  const maximum = Math.max(1, ...data.buckets.map((bucket) => bucket.events));
+  const svg = $('overlay-chart');
+  const live = data.overlay?.live?.buckets ?? [];
+  const historical = data.overlay?.historical?.buckets ?? [];
+  const maximum = Math.max(1, ...live.map((bucket) => bucket.value), ...historical.map((bucket) => bucket.value));
+  const metric = data.overlay?.metric === 'in_progress_items' ? 'In-progress cards' : 'Active agents';
   const nodes = [
-    svgElement('title', {}, `${data.counts.events} emitted facts, ${data.counts.errors} error or critical facts in 24 time buckets`),
+    svgElement('title', {}, `${metric} with Live and Historical series superimposed`),
     svgElement('line', { x1: 35, x2: 950, y1: 150, y2: 150 }),
     svgElement('line', { x1: 35, x2: 950, y1: 20, y2: 20 }),
     svgElement('text', { x: 0, y: 25 }, String(maximum)),
     svgElement('text', { x: 10, y: 154 }, '0'),
   ];
-  data.buckets.forEach((bucket, index) => {
-    const x = 40 + index * 38;
-    const height = bucket.events / maximum * 125;
-    const rect = svgElement('rect', { x, y: 150 - height, width: 25, height, rx: 2, class: 'fact-bar' });
-    rect.append(svgElement('title', {}, `${dateTime(bucket.from)}: ${bucket.events} facts, ${bucket.errors} error/critical`));
-    nodes.push(rect);
-    if (bucket.errors) {
-      const errorHeight = bucket.errors / maximum * 125;
-      nodes.push(svgElement('rect', { x, y: 150 - errorHeight, width: 25, height: errorHeight, rx: 2, class: 'error-bar' }));
-    }
-  });
+  if (historical.length) nodes.push(svgElement('path', { d: seriesPath(historical, maximum), class: 'historical-series' }));
+  if (live.length) nodes.push(svgElement('path', { d: seriesPath(live, maximum), class: 'live-series' }));
   svg.replaceChildren(...nodes);
-  svg.setAttribute('aria-label', `${data.counts.events} emitted facts and ${data.counts.errors} error/critical facts; each of 24 bars is one equal time bucket.`);
-  $('chart-caption').textContent = `${dateTime(data.window.from)} to ${dateTime(data.window.to)} / 24 equal time buckets`;
+  $('chart-metric').textContent = metric;
+  svg.setAttribute('aria-label', `${metric} with Live last-hour and Historical window series superimposed on 24 normalized buckets.`);
+  $('chart-caption').textContent = `Live ${dateTime(data.overlay.live.window.from)}–${dateTime(data.overlay.live.window.to)} superimposed on Historical ${dateTime(data.overlay.historical.window.from)}–${dateTime(data.overlay.historical.window.to)}`;
 }
 
 function renderBreakdown(id, rows) {
@@ -235,12 +348,40 @@ function renderBreakdown(id, rows) {
   }));
 }
 
+function historicalFacetMetrics(data) {
+  const snapshot = data.overlay?.historical?.snapshot;
+  if (!snapshot) {
+    $('historical-facet-metrics').replaceChildren();
+    return;
+  }
+  const rows = state.facet === 'value-stream'
+    ? [
+      ['To Do', snapshot.value_stream.todo],
+      ['In progress', snapshot.value_stream.in_progress],
+      ['Blocked', snapshot.value_stream.blocked],
+      ['Reported done', snapshot.value_stream.completed],
+    ]
+    : [
+      ['Agents', snapshot.internals.agent_count],
+      ['Active agents', snapshot.internals.active_agents],
+      ['MCP calls (last hour at window end)', snapshot.internals.mcp_calls],
+      ['Factory uptime', snapshot.internals.factory_uptime_ms == null ? 'Not recorded' : duration(snapshot.internals.factory_uptime_ms)],
+    ];
+  $('historical-facet-metrics').replaceChildren(...rows.map(([label, value]) => {
+    const article = element('article', undefined, 'mini-metric');
+    article.append(element('span', label), element('strong', String(value)));
+    return article;
+  }));
+}
+
 async function loadAnalytics() {
   const request = ++analyticsRequest;
-  const from = new Date(Date.now() - Number($('window').value) * 3_600_000).toISOString();
-  $('chart-caption').textContent = 'Loading analysis window...';
+  const end = Date.now();
+  const from = new Date(end - Number($('window').value) * 86_400_000).toISOString();
+  const to = new Date(end).toISOString();
+  $('chart-caption').textContent = 'Loading superimposed Live and Historical series...';
   try {
-    const data = await api('/api/v1/analytics', { ...state.filters, from });
+    const data = await api('/api/v1/analytics', { ...state.filters, from, to, facet: state.facet });
     if (request !== analyticsRequest) return;
     $('window-events').textContent = number(data.counts.events);
     $('window-errors').textContent = number(data.counts.errors);
@@ -248,6 +389,7 @@ async function loadAnalytics() {
     $('lead-time').textContent = duration(data.lead_time.median_ms);
     $('lead-sample').textContent = `n = ${data.lead_time.sample_size} matched / ${data.lead_time.unmatched_completions} unmatched`;
     renderChart(data);
+    historicalFacetMetrics(data);
     $('insights').replaceChildren(...data.insights.map((insight) => {
       const item = element('li');
       item.append(element('span', insight.level.toUpperCase(), `badge ${insight.level === 'error' ? 'error' : insight.level === 'warning' ? 'warning' : 'subdued'}`), element('span', insight.text));
@@ -261,32 +403,62 @@ async function loadAnalytics() {
   }
 }
 
+function applyView() {
+  const live = state.mode === 'live';
+  const metadata = state.facet === 'metadata';
+  $('live-view').hidden = !live;
+  $('historical-view').hidden = live;
+  $('live-internals').hidden = !live || !metadata;
+  $('live-value-stream').hidden = !live || metadata;
+  $('assignment-panel').hidden = !live || metadata;
+  $('factory-metadata').hidden = !metadata;
+  $('nav-live').classList.toggle('selected', live);
+  $('nav-historical').classList.toggle('selected', !live);
+  if (live) {
+    $('nav-live').setAttribute('aria-current', 'page');
+    $('nav-historical').removeAttribute('aria-current');
+  } else {
+    $('nav-historical').setAttribute('aria-current', 'page');
+    $('nav-live').removeAttribute('aria-current');
+  }
+  $('nav-facet-metadata').classList.toggle('selected', metadata);
+  $('nav-facet-value-stream').classList.toggle('selected', !metadata);
+  $('nav-facet-metadata').setAttribute('aria-pressed', String(metadata));
+  $('nav-facet-value-stream').setAttribute('aria-pressed', String(!metadata));
+  const title = `${live ? 'Live' : 'Historical'} × ${metadata ? 'Metadata' : 'Value stream'}`;
+  $('page-title').textContent = title;
+  $('page-description').textContent = metadata
+    ? (live ? 'Near-real-time factory internals reconstructed from emitted facts.' : 'The same factory-internal measures aggregated over 1 day to 1 year.')
+    : (live ? 'Reported product/subproduct cards and To Do → Done flow.' : 'Reported card-flow stocks aggregated over 1 day to 1 year.');
+}
+
 function setMode(mode) {
   state.mode = mode;
-  $('live-view').hidden = mode !== 'live';
-  $('analytics-view').hidden = mode !== 'analytics';
-  for (const name of ['live', 'analytics']) {
-    $(`nav-${name}`).classList.toggle('selected', mode === name);
-    if (mode === name) $(`nav-${name}`).setAttribute('aria-current', 'page');
-    else $(`nav-${name}`).removeAttribute('aria-current');
-  }
-  $('page-title').textContent = mode === 'live' ? 'Live operations' : 'Analytics & insights';
-  $('page-description').textContent = mode === 'live' ? 'Follow emitted facts across agents, skills, and product work.' : 'Find patterns in reported activity, outcomes, and observation gaps.';
-  if (mode === 'analytics') loadAnalytics();
+  applyView();
+  loadAnalytics();
+}
+
+function setFacet(facet) {
+  state.facet = facet;
+  applyView();
+  loadAnalytics();
 }
 
 async function refreshSnapshot() {
   try {
     renderSnapshot(await api('/api/v1/overview'));
-    if (state.mode === 'analytics') loadAnalytics();
-  } catch (error) { showError(`Snapshot unavailable: ${error.message}`); }
+    loadAnalytics();
+  } catch (error) { showError(`Snapshot unavailable: ${error.message}`); metadataError(error.message); }
 }
 
 function connectStream(after) {
   state.stream?.close();
   state.stream = new EventSource(`/api/v1/stream?after=${after}`);
   state.stream.onopen = () => connection(true, 'Stream connected');
-  state.stream.onerror = () => connection(false, 'Reconnecting / displayed facts may be old');
+  state.stream.onerror = () => {
+    connection(false, 'Reconnecting / displayed facts may be old');
+    metadataError('Connection lost. The card contains last known metadata and may be outdated.');
+  };
   state.stream.addEventListener('snapshot', (message) => {
     renderSnapshot(JSON.parse(message.data));
     showError('');
@@ -308,6 +480,7 @@ function connectStream(after) {
       state.snapshot.coverage = status.coverage;
       renderFreshness();
       renderCoverage();
+      renderMetadata(status.metadata);
     }
     if (state.captureError) {
       state.captureError = false;
@@ -319,12 +492,19 @@ function connectStream(after) {
     state.captureError = true;
     connection(false, 'Capture degraded');
     showError(`Capture unavailable: ${JSON.parse(message.data).error}`);
+    metadataError(JSON.parse(message.data).error);
   });
 }
 
 $('nav-live').addEventListener('click', () => setMode('live'));
-$('nav-analytics').addEventListener('click', () => setMode('analytics'));
-document.querySelector('a[href="#coverage"]').addEventListener('click', () => setMode('live'));
+$('nav-historical').addEventListener('click', () => setMode('historical'));
+$('nav-facet-metadata').addEventListener('click', () => setFacet('metadata'));
+$('nav-facet-value-stream').addEventListener('click', () => setFacet('value-stream'));
+document.querySelector('a[href="#coverage"]').addEventListener('click', () => {
+  setFacet('metadata');
+  setMode('live');
+});
+document.querySelector('a[href="#factory-metadata"]').addEventListener('click', () => setFacet('metadata'));
 $('window').addEventListener('change', loadAnalytics);
 $('search').addEventListener('input', () => {
   clearTimeout(searchTimer);
@@ -389,9 +569,11 @@ window.addEventListener('pagehide', () => { state.stream?.close(); clearInterval
 try {
   const snapshot = await api('/api/v1/overview');
   renderSnapshot(snapshot);
-  await loadEvents();
+  applyView();
+  await Promise.all([loadEvents(), loadAnalytics()]);
   connectStream(snapshot.last_sequence);
 } catch (error) {
   connection(false, 'Service unavailable');
   showError(`Cannot load this Factory: ${error.message}. Check the local center process and product records, then reload.`);
+  metadataError(error.message);
 }

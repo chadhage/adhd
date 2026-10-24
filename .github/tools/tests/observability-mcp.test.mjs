@@ -12,7 +12,7 @@ test('positive: MCP handshake negotiates a supported version and exposes only re
   assert.equal(negotiated.result.protocolVersion, '2025-06-18');
   await handler({ jsonrpc: '2.0', method: 'notifications/initialized' });
   const tools = (await handler(rpc(2, 'tools/list'))).result.tools;
-  assert.deepEqual(tools.map((tool) => tool.name), ['factory_overview', 'factory_events', 'factory_analytics']);
+  assert.deepEqual(tools.map((tool) => tool.name), ['factory_overview', 'factory_metadata', 'factory_events', 'factory_analytics']);
   assert.ok(tools.every((tool) => tool.annotations.readOnlyHint && !tool.annotations.destructiveHint && !tool.inputSchema.additionalProperties));
   const resources = (await handler(rpc(3, 'resources/list'))).result.resources;
   assert.ok(resources.every((resource) => resource.uri.startsWith('factory://alpha/')));
@@ -120,7 +120,7 @@ test('positive: actual stdio framing honors chunk boundaries, notifications, out
   const responses = await stdio(ws.directory, [input.slice(0, 13), input.slice(13)]);
   assert.equal(responses.length, 2);
   assert.equal(responses[0].id, 1);
-  assert.equal(responses[1].result.tools.length, 3);
+  assert.equal(responses[1].result.tools.length, 4);
 });
 
 test('negative: malformed and oversized stdio frames fail explicitly and the following valid message still works', async (t) => {

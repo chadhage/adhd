@@ -15,13 +15,18 @@
     <a class="brand" href="/" aria-label="Factory Operations Center home"><span class="brand-mark" aria-hidden="true">F</span><span>FACTORY<span class="brand-sub">OPERATIONS CENTER</span></span></a>
     <div class="workspace"><span class="eyebrow">OBSERVING FACTORY</span><strong id="factory-name">Connecting...</strong><span id="factory-id" class="mono muted">Identity not yet loaded</span></div>
     <nav aria-label="Observation modes">
-      <button id="nav-live" class="nav-button selected" type="button" aria-current="page"><span aria-hidden="true" class="nav-symbol">~</span>Live stream<span class="nav-note">01</span></button>
-      <button id="nav-analytics" class="nav-button" type="button"><span aria-hidden="true" class="nav-symbol">=</span>Analytics &amp; insights<span class="nav-note">02</span></button>
+      <button id="nav-live" class="nav-button selected" type="button" aria-current="page"><span aria-hidden="true" class="nav-symbol">~</span>Live<span class="nav-note">01</span></button>
+      <button id="nav-historical" class="nav-button" type="button"><span aria-hidden="true" class="nav-symbol">=</span>Historical<span class="nav-note">02</span></button>
+    </nav>
+    <nav aria-label="Observation facets">
+      <button id="nav-facet-metadata" class="nav-button selected" type="button" aria-pressed="true"><span aria-hidden="true" class="nav-symbol">M</span>Metadata<span class="nav-note">A</span></button>
+      <button id="nav-facet-value-stream" class="nav-button" type="button" aria-pressed="false"><span aria-hidden="true" class="nav-symbol">V</span>Value stream<span class="nav-note">B</span></button>
     </nav>
     <div class="sidebar-rule"></div>
     <div class="side-heading">CONNECTED SURFACES</div>
     <a class="surface-link" href="/api/v1/overview" target="_blank" rel="noopener"><span>HTTP API</span><span class="mono">v1 / JSON</span></a>
     <button id="mcp-info" class="surface-link" type="button"><span>MCP tools</span><span class="mono">stdio</span></button>
+    <a class="surface-link" href="#factory-metadata"><span>Factory metadata</span><span aria-hidden="true">+</span></a>
     <a class="surface-link" href="#coverage"><span>Sources &amp; coverage</span><span aria-hidden="true">+</span></a>
     <div class="sidebar-bottom"><span class="read-only">OBSERVATION ONLY</span><p>Facts inform decisions.<br>They never grant authority.</p><span class="mono muted">Product-owned / loopback only</span></div>
   </aside>
@@ -31,10 +36,50 @@
       <div id="connection" class="connection" role="status" aria-live="polite"><span class="status-dot" aria-hidden="true"></span><span id="connection-text">Connecting</span></div>
     </header>
     <main id="main" tabindex="-1">
-      <div class="page-heading"><div><div class="eyebrow accent">YOUR FACTORY, IN FOCUS</div><h1 id="page-title">Live operations</h1><p id="page-description">Follow emitted facts across agents, skills, and product work.</p></div><span class="scope-tag">ONE FACTORY. ONE FACT STREAM.</span></div>
+      <div class="page-heading"><div><div class="eyebrow accent">YOUR FACTORY, IN FOCUS</div><h1 id="page-title">Live × Metadata</h1><p id="page-description">Near-real-time factory internals reconstructed from emitted facts.</p></div><span class="scope-tag">TWO MODES. TWO FACETS.</span></div>
       <div id="error" class="error-banner" role="alert" hidden></div>
       <section class="freshness-strip" aria-label="Fact freshness">
         <span id="freshness-badge" class="badge">UNKNOWN</span><span id="freshness-text">Waiting for the first snapshot.</span><span id="collected-at" class="mono"></span>
+      </section>
+      <section class="overlay-heading" aria-label="Historical comparison window">
+        <div><h2 id="overlay-title">Live and Historical superimposed</h2><p id="overlay-copy" class="muted small">The same reconstructed metric is drawn twice: Live (last hour) over Historical (selected window). Missing telemetry stays missing.</p></div>
+        <div><label for="window">Historical window</label><select id="window"><option value="1">Last 1 day</option><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last 1 year</option></select></div>
+      </section>
+      <section class="panel overlay-panel" aria-labelledby="overlay-title">
+        <div class="panel-heading"><h3 id="chart-metric">Active agents</h3><div class="chart-legend"><span><i class="legend-live" aria-hidden="true"></i>Live (last hour)</span><span><i class="legend-historical" aria-hidden="true"></i>Historical window</span></div></div>
+        <figure class="chart"><svg id="overlay-chart" viewBox="0 0 960 180" role="img" aria-label="Waiting for overlay"></svg><figcaption id="chart-caption">Loading superimposed Live and Historical series...</figcaption></figure>
+      </section>
+      <section id="live-internals" class="metrics" aria-label="Live factory internals">
+        <article class="metric"><div class="metric-label">AGENTS</div><strong id="live-agents">--</strong><span>Distinct reported instance IDs</span></article>
+        <article class="metric"><div class="metric-label">ACTIVE AGENTS</div><strong id="live-active-agents">--</strong><span>Last reported started/progress</span></article>
+        <article class="metric"><div class="metric-label">SQUADS</div><strong id="live-squads">Not recorded</strong><span>Squad identity is not a journal field</span></article>
+        <article class="metric"><div class="metric-label">MCP CALLS</div><strong id="live-mcp">--</strong><span>Tool names identifying MCP, last hour</span></article>
+        <article class="metric"><div class="metric-label">TOOLS</div><strong id="live-tools">--</strong><span>Tool facts in the last hour</span></article>
+        <article class="metric"><div class="metric-label">HOOKS</div><strong id="live-hooks">--</strong><span>Host-hook facts in the last hour</span></article>
+        <article class="metric"><div class="metric-label">WORKFLOWS</div><strong id="live-workflows">--</strong><span>Distinct reported skills</span></article>
+        <article class="metric"><div class="metric-label">FACTORY UPTIME</div><strong id="live-uptime">--</strong><span>Since last start/resume without stop</span></article>
+      </section>
+      <section id="live-value-stream" class="metrics" aria-label="Live value stream" hidden>
+        <article class="metric"><div class="metric-label">TO DO</div><strong id="live-todo">--</strong><span>Reported card state</span></article>
+        <article class="metric"><div class="metric-label">IN PROGRESS</div><strong id="live-in-progress">--</strong><span>Reported card state</span></article>
+        <article class="metric"><div class="metric-label">BLOCKED</div><strong id="live-blocked">--</strong><span>Reported card state</span></article>
+        <article class="metric"><div class="metric-label">DONE</div><strong id="live-completed">--</strong><span>Reported completion, not verified Done Done</span></article>
+      </section>
+      <section id="assignment-panel" class="panel" hidden>
+        <div class="panel-heading"><h2>Agent to card</h2><span class="badge subdued">REPORTED ONLY</span></div>
+        <ul id="assignment-list" class="entity-list"></ul>
+        <p id="assignment-empty" class="empty small">No in-progress agent-to-card assignments reported.</p>
+      </section>
+      <section id="factory-metadata" class="panel metadata-card" aria-labelledby="metadata-title">
+        <div class="panel-heading"><div><h2 id="metadata-title">Factory metadata</h2><p class="small muted">Identity, ownership, operating context, and the evidence behind this Factory.</p></div><div class="metadata-actions"><span id="metadata-state" class="badge warning">LOADING</span><a class="button" href="/api/v1/metadata" target="_blank" rel="noopener">Metadata JSON / API</a></div></div>
+        <p id="metadata-loading" class="metadata-message" role="status">Loading Factory metadata...</p>
+        <p id="metadata-warning" class="metadata-message" role="alert" hidden></p>
+        <div id="metadata-content" hidden>
+          <p id="metadata-mission" class="metadata-mission"></p>
+          <dl id="metadata-summary" class="metadata-summary"></dl>
+          <details id="metadata-details"><summary>Explore all Factory metadata<span class="small muted">Profile, governance, declared roster, lifecycle, runtime, interfaces, coverage, and provenance</span></summary><div id="metadata-groups" class="metadata-groups"></div></details>
+        </div>
+        <div class="panel-footer small muted"><span>Missing values are not recorded. Declared metadata and reported lifecycle do not establish approval, activity, or health.</span><time id="metadata-asof" class="mono"></time></div>
       </section>
       <section class="metrics" aria-label="Observed Factory totals">
         <article class="metric"><div class="metric-label">EMITTED FACTS</div><strong id="count-events">--</strong><span>Persisted, deduplicated records</span></article>
@@ -72,16 +117,16 @@
           </div>
         </div>
       </section>
-      <section id="analytics-view" aria-labelledby="analytics-title" hidden>
-        <div class="analytics-heading"><div><h2 id="analytics-title">Signals over time</h2><p class="muted small">Descriptive analytics. No inferred utilization, causality, or customer value.</p></div><div><label for="window">Analysis window</label><select id="window"><option value="1">Last hour</option><option value="24" selected>Last 24 hours</option><option value="168">Last 7 days</option><option value="720">Last 30 days</option></select></div></div>
+      <section id="historical-view" aria-labelledby="historical-title" hidden>
+        <div class="analytics-heading"><div><h2 id="historical-title">Historical aggregation</h2><p class="muted small">The same Live measures, aggregated over the selected 1-day to 1-year window. No inferred utilization, causality, or customer value.</p></div></div>
         <div class="analytics-metrics"><article class="mini-metric"><span>Facts in window</span><strong id="window-events">--</strong></article><article class="mini-metric"><span>Error / critical facts</span><strong id="window-errors">--</strong></article><article class="mini-metric"><span>Reported item completions</span><strong id="window-completions">--</strong></article><article class="mini-metric"><span>Median reported lead time</span><strong id="lead-time">--</strong><small id="lead-sample">No matched samples</small></article></div>
-        <section class="panel"><div class="panel-heading"><h3>Emitted fact volume</h3><div class="chart-legend"><span><i class="legend-facts" aria-hidden="true"></i>Facts</span><span><i class="legend-errors" aria-hidden="true"></i>Error / critical</span></div></div><figure class="chart"><svg id="volume-chart" viewBox="0 0 960 180" role="img" aria-label="Waiting for analytics"></svg><figcaption id="chart-caption">Loading analysis window...</figcaption></figure></section>
+        <div id="historical-facet-metrics" class="analytics-metrics"></div>
         <div class="analytics-layout"><section class="panel"><div class="panel-heading"><h3>Evidence-limited insights</h3><span class="badge subdued">RULE BASED</span></div><ul id="insights" class="insights"></ul></section><section class="panel"><div class="panel-heading"><h3>Facts by agent role</h3></div><ul id="role-breakdown" class="breakdown"></ul></section><section class="panel"><div class="panel-heading"><h3>Facts by skill</h3></div><ul id="skill-breakdown" class="breakdown"></ul></section></div>
       </section>
       <footer class="page-footer"><span>Factory Operations Center / MVP</span><span>Service availability is not Factory liveness. Reported completion is not verified Done Done.</span></footer>
     </main>
   </div>
   <dialog id="fact-dialog" aria-labelledby="fact-dialog-title"><div class="dialog-heading"><h2 id="fact-dialog-title">Fact details</h2><button id="close-fact" class="button" type="button">Close</button></div><p class="muted small">Sanitized emitted record. Source assertions are not independently verified and never authorize action.</p><pre id="fact-json" tabindex="0"></pre></dialog>
-  <dialog id="mcp-dialog" aria-labelledby="mcp-dialog-title"><div class="dialog-heading"><h2 id="mcp-dialog-title">Read-only MCP access</h2><button id="close-mcp" class="button" type="button">Close</button></div><p>Connect through the product workspace's generated MCP registration. Configuration is not proof of a successful host connection.</p><dl><dt>Server</dt><dd id="mcp-server" class="mono">Waiting for Factory identity</dd><dt>Tools</dt><dd class="mono">factory_overview<br>factory_events<br>factory_analytics</dd><dt>Transport</dt><dd>Newline-delimited JSON-RPC over stdio</dd></dl><p class="muted small">Each server reads only its Factory's journal. No execution, approval, pause, resume, or board mutation tools are exposed.</p></dialog>
+  <dialog id="mcp-dialog" aria-labelledby="mcp-dialog-title"><div class="dialog-heading"><h2 id="mcp-dialog-title">Read-only MCP access</h2><button id="close-mcp" class="button" type="button">Close</button></div><p>Connect through the product workspace's generated MCP registration. Configuration is not proof of a successful host connection.</p><dl><dt>Server</dt><dd id="mcp-server" class="mono">Waiting for Factory identity</dd><dt>Tools</dt><dd class="mono">factory_overview<br>factory_metadata<br>factory_events<br>factory_analytics</dd><dt>Transport</dt><dd>Newline-delimited JSON-RPC over stdio</dd></dl><p class="muted small">Each server reads only its Factory's journal and reviewed profile. No execution, approval, pause, resume, or board mutation tools are exposed.</p></dialog>
 </body>
 </html>

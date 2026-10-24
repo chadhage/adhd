@@ -3,7 +3,8 @@ import { createHash, randomUUID } from 'node:crypto';
 import { lstat, mkdir, open, readFile, realpath, readdir, rename, unlink, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { factoryIdPattern, newFact, ObservationError, redact, VERSION } from './runtime/store.mjs';
+import { factoryIdPattern, newFact, normalizeConfig, ObservationError, redact, VERSION } from './runtime/store.mjs';
+import { normalizeProfile, readProfile } from './runtime/metadata.mjs';
 
 const scripts = dirname(fileURLToPath(import.meta.url));
 const frameworkRoot = resolve(scripts, '..', '..', '..', '..');
@@ -69,7 +70,7 @@ async function atomicWrite(path, content) {
   }
 }
 
-export async function install({ productRoot, factoryId, label = factoryId, sessionId, staleAfterMs = 60_000 }) {
+export async function install({ productRoot, factoryId, label = factoryId, sessionId, staleAfterMs = 60_000, profilePath }) {
   if (typeof productRoot !== 'string' || !isAbsolute(productRoot)) throw new ObservationError('An explicit absolute product Git root is required');
   if (typeof factoryId !== 'string' || !factoryIdPattern.test(factoryId)) throw new ObservationError('factory-id must be a lowercase filesystem-safe slug, at most 64 characters');
   if (typeof label !== 'string' || !label.trim() || label.length > 100) throw new ObservationError('Factory label must contain 1..100 characters');
@@ -99,6 +100,23 @@ export async function install({ productRoot, factoryId, label = factoryId, sessi
     const configPath = join(directory, 'center.json');
     const config = await jsonFile(configPath, null);
     if (config && (config.version !== 1 || config.factory_id !== factoryId)) throw new ObservationError('Existing center belongs to a different Factory or schema');
+    if (config && !['1.0.0', VERSION].includes(config.runtime_version)) throw new ObservationError('Unsupported existing center runtime version');
+    const nextConfig = normalizeConfig(config ? { ...config, runtime_version: VERSION } : {
+      version: 1, runtime_version: VERSION, factory_id: factoryId, label: redact(label.trim()),
+      created_at: new Date().toISOString(), stale_after_ms: staleAfterMs,
+    });
+    const profileFile = join(directory, 'profile.json');
+    const currentProfile = await readProfile(profileFile, factoryId, { optional: true });
+    let profile;
+    if (profilePath !== undefined) {
+      if (typeof profilePath !== 'string' || !profilePath.trim()) throw new ObservationError('profile must name a reviewed metadata JSON file');
+      profile = (await readProfile(resolve(profilePath), factoryId)).profile;
+    } else if (currentProfile.status === 'not-recorded') {
+      profile = normalizeProfile({
+        version: 1, factory_id: factoryId, product: { workspace: root },
+        source: { ref: 'installer:verified-product-root', revision: VERSION }, updated_at: new Date().toISOString(),
+      }, factoryId);
+    }
     const registryPath = join(base, 'registry.json');
     const registry = await jsonFile(registryPath, { version: 1, factories: {} });
     if (registry.version !== 1 || !registry.factories || typeof registry.factories !== 'object' || Array.isArray(registry.factories)) throw new ObservationError('Existing observation registry is invalid');
@@ -162,10 +180,8 @@ export async function install({ productRoot, factoryId, label = factoryId, sessi
     registry.hook_digest = digest(hookContent);
     writes.push([hookPath, hookContent]);
     writes.push([registryPath, JSON.stringify(registry, null, 2) + '\n']);
-    writes.push([configPath, JSON.stringify(config ?? {
-      version: 1, runtime_version: VERSION, factory_id: factoryId, label: redact(label.trim()),
-      created_at: new Date().toISOString(), stale_after_ms: staleAfterMs,
-    }, null, 2) + '\n']);
+    writes.push([configPath, JSON.stringify(nextConfig, null, 2) + '\n']);
+    if (profile) writes.push([profileFile, JSON.stringify(profile, null, 2) + '\n']);
     writes.push([manifestPath, JSON.stringify({ version: 1, factory_id: factoryId, runtime_version: VERSION, files: hashes }, null, 2) + '\n']);
     const ignorePath = join(base, '.gitignore');
     if (await existing(ignorePath) === null) writes.push([ignorePath, '.install.lock\n*.tmp\n']);
@@ -187,6 +203,7 @@ export async function install({ productRoot, factoryId, label = factoryId, sessi
       ui: { state: 'not-started', command: ['node', join(directory, 'cli.mjs'), 'serve'] },
       mcp: { state: 'configured-not-verified', server: serverName },
       capture: { bound_sessions: sessions.size, state: sessions.size ? 'configured-not-observed' : 'unbound' },
+      metadata: { profile: profileFile, state: profile ? 'written' : 'preserved', api: '/api/v1/metadata', mcp_tool: 'factory_metadata' },
       git: { state: 'pending-versioning', paths: ['.factory', '.mcp.json', join('.vscode', 'mcp.json'), join('.github', 'hooks', 'factory-observability.json')] },
     };
   } finally {
@@ -196,12 +213,12 @@ export async function install({ productRoot, factoryId, label = factoryId, sessi
 }
 
 export function parseArgs(args) {
-  const names = { '--product-root': 'productRoot', '--factory-id': 'factoryId', '--label': 'label', '--session-id': 'sessionId', '--stale-after-ms': 'staleAfterMs' };
+  const names = { '--product-root': 'productRoot', '--factory-id': 'factoryId', '--label': 'label', '--session-id': 'sessionId', '--stale-after-ms': 'staleAfterMs', '--profile': 'profilePath' };
   const options = {};
   for (let index = 0; index < args.length; index += 2) {
     const field = names[args[index]];
     const value = args[index + 1];
-    if (!field || Object.hasOwn(options, field) || typeof value !== 'string' || !value.trim() || value.startsWith('--')) throw new ObservationError('Usage: install.mjs --product-root <absolute-git-root> --factory-id <slug> [--label <label>] [--session-id <actual-id>] [--stale-after-ms <milliseconds>]');
+    if (!field || Object.hasOwn(options, field) || typeof value !== 'string' || !value.trim() || value.startsWith('--')) throw new ObservationError('Usage: install.mjs --product-root <absolute-git-root> --factory-id <slug> [--label <label>] [--session-id <actual-id>] [--stale-after-ms <milliseconds>] [--profile <reviewed-profile.json>]');
     if (field === 'staleAfterMs' && !/^\d+$/.test(value)) throw new ObservationError('stale-after-ms must be an integer');
     options[field] = field === 'staleAfterMs' ? Number(value) : value;
   }

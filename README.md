@@ -61,6 +61,9 @@ The [Factory Observability skill](.github/skills/factory-observability/SKILL.md)
 provides the reusable installer and standalone Node.js runtime:
 
 - Visual live streaming and agent, skill, and product-item drill-down.
+- A comprehensive Factory metadata card covering identity, mission, product,
+  owners, governance, roster, lifecycle, runtime, coverage, and provenance,
+  available through the same read-only API/MCP surfaces.
 - Analytics and evidence-limited insights with explicit freshness/capture gaps.
 - Versioned read-only HTTP JSON/SSE API and per-Factory MCP stdio tools/resources.
 - Product-owned durable facts, metadata-only hooks, and an inbox for agents

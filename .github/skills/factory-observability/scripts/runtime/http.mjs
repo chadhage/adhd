@@ -74,13 +74,13 @@ export function createCenterServer(directory, { intervalMs = 1000, log = (messag
         json(response, 200, eventSchema);
         return;
       }
-      const routes = ['/healthz', '/api/v1/overview', '/api/v1/events', '/api/v1/analytics', '/api/v1/stream'];
+      const routes = ['/healthz', '/api/v1/overview', '/api/v1/metadata', '/api/v1/events', '/api/v1/analytics', '/api/v1/stream'];
       if (!routes.includes(url.pathname)) {
         json(response, 404, { error: 'Unknown Operations Center route' });
         return;
       }
       const query = parseQuery(url.searchParams);
-      if (['/healthz', '/api/v1/overview'].includes(url.pathname) && url.searchParams.size) throw new ObservationError('This route describes the whole Factory and does not accept filters');
+      if (['/healthz', '/api/v1/overview', '/api/v1/metadata'].includes(url.pathname) && url.searchParams.size) throw new ObservationError('This route describes the whole Factory and does not accept filters');
       const { events, snapshot } = await readModel(store);
       if (url.pathname === '/healthz') {
         json(response, snapshot.coverage.ingestion_errors.length ? 503 : 200, {
@@ -90,6 +90,8 @@ export function createCenterServer(directory, { intervalMs = 1000, log = (messag
         });
       } else if (url.pathname === '/api/v1/overview') {
         json(response, 200, snapshot);
+      } else if (url.pathname === '/api/v1/metadata') {
+        json(response, 200, snapshot.metadata);
       } else if (url.pathname === '/api/v1/events') {
         json(response, 200, eventPage(events, query));
       } else if (url.pathname === '/api/v1/analytics') {
@@ -132,7 +134,7 @@ export function createCenterServer(directory, { intervalMs = 1000, log = (messag
           if (!send(client, 'fact', event, event.sequence)) break;
           client.cursor = event.sequence;
         }
-        if (clients.has(client)) send(client, 'status', { freshness: snapshot.freshness, coverage: snapshot.coverage });
+        if (clients.has(client)) send(client, 'status', { freshness: snapshot.freshness, coverage: snapshot.coverage, metadata: snapshot.metadata });
       }
     } catch (error) {
       log(`[factory-observability] stream read failed: ${error instanceof ObservationError ? error.message : error.code ?? error.name}`);
