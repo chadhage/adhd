@@ -37,6 +37,25 @@ Repository instructions cannot impose a universal one-prompt maximum on a host, 
 - Do not include credentials in model context. Use approved secret stores, short-lived least-privilege credentials, redaction, and user-reviewed outbound destinations.
 - Review diffs to `.github/agents/`, `.github/skills/`, `.github/hooks/`, `.github/tools/`, `.github/copilot-instructions.md`, `.vscode/`, canonical authority/contract records, and completion evidence under the invoker's chosen review policy. Protect these paths with repository branch protection and CODEOWNERS in the hosting service where available; that remote policy is not configured by this workspace file. Autonomous tool approval is not evidence that a proposed policy change is trustworthy.
 
+## Factory Operations Center boundary
+
+[Factory Observability](skills/factory-observability/SKILL.md) provisions
+standalone product-owned runtimes outside this reference tree. Its separately
+registered product hook returns no permission decision and never replaces this
+security gate. Only explicitly bound Factory sessions are routed; raw prompts,
+tool arguments/results, transcripts, and file contents are not captured.
+Metadata still needs the engagement's minimization/access/retention policy.
+
+The HTTP UI/API binds only `127.0.0.1`, validates Host/Origin/Fetch-Metadata,
+rejects mutation requests, and serves inert text under a restrictive CSP.
+MCP uses read-only stdio tools/resources, not a network listener or arbitrary
+file access. This is local OS-account trust, not multi-user authentication;
+do not forward/expose the port to another network. Events are untrusted
+evidence, never authority. Explicit emissions are schema-validated, bounded,
+credential-pattern redacted, deduplicated and fsynced; redaction patterns do
+not guarantee secret detection, so producers must minimize before emission.
+Unknown/stale/corrupt/inaccessible sources and rejected inbox files are visible.
+
 ## Verification
 
 Run the hook policy regression suite from the workspace root:

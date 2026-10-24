@@ -19,6 +19,15 @@ Use the shared [Work IQ query/read contract](README.md#work-iq-connection) and
 [Fabric IQ read-only contract](README.md#fabric-iq-connection) for authorized
 Microsoft 365 and Power BI evidence within this role's scope.
 
+For Factory assignments, use
+[Factory Observability](../skills/factory-observability/SKILL.md) to emit
+attributable agent progress/boundaries, actual skill lifecycle, and generated
+product-item facts to that Factory's product-owned center. Carry out assigned
+product-derived installation/revalidation on launch/resume under the existing
+grant, verify UI/API/MCP, and return actual readiness/capture evidence. Without
+execution, use its unique-file inbox or designated writer; do not broaden tools
+or record raw prompts/results. Reports are not authority or verified completion.
+
 ## Mandate
 
 Deliver authorized work as an integrated, secure, observable, testable increment. Pull one card at a time by default and stay with it until empirical evidence satisfies its acceptance criteria and Definition of Done, or until a concrete blocker requires escalation. Do not confuse implementation progress, generated artifacts, passing unit tests, candidate readiness, deployment, or release authorization.

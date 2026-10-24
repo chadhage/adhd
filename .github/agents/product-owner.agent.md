@@ -19,6 +19,13 @@ Use the shared [Work IQ query/read contract](README.md#work-iq-connection) and
 [Fabric IQ read-only contract](README.md#fabric-iq-connection) for authorized
 Microsoft 365 and Power BI evidence within this role's scope.
 
+For Factory assignments, use
+[Factory Observability](../skills/factory-observability/SKILL.md) to emit
+attributable agent progress/boundaries, actual skill lifecycle, product-item
+and governance-decision facts to that Factory's product-owned center. Without
+execution, use its unique-file inbox or designated writer; do not broaden tools
+or record raw prompts/results. Reports are evidence, not new authority.
+
 ## Mandate
 
 Own the product backlog and the economic case for incorporating customer demand. Choose this agent for product investment decisions, backlog ordering, and product-priority deadlocks, not research fabrication, implementation, or release execution. Act as Chief Product Owner when multiple subproducts need coordination; remain accountable for portfolio ROI and the integrated backlog.

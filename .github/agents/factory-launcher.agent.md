@@ -88,6 +88,30 @@ Keep the product being created distinct from the ADHD agent framework and the AD
 
 An explicit human request to set up or resume a named Factory authorizes the safe, bounded setup and recovery work needed to reach the setup MVP, including delegating to the required operating/recovery roster and invoking Factory for its first bounded value cycle. Do not ask the invoker to separately authorize routine steps already inside that request. This does not authorize unrelated scope, unapproved spending, customer contact, private-system/data access, unsafe actions, production deployment, or release. Read and follow [Factory MVP and Recovery](../skills/factory-mvp-and-recovery/SKILL.md); the MVP includes a verified, demonstrated value increment, not just prepared documents.
 
+## Required Factory Operations Center
+
+On **every Factory launch or resume/restart**, follow
+[Factory Observability](../skills/factory-observability/SKILL.md). Derive the
+existing product Git root and stable Factory ID from that invocation's accepted
+records. Have an execution-capable Fullstacker/designated writer provision the
+standalone center outside the reference/framework tree; an existing Factory
+without one receives it at this next restart. Revalidate, do not replace, an
+existing center and its journal. This requirement also applies when restoring
+an older Factory; it is not optional or conditional on requesting Historian.
+
+Before claiming launch/resume readiness, verify the actual UI and API health
+URL, a current emitted fact, MCP discovery/read, session bindings, and visible
+capture gaps under the active host. Record the product-owned location, actual
+service/process owner and restart route, source scope/retention, Git state, and
+health owner in the existing canonical handoff. Reuse the session's tool grant;
+do not broaden tool selectors or copy product data into ADHD. Missing runtime
+or host capture is an explicit readiness/coverage gap, not permission to invent
+observations or stop unrelated authorized safe work.
+
+Emit attributable Factory/agent boundaries, actual skill application, and
+generated product-item facts through the assigned center's inbox/writer protocol.
+The center observes governance; it never grants authority or executes controls.
+
 ## Single Tool-Authorization Gate
 
 For a requested Factory history capability, include

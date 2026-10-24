@@ -454,6 +454,37 @@ after a completed delivery attempt. Four equally available Fullstackers reservin
 25% can use one DRF and three feature workers; that is only an illustration, not
 an extra member.
 
+## Required Factory Operations Center
+
+Every Factory has its own product-owned observation tower. New launches
+provision one; every resume/restart installs a missing one (including existing
+Factories) or revalidates the same instance and durable journal. FactoryLauncher
+and direct Factory invocations derive the existing product Git root and stable
+Factory ID at invocation time, not from the reference workspace or a hard-coded
+product. Use [Factory Observability](../skills/factory-observability/SKILL.md).
+
+The reusable dependency-free Node installer lives in the skill. Each standalone
+runtime, configuration, fact journal and approved retained evidence live outside
+ADHD at the product's `.factory/observability/<factory-id>`. A distinct local
+browser center/API port and MCP stdio registration serve that Factory. Existing
+workspace settings and other MCP/security hooks are preserved.
+
+The UI offers real-time troubleshooting, pause/follow, filters, provenance and
+agent/skill/product-item drill-down, plus analytics/insights. Versioned read-only
+JSON/SSE API and read-only MCP tools use the identical journal/projections.
+All nine framework roles emit scoped lifecycle and product facts via an
+execution-capable writer or unique-file inbox. Optional verified product-host
+hooks capture allowlisted metadata only, not transcripts or tool payloads.
+Unknown attribution, stale source time, capture gaps, invalid emissions, and
+unverified host connectivity remain visible. No seeded activity or causal,
+utilization, verified-completion, or customer-value claims replace evidence.
+
+Provisioning/registration alone is not readiness. Verify actual UI/API/MCP and
+current emitted facts before reporting launch/resume ready, record the service
+and health owner, and keep the effective host grant unchanged. This is
+observation of governance, not an approval, execution, or production-control
+surface. The default loopback service is not a shared authenticated deployment.
+
 ## Factory history with Historian
 
 Select [Historian](historian.agent.md) directly, or ask FactoryLauncher/Factory

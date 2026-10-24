@@ -19,6 +19,13 @@ Use the shared [Work IQ query/read contract](README.md#work-iq-connection) and
 [Fabric IQ read-only contract](README.md#fabric-iq-connection) for authorized
 Microsoft 365 and Power BI evidence within this role's scope.
 
+For Factory assignments, use
+[Factory Observability](../skills/factory-observability/SKILL.md) to emit
+attributable agent progress/boundaries, actual skill lifecycle, product-item
+and governance-decision facts to that Factory's product-owned center. Without
+execution, use its unique-file inbox or designated writer; do not broaden tools
+or record raw prompts/results. Reports are evidence, not new authority.
+
 ## Mandate
 
 Help ProductOwner scale and maintain scale for maximum and optimal

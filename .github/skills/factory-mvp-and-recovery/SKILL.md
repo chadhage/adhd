@@ -23,6 +23,19 @@ verifiably known, Historian records/broadcasts it and ProductOwner verifies
 Kanban's necessary atomic-card coverage. Andon does not authorize a Factory-wide
 shutdown or replace the recovery, human-authority, or safety boundaries below.
 
+## Required per-Factory observation
+
+Every new Factory launch includes a product-owned Operations Center under
+[Factory Observability](../factory-observability/SKILL.md). Every resume/restart
+derives the product root and stable Factory ID from the accepted invocation,
+installs a center if missing (including older Factories), and revalidates an
+existing one without replacing its facts. Require observed UI/API readiness,
+MCP discovery/read, explicit agent/skill/item emissions, session/source coverage,
+freshness and capture gaps in the canonical handoff. ADHD holds reusable
+installer source only; each running center and its data stay outside the
+reference/framework. This observation capability neither authorizes production
+controls nor replaces Historian's separately scoped history work.
+
 ## Single Tool Authorization
 
 Use one session-scoped tool-authorization gate for FactoryLauncher, Factory, every Squad, ProductOwner, VOC, AssociateProductOwner, Fullstacker, and Kanban, including nested subagents. Recommend autonomous operation within the bounded human-authorized mission, not global or workspace-wide auto-approval. The invoker may instead choose per-invocation or selective prompting. A recommendation is not a host permission grant.
