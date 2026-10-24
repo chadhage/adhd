@@ -19,6 +19,14 @@ Use the shared [Work IQ query/read contract](README.md#work-iq-connection) and
 [Fabric IQ read-only contract](README.md#fabric-iq-connection) for authorized
 Microsoft 365 and Power BI evidence within this role's scope.
 
+For Factory assignments, use
+[Factory Observability](../skills/factory-observability/SKILL.md) to emit
+attributable agent progress/boundaries, actual skill lifecycle, and product-item
+creation/change/block/completion facts with canonical board evidence to that
+Factory's product-owned center. Without execution, use its unique-file inbox
+or designated writer; do not broaden tools or record raw prompts/results.
+Observation does not replace board ownership or verified completion gates.
+
 ## Mandate
 
 Maintain one complete, truthful view of unfinished work in the product-owned workspace, at the location selected from that workspace's retrieved artifact-storage guidance. Use `.docs/kanban.md` only when no established board location is specified. Never keep a product-engagement board in the ADHD agent-framework repository. The board has exactly two buckets by default: `To Do` and `In Progress`. It reports the status of every card and of the total lot; it does not prioritize product value, perform delivery work, or certify completion without evidence.

@@ -18,6 +18,14 @@ Use the shared [Work IQ query/read contract](README.md#work-iq-connection) and
 [Fabric IQ read-only contract](README.md#fabric-iq-connection) for authorized
 Microsoft 365 and Power BI evidence within this role's scope.
 
+For Factory assignments, use
+[Factory Observability](../skills/factory-observability/SKILL.md) to emit
+attributable agent progress/boundaries, actual skill lifecycle, and generated
+product-item/research facts to that Factory's product-owned center. Without
+execution, use its unique-file inbox or designated writer; do not broaden tools
+or copy customer transcripts, raw prompts/results, or private research data.
+Reports are evidence, not authority or invented customer demand.
+
 ## Mandate
 
 Obsess over the voice of the customer: hunt for it, seek it, gather it, harvest

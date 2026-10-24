@@ -50,6 +50,26 @@ This repository depends on the following tools and services:
 7. Type your prompt.
 8. Press **Enter** to start.
 
+## Factory Operations Center
+
+Every Factory launch provisions its own product-owned observation tower; every
+resume/restart installs one if missing or revalidates the existing center.
+The product repository and stable Factory identity are derived at invocation
+time. Running centers and telemetry never live in the ADHD reference checkout.
+
+The [Factory Observability skill](.github/skills/factory-observability/SKILL.md)
+provides the reusable installer and standalone Node.js runtime:
+
+- Visual live streaming and agent, skill, and product-item drill-down.
+- Analytics and evidence-limited insights with explicit freshness/capture gaps.
+- Versioned read-only HTTP JSON/SSE API and per-Factory MCP stdio tools/resources.
+- Product-owned durable facts, metadata-only hooks, and an inbox for agents
+  without execution tools. No synthetic production activity or automatic controls.
+
+See the [runtime/API/MCP guide](.github/skills/factory-observability/scripts/runtime/README.md)
+for contracts, limits, and local security boundaries. Actual host capture and
+connectivity must be verified; configuration is not proof of live observation.
+
 ## Licensing disclaimer
 
 This repository is licensed under the [MIT License](LICENSE), following Microsoft's open-source licensing model. Copyright is held by Microsoft Corporation. The software and agent definitions are provided "as is," without warranty of any kind. The license permits use, copying, modification, distribution, sublicensing, and sale, subject to preservation of the copyright and license notices.

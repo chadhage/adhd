@@ -153,6 +153,32 @@ Before producing or persisting any artifact, read and follow [Artifact Storage a
 Before orchestration or delegation, create or update one canonical engagement record in the approved product-owned workspace, following its artifact-storage guidance and the contract schema in [Artifact Storage and Engagement Contracts](../skills/artifact-storage-and-engagement-contracts/SKILL.md). Never put product-engagement records in the ADHD agent-framework repository. Record the human invoker and authority, Factory owner, product/work scope, subjects or affected-party groups and consent/notice requirements, each participating agent's bounded assignment and acceptance, permissions, deliverables and acceptance criteria, dependencies, operating/resource limits, stop/amend/escalation terms, and approval evidence. Use the same record across all member-agent handoffs; do not imply an agent accepted an assignment until the handoff is explicitly accepted. Block dependent work when authority, required acceptance, or permissions are missing. Amend the record for scope or roster changes and record closure, residuals, and reopen triggers. Follow the record schema and privacy rules in the linked skill.
 Every record must explicitly identify the human invoker and relevant subjects/affected parties; list all other participating agents, each bounded assignment, and each agent's explicit acceptance; and block dependent work until required authority, consent, acceptance, and permissions are recorded.
 
+## Required Factory Operations Center
+
+On **every Factory launch or resume/restart**, including direct invocations
+without Launcher, follow
+[Factory Observability](../skills/factory-observability/SKILL.md). Derive the
+product-owned Git root and stable Factory ID from the accepted invocation.
+Require an execution-capable Fullstacker/designated writer to install a missing
+standalone center outside the reference/framework tree, or revalidate the
+existing center while preserving its journal. An older Factory without a center
+receives one at its next restart. Launcher handoff may supply verified
+provisioning evidence but never removes this requirement.
+
+Verify actual UI/API readiness, MCP discovery/read, source bindings and capture
+gaps; retain its location, URLs, process/restart owner, safe Git evidence, and
+health/escalation owner in the canonical product records. Report unavailable
+host capture or persistence honestly and keep unrelated safe authorized work
+moving. Do not claim the Factory is live merely because the center is online.
+
+Require every participating role to emit attributable agent boundaries/progress,
+actual skill lifecycle, generated/changed product items, blockers, governance
+decisions and evidence to this Factory's center. Use the inbox/designated writer
+when execution is unavailable. Observed tool requests/loads do not establish
+execution, method completion, or accepted product work. The center exposes
+streaming and analytics through UI, API, and read-only MCP; it cannot approve,
+pause/resume, reprioritize, or execute Factory work.
+
 ## Optional Launcher Handoff
 
 Use [FactoryLauncher](factory-launcher.agent.md) when the human wants help establishing prerequisites and preparing durable records. A launcher package is optional; existing direct invocations remain valid.

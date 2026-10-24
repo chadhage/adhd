@@ -15,6 +15,21 @@ None of these tools grants authority or approves anything. Only `supervisor.mjs`
 | `stop-gate.mjs` | `agentStop` hook script. That event fires at the end of **every** main-agent turn, so the gate lets a turn end when a valid human Factory-shutdown approval exists or a human decision is pending in the approval queue. Otherwise it blocks once; the forced retry is released (`stop_hook_active`) and reported as a suspected unapproved halt, so it can never trap a session. Inert unless a configured board file exists. | **Registered** in `tool-policy.json` (inert until a board is configured) |
 | `supervisor.mjs` | One supervisor pass for an external scheduler (`tick`). Resumes the Factory only when unfinished work, no valid approval, and no progress within the deadline all hold. Honors an inhibit file, valid stoppage approvals, duplicate-run prevention, a cooldown, and a retry bound. Dry run unless `--execute`. Never uses a shell, never stores credentials, never kills a stalled run. | Built; **not scheduled** (needs your values and exact command) |
 
+## Per-Factory Operations Center
+
+[Factory Observability](../skills/factory-observability/SKILL.md) provides the
+reusable installer and standalone runtime, with a visual live/analytics UI,
+read-only HTTP JSON/SSE API, and read-only MCP stdio tools. Every launch/resume
+derives its product-owned destination; no running instance or product telemetry
+belongs in this reference repository. The installed metadata hook is separate
+from the security policy and requires verified product-host session bindings.
+All agent roles participate through attributable emissions/inbox records.
+
+Runtime contracts, safety boundaries and limits are in the
+[runtime guide](../skills/factory-observability/scripts/runtime/README.md).
+Observability regression tests live alongside this tool suite and run through
+the existing quality gate; browser UI checks are separate from backend coverage.
+
 ## Workspace configuration: `.github/hooks/factory-ops.json`
 
 One reviewed file configures Factory records, the stop gate, and the supervisor for a workspace. It ships without boards or supervisor configuration, so those operations are inert until configured. Tool approval always follows the invoker's effective host/session permissions; this file does not grant or revoke it.

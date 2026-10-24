@@ -28,6 +28,7 @@ const run = spawnSync(
     '--experimental-test-coverage',
     '--test-coverage-include=.github/tools/**',
     '--test-coverage-include=.github/hooks/*.mjs',
+    '--test-coverage-include=.github/skills/factory-observability/scripts/**/*.mjs',
     '--test-coverage-exclude=**/tests/**',
     '--test-coverage-exclude=**/run-tests.mjs',
     `--test-coverage-lines=${policy.threshold}`,

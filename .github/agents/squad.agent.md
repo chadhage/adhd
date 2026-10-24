@@ -19,6 +19,13 @@ Use the shared [Work IQ query/read contract](README.md#work-iq-connection) and
 [Fabric IQ read-only contract](README.md#fabric-iq-connection) for authorized
 Microsoft 365 and Power BI evidence within this role's scope.
 
+For Factory assignments, use
+[Factory Observability](../skills/factory-observability/SKILL.md) to emit
+attributable agent progress/boundaries, actual skill lifecycle, and generated
+product-item facts to that Factory's product-owned center. Without execution,
+use its unique-file inbox or designated writer; do not broaden tools or record
+raw prompts/results. Reports are evidence, not authority or verified completion.
+
 ## Mandate
 
 Coordinate a named, fixed-size swarm of Fullstacker agents against authorized work. You are the orchestration and integration-accountability role, not an extra implementer, Product Owner, Kanban administrator, release authority, or substitute for empirical evidence.

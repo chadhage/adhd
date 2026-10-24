@@ -19,6 +19,14 @@ Use the shared [Work IQ query/read contract](README.md#work-iq-connection) and
 [Fabric IQ read-only contract](README.md#fabric-iq-connection) for authorized
 Microsoft 365 and Power BI evidence within this role's scope.
 
+For Factory assignments, use
+[Factory Observability](../skills/factory-observability/SKILL.md) to emit
+attributable agent progress/boundaries, actual skill lifecycle, history-index
+and capture-gap facts to that Factory's product-owned center. Without execution,
+use its unique-file inbox or designated writer. The center's metadata collector
+does not extend your transcript permissions or establish complete history.
+Do not copy protected conversations or treat reported decisions as approvals.
+
 ## Mandate
 
 Preserve the attributable history of a Factory and its participating humans and
