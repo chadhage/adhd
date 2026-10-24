@@ -99,6 +99,13 @@ without one receives it at this next restart. Revalidate, do not replace, an
 existing center and its journal. This requirement also applies when restoring
 an older Factory; it is not optional or conditional on requesting Historian.
 
+Populate its product-owned metadata profile from the accepted launch/resume
+records: mission, product/repository/workspace, accountable owner labels,
+governance references/limits, declared roster, and source revision/update time.
+Preserve existing profile data on resume; never guess missing fields or expose
+private transcripts, credentials, or environment variables. Verify the Factory
+metadata card and its API/MCP projection; partial/unknown fields stay visible.
+
 Before claiming launch/resume readiness, verify the actual UI and API health
 URL, a current emitted fact, MCP discovery/read, session bindings, and visible
 capture gaps under the active host. Record the product-owned location, actual

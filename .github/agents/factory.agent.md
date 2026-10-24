@@ -165,6 +165,12 @@ existing center while preserving its journal. An older Factory without a center
 receives one at its next restart. Launcher handoff may supply verified
 provisioning evidence but never removes this requirement.
 
+Require the product-owned metadata profile to reflect accepted invocation
+records, preserving owner-maintained fields on resume. Verify its comprehensive
+Factory metadata card and matching API/MCP data, including missing fields,
+source provenance, and declared-versus-observed distinctions. A roster declaration
+is not an observed worker, and reported lifecycle is not verified health.
+
 Verify actual UI/API readiness, MCP discovery/read, source bindings and capture
 gaps; retain its location, URLs, process/restart owner, safe Git evidence, and
 health/escalation owner in the canonical product records. Report unavailable
