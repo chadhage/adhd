@@ -63,6 +63,21 @@ test('positive: API and MCP read identical sanitized Factory facts, entities and
   assert.deepEqual(apiAnalytics, (await mcp(rpc(4, 'tools/call', { name: 'factory_analytics', arguments: window }))).result.structuredContent);
 });
 
+test('positive: exact one-year windows retain their explicit end time across HTTP processing', async (t) => {
+  const ws = await service(t);
+  const end = Date.now();
+  const query = {
+    from: new Date(end - 365 * 86_400_000).toISOString(),
+    to: new Date(end).toISOString(),
+    facet: 'metadata',
+  };
+  const response = await fetch(`${ws.url}/api/v1/analytics?${new URLSearchParams(query)}`);
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.deepEqual(result.window, { from: query.from, to: query.to });
+  assert.equal(Date.parse(result.window.to) - Date.parse(result.window.from), 365 * 86_400_000);
+});
+
 for (const [name, headers] of [
   ['cross-site origin', { Origin: 'https://untrusted.example' }],
   ['rebinding Host', { Host: 'untrusted.example' }],
@@ -99,7 +114,8 @@ for (const path of [
 for (const path of [
   '/api/v1/schema?q=ignored', '/api/v1/overview?agent_id=x', '/healthz?limit=1',
   '/api/v1/events?limit=501', '/api/v1/events?after=99', '/api/v1/events?limit=1&limit=2',
-  '/api/v1/analytics?from=2020-01-01T00:00:00Z', '/api/v1/analytics?limit=1', '/api/v1/stream?before=1',
+  '/api/v1/analytics?from=2020-01-01T00:00:00Z', '/api/v1/analytics?limit=1', '/api/v1/analytics?facet=live',
+  '/api/v1/events?facet=metadata', '/api/v1/stream?before=1',
   '/api/v1/stream?order=desc', '/api/v1/stream?limit=2', '/api/v1/stream?after=99',
 ]) test(`negative: invalid API parameters fail explicitly for ${path}`, async (t) => {
   const ws = await service(t);

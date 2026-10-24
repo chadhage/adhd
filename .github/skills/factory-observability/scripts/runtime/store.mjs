@@ -3,7 +3,7 @@ import { readFileSync, realpathSync } from 'node:fs';
 import { lstat, mkdir, open, readdir, readFile, stat, unlink } from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
 
-export const VERSION = '1.0.0';
+export const VERSION = '1.2.0';
 export const MAX_EVENT_BYTES = 16 * 1024;
 export const MAX_JOURNAL_BYTES = 32 * 1024 * 1024;
 export const kinds = [
@@ -40,7 +40,7 @@ export function redact(value) {
     .replace(/\b(?:Bearer|Basic)\s+[A-Za-z0-9+/_.=~-]+/gi, '[REDACTED]')
     .replace(/\b(?:gh[pousr]_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+|sk-[A-Za-z0-9_-]{12,}|AKIA[A-Z0-9]{16})\b/g, '[REDACTED]')
     .replace(/\b(password|api[_-]?key|token|secret|authorization|connection[_-]?string)\s*[:=]\s*("[^"]*"|'[^']*'|[^\s,;]+)/gi, '$1=[REDACTED]')
-    .replace(/https?:\/\/[^\s]+/gi, (text) => {
+    .replace(/\b[a-z][a-z\d+.-]*:\/\/[^\s]+/gi, (text) => {
       try {
         const url = new URL(text);
         url.username = '';
@@ -186,18 +186,22 @@ export function normalizeEvent(input, factoryId, now = Date.now()) {
   return event;
 }
 
-export function loadConfig(directory) {
-  const config = JSON.parse(readFileSync(join(directory, 'center.json'), 'utf8'));
+export function normalizeConfig(config) {
   requireObject(config, ['version', 'runtime_version', 'factory_id', 'label', 'created_at', 'stale_after_ms'], 'center config');
   if (config.version !== 1 || config.runtime_version !== VERSION || !factoryIdPattern.test(config.factory_id)) throw new ObservationError('Unsupported center configuration');
   if (typeof config.label !== 'string' || !config.label.trim() || config.label.length > 100) throw new ObservationError('Invalid Factory label');
   timestamp(config.created_at, 'created_at');
   if (!Number.isInteger(config.stale_after_ms) || config.stale_after_ms < 1000 || config.stale_after_ms > 86_400_000) throw new ObservationError('Invalid freshness threshold');
+  return { ...config, label: redact(config.label) };
+}
+
+export function loadConfig(directory) {
+  const config = normalizeConfig(JSON.parse(readFileSync(join(directory, 'center.json'), 'utf8')));
   const actual = realpathSync(directory);
   if (basename(actual) !== config.factory_id || basename(dirname(actual)) !== 'observability' || basename(dirname(dirname(actual))) !== '.factory') {
     throw new ObservationError('Center must live in the product-owned .factory/observability/<factory-id> directory');
   }
-  return { ...config, label: redact(config.label) };
+  return config;
 }
 
 export function newFact(factoryId, kind, message, extra = {}) {
@@ -317,8 +321,9 @@ export function createStore(directory) {
   async function coverage() {
     const registry = JSON.parse(await readFile(join(dirname(directory), 'registry.json'), 'utf8'));
     const sessions = registry.factories?.[config.factory_id]?.sessions;
-    if (registry.version !== 1 || !Array.isArray(sessions)) throw new ObservationError('Factory capture registry is invalid', 503);
-    return { bound_sessions: sessions.length };
+    if (registry.version !== 1 || !Array.isArray(sessions) || sessions.some((id) => typeof id !== 'string' || !idPattern.test(id)) ||
+        new Set(sessions).size !== sessions.length) throw new ObservationError('Factory capture registry is invalid', 503);
+    return { bound_sessions: sessions.length, session_ids: sessions.map(redact) };
   }
 
   return { config, directory, read, append, drain, coverage };
