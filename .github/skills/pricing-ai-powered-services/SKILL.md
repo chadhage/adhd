@@ -111,6 +111,9 @@ or audit obligations.
    and source any currency conversion. A cost-plus floor or attractive margin
    is not evidence of willingness to pay. Missing demand, margin policy or
    economic inputs mean a conditional recommendation, not financial approval.
+   Evaluate deliberately below-cost entry components with
+   [LossLeaderTheory](../loss-leader-theory/SKILL.md); an assumed future upsell
+   is not evidence that incremental complement contribution covers the subsidy.
 8. **Compare scenarios and validate reversibly.** Use
    [What-if Analysis](../product-what-if-analysis/SKILL.md) for downside/base/upside
    cases covering adoption, volume, per-origin credit burn, support/escalation,

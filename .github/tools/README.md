@@ -115,6 +115,11 @@ PricingAIPoweredServices discovery, source/page provenance and conditional
 pricing/authority safeguards. It does not validate the paper empirically,
 verify live vendor prices, or approve a customer offer.
 
+[`loss-leader-skill-contract.test.mjs`](tests/loss-leader-skill-contract.test.mjs)
+checks LossLeaderTheory discovery, source/page provenance, model boundaries
+and worked accounting fixtures. It is not an approximation solver, empirical
+promotion validation, or authority to subsidize a customer offer.
+
 The [Factory quality workflow](../workflows/factory-quality.yml) runs that exact gate for every pull request and pushes to `main`, on Windows with Node `22.21.0`. It records the tested revision and runtime, uses commit-pinned actions with read-only repository permissions, and does not ignore gate failures. The stable check name is `Factory quality gate`; making it required is a separately verified repository-owner setting. A local workflow file is not evidence that GitHub has run the check.
 
 ### Acceptance tests

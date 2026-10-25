@@ -394,8 +394,16 @@ For customer-facing offer and contract structure, use
 [PricingAIPoweredServices](../skills/pricing-ai-powered-services/SKILL.md).
 Its source-grounded observability/attribution map guides pricing choices;
 Factory credit costs remain internal inputs, not automatically customer prices.
-ProductOwner's skill catalog also makes this method available to chartered
-AssociateProductOwners.
+
+For loss-making entry offers or complementary bundles, use
+[LossLeaderTheory](../skills/loss-leader-theory/SKILL.md). It distinguishes
+cost-bearing discounts from zero-cost coupons and requires a counterfactual
+profit assessment, explicit subsidy authority and evidence for the bundle
+demand assumptions; more customers or discounted usage is not itself profit.
+
+Both ProductOwner and AssociateProductOwner explicitly list these two skills.
+Associates apply them only within the chief-approved charter, shared portfolio
+policy and existing pricing/subsidy authority.
 
 ## Agent feature truth table
 

@@ -151,6 +151,7 @@ Read only the relevant skill before applying its method. Each skill is independe
 | Kano Modeling | [product-kano-modeling](../skills/product-kano-modeling/SKILL.md) |
 | Financial Modeling | [product-financial-modeling](../skills/product-financial-modeling/SKILL.md) |
 | Pricing AI-powered services (PricingAIPoweredServices) | [pricing-ai-powered-services](../skills/pricing-ai-powered-services/SKILL.md) |
+| Loss leaders, below-cost bundles and coupon economics (LossLeaderTheory) | [loss-leader-theory](../skills/loss-leader-theory/SKILL.md) |
 | Business Model Canvas Modeling | [product-business-model-canvas](../skills/product-business-model-canvas/SKILL.md) |
 | Value Proposition Modeling | [product-value-proposition-modeling](../skills/product-value-proposition-modeling/SKILL.md) |
 | What-if Analysis | [product-what-if-analysis](../skills/product-what-if-analysis/SKILL.md) |

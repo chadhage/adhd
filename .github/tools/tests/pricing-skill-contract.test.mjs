@@ -29,6 +29,7 @@ test('positive: PricingAIPoweredServices has discoverable skill metadata and bot
   const guide = readMarkdown('.github', 'agents', 'README.md');
   assert.match(chief, /\[pricing-ai-powered-services\]\(\.\.\/skills\/pricing-ai-powered-services\/SKILL\.md\)/);
   assert.match(associate, /ProductOwner skill catalog/);
+  assert.match(associate, /\[PricingAIPoweredServices\]\(\.\.\/skills\/pricing-ai-powered-services\/SKILL\.md\)/);
   assert.match(guide, /\[PricingAIPoweredServices\]\(\.\.\/skills\/pricing-ai-powered-services\/SKILL\.md\)/);
 });
 
