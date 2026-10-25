@@ -105,6 +105,21 @@ One command runs every suite under `.github/tools/tests/` and `.github/hooks/tes
 
 Run a single file while developing with `node --test <file>`. `run-tests.mjs` is the pass/fail authority.
 
+[`credit-rate-contract.test.mjs`](tests/credit-rate-contract.test.mjs) checks
+the five agents' shared daily-rate instructions, pricing/freshness boundaries,
+and worked credit-cost arithmetic. These are static contract checks, not a live
+billing meter, scheduled human refresh, or proof of actual agent compliance.
+
+[`pricing-skill-contract.test.mjs`](tests/pricing-skill-contract.test.mjs) checks
+PricingAIPoweredServices discovery, source/page provenance and conditional
+pricing/authority safeguards. It does not validate the paper empirically,
+verify live vendor prices, or approve a customer offer.
+
+[`loss-leader-skill-contract.test.mjs`](tests/loss-leader-skill-contract.test.mjs)
+checks LossLeaderTheory discovery, source/page provenance, model boundaries
+and worked accounting fixtures. It is not an approximation solver, empirical
+promotion validation, or authority to subsidize a customer offer.
+
 The [Factory quality workflow](../workflows/factory-quality.yml) runs that exact gate for every pull request and pushes to `main`, on Windows with Node `22.21.0`. It records the tested revision and runtime, uses commit-pinned actions with read-only repository permissions, and does not ignore gate failures. The stable check name is `Factory quality gate`; making it required is a separately verified repository-owner setting. A local workflow file is not evidence that GitHub has run the check.
 
 ### Acceptance tests

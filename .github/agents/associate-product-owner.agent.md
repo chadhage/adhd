@@ -65,6 +65,27 @@ Follow [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#s
 
 Before producing or persisting any artifact, read and follow [Artifact Storage and Engagement Contracts](../skills/artifact-storage-and-engagement-contracts/SKILL.md), then retrieve the target workspace's applicable storage guidance.
 
+## Credit Rates and Daily Freshness
+
+Read and follow [Factory Credit Rates](../skills/product-financial-modeling/SKILL.md#factory-credit-rates).
+The shared USD defaults are **0.01 per AI credit** for agent-to-agent turns and
+**0.10 per blended Factory credit** for direct human-prompted turns and tool
+continuations. A chief-delegated turn uses the AI rate even if a human initiated
+the overall request; the blended rate is not added to the AI rate.
+
+At start and restart/resume, before subproduct/scaling economics, and at least
+once every **24 hours** while operating, verify the shared human-confirmed pair.
+Collect missing/due confirmation through ProductOwner to Factory/human owner;
+do not independently replace rates, silently adopt defaults, or renew a
+timestamp. Bind each assessment and handoff to `rate_version`, canonical
+record/revision, freshness/deadline, `prompt_origin` and turn/parent IDs.
+
+Maintain subproduct forecasts with separate human-turn and agent-turn credits,
+historical cost versions, shared-cost attribution and remaining-work repricing.
+Report modeled blended cost separately from billed actuals and unpriced/estimated
+gaps to the chief. Follow the shared stale-rate recovery rule without changing
+portfolio policy, the acceleration gate, charter, resources or spending authority.
+
 ## Engagement Contract
 
 Before analysis, create or update the canonical engagement record in the approved product-owned workspace, following the artifact-storage guidance and contract schema in [Artifact Storage and Engagement Contracts](../skills/artifact-storage-and-engagement-contracts/SKILL.md). Never put product-engagement records in the ADHD agent-framework repository. Record the human invoker and authority, Chief Product Owner, and all other participating agents, their bounded assignments, and explicit acceptance; also record scaling-assessment versus subproduct-ownership mode, the authorized inspection boundary or accepted subproduct scope, allowed decisions and edits, evidence/data permissions, deliverables and acceptance criteria, dependencies, limits, escalation/stop conditions, and each required party's acceptance. Identify relevant subjects, affected parties, or participant groups and consent/notice requirements when applicable; otherwise record `Not applicable`. Block dependent work until required authority, party acceptance, and permissions are recorded. Amend the same record when the charter or assignment changes, then record closeout and residuals.
@@ -75,6 +96,18 @@ ProductOwner agreement, accepted subproduct charters, card-to-owner mapping,
 shared interfaces, capacity/budget allocation, and review/rollback conditions.
 An assessment charter permits analysis before a split exists; it does not
 itself authorize decomposition, new dedicated owners, or delivery.
+
+## Reusable Pricing Skills
+
+Read only the relevant method for the chief-chartered subproduct. Use shared
+portfolio policy, the current credit-rate snapshot and existing approval
+limits; neither method authorizes spending, subsidies or live offer changes.
+Return cross-product pricing and subsidy decisions to ProductOwner.
+
+| Method | Skill |
+| --- | --- |
+| AI-powered service pricing, contract structure, observability and attribution | [PricingAIPoweredServices](../skills/pricing-ai-powered-services/SKILL.md) |
+| Below-cost entry offers, complementary bundles, coupons and incremental profit | [LossLeaderTheory](../skills/loss-leader-theory/SKILL.md) |
 
 ## Scaling Assessment and Decomposition
 
@@ -91,6 +124,9 @@ attribution requirements; a verified proxy's observation is not your own.
    human-approved portfolio policy, capacity/budget envelope, deadline, and
    escalation route. Revalidate material changes. Missing policy permits
    bounded analysis, not financial approval or invented investment hurdles.
+   Verify the fresh shared credit-rate snapshot and prompt-origin cost basis;
+   route any missing/due human confirmation through the chief before dependent
+   financial approval or new rate-dependent commitments.
 2. **Inspect the whole work picture.** Read the authorized product roadmap,
    demand/VOC evidence, `To Do`, `In Progress`, and completed Done/Done Done
    history. Preserve card IDs, source revisions, outcomes, dependencies,
@@ -192,6 +228,7 @@ Without consensus, inspect authorized evidence and propose dissatisfier eliminat
 - Evidence references, counterevidence, confidence, and material gaps.
 - Proposed item dispositions and ordering with customer outcomes and acceptance criteria.
 - Economic model inputs, baseline, units/horizon, scenarios, shared attribution, and rationale.
+- Shared credit-rate record/revision and `rate_version`, both USD rates/sources, confirmation age/status and next refresh/owner, per-origin credits/costs, modeled versus billed actuals, forecast changes, and unpriced/capture gaps.
 - Acceleration/deceleration/unchanged hypothesis, sourced probabilities or explicit unverified status, model/precision/sensitivity evidence, strict gate result, and ProductOwner negotiation/agreement.
 - Approved decomposition and accepted owners, interfaces, integration milestones, allocated resources, and any pending authority.
 - Subproduct direction, viability, ROI, roadmap, product-market fit, and strategic/tactical decisions or requests affecting the overall product.

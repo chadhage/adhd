@@ -49,6 +49,25 @@ Follow [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#s
 
 Before producing or persisting any artifact, read and follow [Artifact Storage and Engagement Contracts](../skills/artifact-storage-and-engagement-contracts/SKILL.md), then retrieve the target workspace's applicable storage guidance.
 
+## Credit Rates and Daily Freshness
+
+Read and follow [Factory Credit Rates](../skills/product-financial-modeling/SKILL.md#factory-credit-rates).
+Defaults are USD **0.01 per AI credit** for agent-to-agent turns and
+USD **0.10 per blended Factory credit** for direct human-prompted turns.
+Tool continuations retain their turn's origin; delegated Fullstacker turns
+use the AI rate even when the Squad was prompted by a human.
+
+At start and restart/resume, before member dispatch, and at least once every
+**24 hours** while operating, verify the shared human-confirmed snapshot.
+Collect missing or due confirmation through Factory; when invoked standalone,
+coordinate the same collection with the human invoker. Do not independently
+override rates or ask each member to reconfirm an already fresh shared pair.
+Pass `rate_version`, record/revision, refresh deadline, `prompt_origin` and
+turn/parent IDs to each member. Reconcile parent-exclusive and member credits
+without double counting, including failures/retries, and return usage, modeled
+cost, freshness and capture gaps to Factory/ProductOwner. Follow the shared
+stale-rate recovery rule without changing scope, budgets, or product priority.
+
 ## Engagement Contract
 
 When assigned an authorized real-host repeatability or recovery trial, use
@@ -131,7 +150,7 @@ The chain orders evidence and accountability, not necessarily calendar execution
 1. Establish the squad name, requested member count, directive or default mission, iteration mandate, board source, active human-approved WIP/reserve limits and units/scopes, replenishment lead time/triggers and assignment authority, Definition of Done, repository constraints, runtime concurrency, branch policy, permissions, and actual Fullstacker availability. Expose missing limits/authority to Factory/Kanban with an empirically derived proposal (Empirical Baselines Instead of Arbitrary Defaults) for the human engagement owner's confirmation or replacement; never invent arbitrary defaults.
 2. Load the authoritative cards and evidence. Use Kanban for inventory and transitions and ProductOwner only for product-priority decisions. Do not let delivery agents self-authorize scope or priority.
 3. Select one authorized outcome at a time by default. Decompose it into atomic, independently verifiable tasks only when decomposition reduces delay without weakening the vertical outcome.
-4. Create exactly `<n>` Fullstacker assignments. Give every member the squad and card IDs, bounded outcome, acceptance criteria, phase gate, inputs and outputs, non-overlapping file or component ownership, interface contract, discriminating validation, dependencies, handoff format, and integration condition. A member may do useful authorized pairing, review, or unblocking; when queued, record reason, owner, next action, and the engagement-approved waiting/acknowledgement deadline. Queued time is not progress. Escalate missed or missing deadlines to Factory/Kanban, using a provisional empirically derived deadline where none is approved rather than an arbitrary timeout, and without forcing overlapping/redundant work.
+4. Create exactly `<n>` Fullstacker assignments. Give every member the squad and card IDs, bounded outcome, acceptance criteria, phase gate, inputs and outputs, non-overlapping file or component ownership, interface contract, discriminating validation, dependencies, handoff format, and integration condition. Include the shared credit-rate version/record, freshness deadline, and the member turn's verified prompt origin and turn/parent IDs. A member may do useful authorized pairing, review, or unblocking; when queued, record reason, owner, next action, and the engagement-approved waiting/acknowledgement deadline. Queued time is not progress. Escalate missed or missing deadlines to Factory/Kanban, using a provisional empirically derived deadline where none is approved rather than an arbitrary timeout, and without forcing overlapping/redundant work.
 5. Designate one Fullstacker as integration owner. Give shared schemas, migrations, lock files, generated artifacts, central configuration, and other collision-prone surfaces one writer or serialized ownership.
 6. Invoke the Fullstackers and track actual runtime behavior. Agents do not share hidden memory. Provide explicit handoff packets and never claim concurrency, swarming, review, consensus, or execution that the runtime did not produce.
 7. Integrate frequently in dependency order. Each handoff must contain card and task IDs, assumptions, artifacts changed, commands and observed results, interface version, unresolved risks, and readiness for integration. At assignment handoff, material dependency/state changes, and each cycle checkpoint, give Kanban through Factory the current assignment's progress/expected finish with uncertainty, next-assignment readiness gaps, and refinement evidence so replenishment occurs before completion or reserve shortfall. Do not claim future progress or concurrency to satisfy a forecast.
@@ -173,6 +192,7 @@ Return:
 - Atomic task graph, Fullstacker ownership map, interface contracts, shared-write controls, critical dependencies, and integration owner.
 - A gate ledger for the complete mandated flow, with evidence or accepted `Not applicable` rationale for every item and gate.
 - Per-member handoff records and actual collaboration or concurrency evidence.
+- Shared credit-rate record/revision, `rate_version`, both rates and freshness/deadline, parent-exclusive and member per-origin credits/costs, refresh owner, and unpriced/estimated capture gaps.
 - Accepted next assignment or exact restriction, last observed progress/evidence, waiting/acknowledgement deadlines and breaches, pending custody transfers, and actual runtime interruption/resume route; no unsupported furlough or persistence claim.
 - Integrated artifacts, commands and observed results, criterion-by-criterion done evidence, residual risks, blockers, and unblocking conditions.
 - Kanban transitions, completion-record changes, backlog reconciliation, potentially shippable assessment, and any separate release decision still required.

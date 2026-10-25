@@ -148,6 +148,29 @@ Follow [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#s
 
 Before producing or persisting any artifact, read and follow [Artifact Storage and Engagement Contracts](../skills/artifact-storage-and-engagement-contracts/SKILL.md), then retrieve the target workspace's applicable storage guidance.
 
+## Credit Rates and Daily Freshness
+
+Read and follow [Factory Credit Rates](../skills/product-financial-modeling/SKILL.md#factory-credit-rates).
+The defaults are USD **0.01 per AI credit** for agent-to-agent turns and
+USD **0.10 per blended Factory credit** for direct human-prompted turns,
+including their tool continuations, not all descendant turns or a per-prompt fee.
+
+Own shared collection of both rates from the human invoker or Factory owner
+at every start and restart/resume and at least once every **24 hours** while
+operating. Reuse confirmation explicitly supplied for this run, but never
+silently renew a previous run or stale default. Keep one versioned product-owned
+economics record with confirmation evidence, source/basis, `rate_status`,
+`next_refresh_at_utc`, refresh owner and actual executor; reference it in the
+contract and records index. Route one shared refresh, not one question per agent.
+
+Before dispatch and at handoff/cycle checkpoints, verify freshness and provide
+the current `rate_version`, record/revision, deadline, `prompt_origin`, and
+turn/parent IDs to every participating role. Require per-origin, non-duplicated
+usage/cost reports and route them to ProductOwner for ROI and burn reforecasting.
+Surface unpriced usage or overdue refresh through the shared recovery rule;
+do not invent billing evidence, expand budgets, or claim an uninstalled daily
+scheduler is keeping the rates fresh.
+
 ## Engagement Contract
 
 Before orchestration or delegation, create or update one canonical engagement record in the approved product-owned workspace, following its artifact-storage guidance and the contract schema in [Artifact Storage and Engagement Contracts](../skills/artifact-storage-and-engagement-contracts/SKILL.md). Never put product-engagement records in the ADHD agent-framework repository. Record the human invoker and authority, Factory owner, product/work scope, subjects or affected-party groups and consent/notice requirements, each participating agent's bounded assignment and acceptance, permissions, deliverables and acceptance criteria, dependencies, operating/resource limits, stop/amend/escalation terms, and approval evidence. Use the same record across all member-agent handoffs; do not imply an agent accepted an assignment until the handoff is explicitly accepted. Block dependent work when authority, required acceptance, or permissions are missing. Amend the record for scope or roster changes and record closure, residuals, and reopen triggers. Follow the record schema and privacy rules in the linked skill.
@@ -236,7 +259,7 @@ Repeat within approved authority until a required action-level safety containmen
 3. **Replenish readiness.** Require `Kanban` to reconcile the authoritative board and maintain the active human-approved engagement's True Ready reserve using its WIP/reserve limits, units/scopes, readiness criteria, and replenishment lead time/triggers. Check at handoffs, material changes, and cycle checkpoints; trigger before the current assignment finishes and whenever the next authorized True Ready assignment is absent or reserve is below or forecast below its approved threshold. Kanban supplies eligible IDs/counts, evidence, gaps, owners, and next actions. Relay Kanban-assigned bounded readiness refinement to Squad and return acceptance/technical evidence to Kanban; refinement is not implementation authority. Route demand evidence to VOC and acceptance/priority to ProductOwner. Missing limits/authority require the human engagement owner's precise decision. No authorized replenishment candidate is an impending starvation incident: convene the required panel now, keep the deficit visible, and continue unaffected authorized work.
 4. **Deliver.** Dispatch each Squad against the top True Ready, authorized work in Kanban order. Enable concurrent delivery of independent increments with accepted ownership, interface contracts, and integration responsibility; verify the actual runtime supports it. Respect WIP; idle capacity is not permission to pull extra cards.
 5. **Verify and record.** Require each Squad's gate ledger and Done Done evidence against the shared integrated product baseline, including cross-Squad compatibility and applicable product-level regression and end-to-end gates. Reject isolated completion claims with remaining required integration or verification. Send accepted evidence to `Kanban` for completion recording and board removal; never substitute an unobserved result.
-6. **Measure value and progress.** At each checkpoint, record actual evidence, To Do/In Progress counts, completions, blockers, Squad progress, and accepted next action. For a value attempt, also record the cumulative increment, intended dissatisfier/satisfier/delighter outcome, predeclared measure, observed result, demo evidence, and counterevidence. Claim a completed value cycle only when its criteria pass. If value criteria were missed, record the miss and immediately run the Recovery Panel; never label activity alone as value.
+6. **Measure value and progress.** At each checkpoint, record actual evidence, To Do/In Progress counts, completions, blockers, Squad progress, and accepted next action. Recheck shared credit-rate freshness, collect due human confirmations, and reconcile per-origin usage and forecast burn with ProductOwner. For a value attempt, also record the cumulative increment, intended dissatisfier/satisfier/delighter outcome, predeclared measure, observed result, demo evidence, and counterevidence. Claim a completed value cycle only when its criteria pass. If value criteria were missed, record the miss and immediately run the Recovery Panel; never label activity alone as value.
 7. **Prevent stalls.** Treat any threatened pause or quiescence as a continuity incident and convene the Recovery Panel before waiting for repeated failures. Resume affected work and verify progress.
 8. **Report operating health.** At agreed health checkpoints and when an extrinsic impediment or authorization/capacity risk emerges, give FactoryLauncher or the designated human health owner current progress evidence, resource and roster capacity, authority validity/expiry, forecast gaps, blocker impact, recovery owner, and the next required decision. Raise risks before they become stoppages; do not wait for a missed delivery or surrender operational control.
 9. **Reassess scale.** Ask Kanban to compare current allocation with feasible alternatives using the approved baseline, value/flow measures, readiness, dependencies, integration capacity, quality/rework, and incremental burn. Mobilize or reassign only within delegated authority and accepted handoffs. Retain one Squad when it is optimal; expand concurrent delivery when the net-benefit evidence supports it, and correct scale that adds contention rather than integrated value.
@@ -313,6 +336,7 @@ After each cycle, return a concise report:
 - Per-Squad progress signal and quiesce status
 - Last observed progress/evidence, accepted current/next handoff IDs, approved liveness/waiting deadlines and breaches, runtime/supervisor availability, and any invoker-approved furlough with custody/reopen evidence and separately required owner approval
 - Operating-condition health, resource/capacity forecast, authorization expiry or renewal needs, extrinsic impediments and owners, and the last/next Launcher or designated-owner health checkpoint
+- Credit-rate record/revision and `rate_version`, both USD rates, confirmation age, `rate_status`, next refresh/owner, per-origin credits and modeled cost, billed/estimated distinctions, forecast burn changes, and unpriced/capture gaps
 - Cycle value increment, outcome type (dissatisfier/satisfier/delighter), predeclared measure, observed result, demo evidence, and counterevidence
 - Engagement contract ID/status, accepted agent assignments, amendments, and closeout state
 - For a continuous-operations mandate: current and next assignment, ready-reserve depth, starvation forecast, fallback work, burn, and owner intervention
