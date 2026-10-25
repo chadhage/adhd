@@ -13,6 +13,7 @@
 - [VOC evidence and discovery dependencies](#voc-evidence-and-discovery-dependencies)
 - [Product and subproduct scaling](#product-and-subproduct-scaling)
 - [Daily credit rates and ROI costing](#daily-credit-rates-and-roi-costing)
+- [Federal accounting standards and pronouncements](#federal-accounting-standards-and-pronouncements)
 - [Agent feature truth table](#agent-feature-truth-table)
 - [Important distinctions](#important-distinctions)
 - [Shared statistical analysis](#shared-statistical-analysis)
@@ -404,6 +405,22 @@ demand assumptions; more customers or discounted usage is not itself profit.
 Both ProductOwner and AssociateProductOwner explicitly list these two skills.
 Associates apply them only within the chief-approved charter, shared portfolio
 policy and existing pricing/subsidy authority.
+
+## Federal accounting standards and pronouncements
+
+ProductOwner and chartered AssociateProductOwners can use
+[FederalAccountingStandardsAndOtherPronouncements](../skills/federal-accounting-standards-and-other-pronouncements/SKILL.md)
+for source-grounded federal accounting research. It uses the 2025 FASAB
+Handbook, checks the GAAP hierarchy and later/effective amendments, and
+distinguishes cost forecasts, source-supported records, accruals, budgetary
+obligations/outlays and cash. Its topic map includes managerial full cost,
+advances/payables, internal use software/cloud and budget-accrual reconciliation.
+
+The human confirmed **Pronouncements**, not **Procurements**. This is not a
+procurement rulebook, journal-posting tool, audit certification or spending
+authority. Factory credit defaults are planning inputs, not FASAB-prescribed
+book costs. Applicable entity policies and qualified accounting review remain
+necessary; accounting and acquisition/funds decisions have separate owners.
 
 ## Agent feature truth table
 

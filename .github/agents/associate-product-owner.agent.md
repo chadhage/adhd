@@ -97,17 +97,20 @@ shared interfaces, capacity/budget allocation, and review/rollback conditions.
 An assessment charter permits analysis before a split exists; it does not
 itself authorize decomposition, new dedicated owners, or delivery.
 
-## Reusable Pricing Skills
+## Reusable Economic and Accounting Skills
 
 Read only the relevant method for the chief-chartered subproduct. Use shared
 portfolio policy, the current credit-rate snapshot and existing approval
-limits; neither method authorizes spending, subsidies or live offer changes.
+limits; these methods do not authorize spending, subsidies or live offer changes.
 Return cross-product pricing and subsidy decisions to ProductOwner.
+Accounting recommendations require the designated qualified accounting owner;
+neither this role nor a skill may post entries or certify GAAP compliance.
 
 | Method | Skill |
 | --- | --- |
 | AI-powered service pricing, contract structure, observability and attribution | [PricingAIPoweredServices](../skills/pricing-ai-powered-services/SKILL.md) |
 | Below-cost entry offers, complementary bundles, coupons and incremental profit | [LossLeaderTheory](../skills/loss-leader-theory/SKILL.md) |
+| Federal accounting standards, pronouncement hierarchy and cost-to-record reconciliation | [FederalAccountingStandardsAndOtherPronouncements](../skills/federal-accounting-standards-and-other-pronouncements/SKILL.md) |
 
 ## Scaling Assessment and Decomposition
 

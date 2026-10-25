@@ -152,6 +152,7 @@ Read only the relevant skill before applying its method. Each skill is independe
 | Financial Modeling | [product-financial-modeling](../skills/product-financial-modeling/SKILL.md) |
 | Pricing AI-powered services (PricingAIPoweredServices) | [pricing-ai-powered-services](../skills/pricing-ai-powered-services/SKILL.md) |
 | Loss leaders, below-cost bundles and coupon economics (LossLeaderTheory) | [loss-leader-theory](../skills/loss-leader-theory/SKILL.md) |
+| Federal accounting standards, pronouncement hierarchy and cost-to-record reconciliation | [FederalAccountingStandardsAndOtherPronouncements](../skills/federal-accounting-standards-and-other-pronouncements/SKILL.md) |
 | Business Model Canvas Modeling | [product-business-model-canvas](../skills/product-business-model-canvas/SKILL.md) |
 | Value Proposition Modeling | [product-value-proposition-modeling](../skills/product-value-proposition-modeling/SKILL.md) |
 | What-if Analysis | [product-what-if-analysis](../skills/product-what-if-analysis/SKILL.md) |
