@@ -12,6 +12,7 @@
 - [Fabric IQ connection](#fabric-iq-connection)
 - [VOC evidence and discovery dependencies](#voc-evidence-and-discovery-dependencies)
 - [Product and subproduct scaling](#product-and-subproduct-scaling)
+- [Daily credit rates and ROI costing](#daily-credit-rates-and-roi-costing)
 - [Agent feature truth table](#agent-feature-truth-table)
 - [Important distinctions](#important-distinctions)
 - [Shared statistical analysis](#shared-statistical-analysis)
@@ -357,6 +358,44 @@ ROI, roadmap, and product-market fit within their charters, keep work aligned,
 and inform ProductOwner's overall strategic/tactical decisions. Forecasts are
 checked against actual value velocity to maintain or renegotiate effective scale.
 Completed Done work stays in the completion ledger, not a new Kanban bucket.
+
+## Daily credit rates and ROI costing
+
+Factory, Squad, Fullstacker, ProductOwner and AssociateProductOwner use one
+shared [Factory Credit Rates policy](../skills/product-financial-modeling/SKILL.md#factory-credit-rates):
+
+| Prompt origin | Default USD per AI credit consumed |
+| --- | --- |
+| Direct human-prompted turn, including its tool continuations | 0.10 blended Factory rate |
+| Separately delegated agent-to-agent turn, even under a human request | 0.01 AI rate |
+
+The rates are alternatives, not additive and not per-prompt fees. Thus 100
+credits in a human turn plus 100 in a delegated turn cost a modeled USD 11.00.
+Unknown origin or missing metering is reported, not silently priced as zero.
+
+Factory coordinates one human confirmation of both rates at every start and
+restart/resume and at least once every rolling 24 hours while operating.
+Standalone roles coordinate with their invoker; delegates reuse and verify the
+shared snapshot instead of asking duplicate questions. Defaults and unchanged
+rates still require confirmation. Exactly 24 hours is stale, and a restart
+requires confirmation even sooner. Keep the versioned record, sources,
+confirmation evidence and next refresh/owner in the product-owned economics
+record referenced by the contract and records index.
+
+All five roles check freshness at their dispatch, handoff and economic/reporting
+checkpoints. ProductOwner and associates use separate per-origin consumption,
+preserve historical cost versions, and reforecast remaining work with fresh
+rates. Avoid duplicate parent/child usage and human/AI charges already covered
+by the blended basis. Modeled economic cost is not a provider invoice; rates
+never authorize spending or replace the investment policy. These instructions
+do not install metering or a daily scheduler; record actual runtime/refresh gaps.
+
+For customer-facing offer and contract structure, use
+[PricingAIPoweredServices](../skills/pricing-ai-powered-services/SKILL.md).
+Its source-grounded observability/attribution map guides pricing choices;
+Factory credit costs remain internal inputs, not automatically customer prices.
+ProductOwner's skill catalog also makes this method available to chartered
+AssociateProductOwners.
 
 ## Agent feature truth table
 
