@@ -198,7 +198,10 @@ certify Git tracking, acceptance, or Done Done.
 
 Repository bindings use native canonical paths so equivalent Windows path
 casing resolves to the same product root without weakening link or cross-root
-checks.
+checks. Current-file previews and downloads reject symlinks, junctions, and hard
+links before Git checks, so a POSIX symlink cannot mask the explicit 403
+rejection with a Git availability error. Regular files still require a valid
+repository binding and must pass Git's ignore checks before content is opened.
 
 Use installer `--artifacts <reviewed-catalog.json>` to explicitly replace the
 catalog with a validated/redacted snapshot. Otherwise resume preserves existing

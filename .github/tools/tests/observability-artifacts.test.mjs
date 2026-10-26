@@ -268,18 +268,41 @@ test('negative: missing, directory, ignored and oversized current artifacts neve
   await assert.rejects(ws.reader.read(artifact.id), (error) => error.status === 413);
   await writeFile(join(ws.root, '.gitignore'), 'docs/result.md\n');
   await assert.rejects(ws.reader.read(artifact.id), (error) => error.status === 403);
+  await assert.rejects(ws.reader.download(artifact.id), (error) => error.status === 403);
 });
 
-test('negative: current symlinks, parent junctions and hard links cannot expose outside files', async (t) => {
+for (const dangling of [false, true]) test(`negative: ${dangling ? 'dangling' : 'existing'} parent symlinks and junctions reject previews and downloads`, async (t) => {
+  const ws = await workspace(t);
+  const outside = await center(t);
+  await writeFile(join(outside.root, 'private.txt'), 'PRIVATE-OUTSIDE');
+  await symlink(dangling ? join(outside.root, 'missing') : outside.root, join(ws.root, 'redirect'), 'junction');
+  const [redirected] = await register(ws, [entry('redirect/private.txt')]);
+  await assert.rejects(ws.reader.read(redirected.id), (error) => error.status === 403);
+  await assert.rejects(ws.reader.download(redirected.id), (error) => error.status === 403);
+});
+
+test('negative: current hard links cannot expose outside files through previews or downloads', async (t) => {
+  const ws = await workspace(t);
+  const outside = await center(t);
+  await writeFile(join(outside.root, 'private.txt'), 'PRIVATE-OUTSIDE');
+  await link(join(outside.root, 'private.txt'), join(ws.root, 'hardlink.txt'));
+  const [linked] = await register(ws, [entry('hardlink.txt')]);
+  await assert.rejects(ws.reader.read(linked.id), (error) => error.status === 403);
+  await assert.rejects(ws.reader.download(linked.id), (error) => error.status === 403);
+});
+
+test('negative: Git metadata failures cannot mask current link rejection or allow regular file reads', async (t) => {
   const ws = await workspace(t);
   const outside = await center(t);
   await writeFile(join(outside.root, 'private.txt'), 'PRIVATE-OUTSIDE');
   await symlink(outside.root, join(ws.root, 'redirect'), 'junction');
-  const [redirected] = await register(ws, [entry('redirect/private.txt')]);
+  await file(ws, 'regular.txt', 'Synthetic regular artifact');
+  const [redirected, regular] = await register(ws, [entry('redirect/private.txt'), entry('regular.txt')]);
+  await writeFile(join(ws.root, '.git', 'config'), '[invalid\n');
   await assert.rejects(ws.reader.read(redirected.id), (error) => error.status === 403);
-  await link(join(outside.root, 'private.txt'), join(ws.root, 'hardlink.txt'));
-  const [linked] = await register(ws, [entry('hardlink.txt')]);
-  await assert.rejects(ws.reader.read(linked.id), (error) => error.status === 403);
+  await assert.rejects(ws.reader.download(redirected.id), (error) => error.status === 403);
+  await assert.rejects(ws.reader.read(regular.id), (error) => error.status === 503);
+  await assert.rejects(ws.reader.download(regular.id), (error) => error.status === 503);
 });
 
 test('negative: binary and invalid UTF-8 artifacts require explicit download, and LFS pointers are not fake documents', async (t) => {
