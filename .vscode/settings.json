@@ -1,0 +1,10 @@
+{
+  "chat.useHooks": true,
+  "chat.subagents.allowInvocationsFromSubagents": true,
+  "json.schemas": [
+    {
+      "fileMatch": ["/.github/hooks/factory-ops.json"],
+      "url": "./.github/hooks/factory-ops.schema.json"
+    }
+  ]
+}

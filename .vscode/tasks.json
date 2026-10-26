@@ -1,0 +1,28 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Prompt-Injection Policy Regression Suite",
+			"type": "shell",
+			"command": "node",
+			"args": [
+				"--test",
+				".github/hooks/tests/pre-tool-policy.test.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Factory Quality Gate (tests, coverage, ratio, acceptance)",
+			"type": "shell",
+			"command": "node",
+			"args": [
+				".github/tools/run-tests.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "test"
+		},
+	]
+}

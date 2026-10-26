@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Factory operations configuration",
+  "description": "Configuration is not engagement acceptance, host permission or live capability evidence.",
+  "type": "object",
+  "required": ["version"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "const": 1 },
+    "operatingProfile": {
+      "type": "string",
+      "enum": ["bounded", "parallel", "supervised"],
+      "default": "bounded",
+      "description": "Default proposal for new engagements only. Omission preserves legacy semantics; changing accepted guarantees requires an authorized amendment."
+    },
+    "boardPaths": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/nonEmptyString" },
+      "description": "Exact workspace-owned Markdown boards. Runtime checks enforce confinement and protected-path exclusions; these are not tool-approval allowlists."
+    },
+    "approvalsPath": { "$ref": "#/definitions/optionalPath" },
+    "approvalQueuePath": { "$ref": "#/definitions/optionalPath" },
+    "progressPath": { "$ref": "#/definitions/optionalPath" },
+    "unattended": {
+      "type": "boolean",
+      "default": false,
+      "description": "Human availability declaration, not an upgrade to supervised operation or a host approval."
+    },
+    "supervisor": {
+      "type": ["object", "null"],
+      "required": ["owner", "authorizedBy", "resume", "statePath", "logPath", "inhibitPath", "deadline", "retry"],
+      "additionalProperties": false,
+      "properties": {
+        "owner": { "$ref": "#/definitions/nonEmptyString" },
+        "authorizedBy": {
+          "type": "string",
+          "pattern": "\\S",
+          "description": "Reference to separately verified human authority, not proof of approval by itself."
+        },
+        "resume": {
+          "type": "object",
+          "required": ["command", "args"],
+          "additionalProperties": false,
+          "properties": {
+            "command": { "$ref": "#/definitions/nonEmptyString" },
+            "args": { "type": "array", "items": { "type": "string" } },
+            "cwd": { "$ref": "#/definitions/nonEmptyString" }
+          }
+        },
+        "restartPacketPath": { "$ref": "#/definitions/optionalPath" },
+        "statePath": { "$ref": "#/definitions/nonEmptyString" },
+        "logPath": { "$ref": "#/definitions/nonEmptyString" },
+        "inhibitPath": { "$ref": "#/definitions/nonEmptyString" },
+        "deadline": {
+          "type": "object",
+          "required": ["ms", "status", "source"],
+          "additionalProperties": false,
+          "properties": {
+            "ms": { "$ref": "#/definitions/positiveInteger" },
+            "status": { "$ref": "#/definitions/operatingValueStatus" },
+            "source": { "$ref": "#/definitions/nonEmptyString" }
+          }
+        },
+        "retry": {
+          "type": "object",
+          "required": ["maxRestarts", "minIntervalMs", "status", "source"],
+          "additionalProperties": false,
+          "properties": {
+            "maxRestarts": { "$ref": "#/definitions/positiveInteger" },
+            "minIntervalMs": { "$ref": "#/definitions/positiveInteger" },
+            "status": { "$ref": "#/definitions/operatingValueStatus" },
+            "source": { "$ref": "#/definitions/nonEmptyString" }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "nonEmptyString": { "type": "string", "pattern": "\\S" },
+    "optionalPath": {
+      "anyOf": [{ "type": "null" }, { "$ref": "#/definitions/nonEmptyString" }]
+    },
+    "positiveInteger": { "type": "integer", "minimum": 1 },
+    "operatingValueStatus": { "type": "string", "enum": ["provisional", "confirmed"] }
+  }
+}

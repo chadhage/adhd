@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "workiq": {
+      "type": "http",
+      "url": "https://workiq.svc.cloud.microsoft/mcp",
+      "oauthClientId": "ba081686-5d24-4bc6-a0d6-d034ecffed87",
+      "oauthPublicClient": true,
+      "auth": {
+        "redirectPort": 12798
+      },
+      "tools": [
+        "ask",
+        "fetch",
+        "search_paths",
+        "get_schema"
+      ]
+    },
+    "fabriciq": {
+      "type": "http",
+      "url": "https://fabriciq.svc.cloud.microsoft/v1/mcp/fabriciq",
+      "headers": {
+        "X-Variants": "Fabric.Routing.FabricIQ.V1"
+      },
+      "tools": [
+        "DiscoverArtifacts",
+        "ResolveFabricItem",
+        "GetReportMetadata",
+        "GetSemanticModelSchema",
+        "ValueSearch",
+        "ExecuteQuery"
+      ]
+    }
+  }
+}

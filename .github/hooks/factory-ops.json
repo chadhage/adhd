@@ -1,0 +1,11 @@
+{
+  "$schema": "./factory-ops.schema.json",
+  "version": 1,
+  "operatingProfile": "bounded",
+  "boardPaths": [],
+  "approvalsPath": null,
+  "approvalQueuePath": null,
+  "progressPath": null,
+  "unattended": false,
+  "supervisor": null
+}
