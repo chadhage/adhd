@@ -11,6 +11,10 @@ disable-model-invocation: false
 For delivery admission apply
 [Atomic and Independent Cards](../factory-mvp-and-recovery/SKILL.md#atomic-and-independent-cards);
 assigned refinement is not verified delivery reserve.
+Bind the governing Squad board and product-wide allocation under
+[Shared Product Planning and Squad Kanban](../kanban-one-factory-many-squads/SKILL.md#shared-product-planning-and-squad-kanban).
+One writer governs each board; independent boards may advance inside approved
+aggregate capacity, not through stale global counts or duplicate card claims.
 
 ## State Rules
 
@@ -21,16 +25,22 @@ assigned refinement is not verified delivery reserve.
 
 ## Procedure
 
-1. Establish each card's current bucket, requested transition, owner, acceptance or exit criteria, evidence, dependencies, iteration authority, edit authority, configured work-in-progress limit, and completion-record location.
-2. Validate that the card is in scope and appears exactly once. Stop and request reconciliation when its identity, scope, or current state is contradictory.
+1. Establish each card's canonical allocation, Factory/Squad/board, current bucket, requested transition, owner, criteria, evidence, dependencies, iteration/edit authority, applicable product/Factory/Squad WIP limits or capacity reservations, and completion-record location.
+2. Validate that the card is in scope and appears exactly once across the product's indexed source and Squad inventories. Block the affected transition and request reconciliation when identity, ownership or state is contradictory; unrelated boards continue.
 3. For `To Do` to `In Progress`, require concrete activity evidence and an identified owner or active agent. Delivery implementation additionally requires current True Ready evidence under approved criteria. Separately authorized research, refinement, or recovery uses its own exit criteria and permissions; its activity cannot count as delivery admission or ready reserve. Priority, planning, assignment without activity, or iteration selection alone is insufficient.
 4. For `In Progress` to `To Do`, require evidence that active work has stopped or an authorized decision to pause it. Preserve blocker, partial-work, dependency, and restart context as attributes.
 5. For removal after completion, require satisfied exit criteria, observed verification evidence, and an authorized established completion record. Record the evidence there before removing the card; never add `Done`, archive, or completed as a live board bucket.
 6. For blocked, waiting, review, paused, stale, or at-risk work, update the relevant attributes, next action, owner, and date without changing buckets unless the active-work rule independently requires a move.
 	For Factory work, a paused/quiesced attribute is a continuity incident: alert Factory and the required recovery panel, keep the work accurately represented, and do not treat the label itself as a recovery or completion.
-7. Before moving work into `In Progress`, calculate the resulting WIP count. If it would exceed the configured limit, block the transition until an authorized human explicitly approves the exception. Record the override and resulting excess; never hide excess work or invent a limit.
+7. Before moving work into `In Progress`, calculate resulting WIP at every applicable scope, including pending capacity reservations under the approved policy. With no disjoint reservation or atomic shared allocator, serialize the short aggregate admission check/update. If any limit would be exceeded, block until an authorized human explicitly approves the exception. Record the override and excess; never hide WIP or invent a limit.
 8. Use one designated board writer and record the expected board revision or content digest. Under exclusive write ownership, recheck that revision, readiness/admission evidence, and resulting WIP immediately before applying the authorized transition; then record the new revision. On a mismatch, reread and recompute instead of overwriting or using stale WIP counts. If exclusive ownership is unavailable, return a proposed transition, not a board mutation. Update source references and timestamps and preserve unrelated card facts. For completion, record a stable completion ID and verification evidence first, then remove the card; after interruption, reconcile both records using that ID before retrying so neither completion nor removal is duplicated.
 9. Recount both buckets and verify that transitioned cards remain represented exactly once unless they were validly handed off as completed.
+
+Cross-board/Factory ownership changes follow
+[Handoff Continuity](../kanban-one-factory-many-squads/SKILL.md#handoff-continuity):
+reuse the transfer ID, expected revisions and completion IDs; retain current
+custody until actual acceptance and canonical reconciliation. Preparation
+leaves work in `To Do`; it cannot start implementation or free active WIP.
 
 ## Output and Quality Gate
 

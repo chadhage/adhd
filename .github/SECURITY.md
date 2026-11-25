@@ -76,6 +76,20 @@ Supervised operation retains separate authority, owner-sourced limits, dry-run,
 state/audit, duplicate-run, inhibit and revocation checks. A legacy configuration
 must not be described as having passed the new profile-assurance contract.
 
+Whole-Factory liveness/restart suppression requires a Factory shutdown approval,
+not a scoped stoppage approval. Scoped stops remain binding on their affected
+actions and must be reconciled before resumed dispatch; an inhibit file still
+prevents all supervised restarts. The tools do not lift approval, revocation or
+safety restrictions, and restart permission is not permission to replay effects.
+
+For multiple configured Squad boards, the supervisor checks each board's own
+progress and inventory; unscoped heartbeats cannot certify every lane. Missing
+or unparseable boards are explicit restart-validation gaps, not permission to
+drop work or stop unaffected execution. Each Factory retains scoped process,
+state/audit/inhibit custody while product backlog and roadmap remain shared.
+These diagnostics neither transfer ownership nor implement atomic cross-board
+admission; designated writers and accepted handoffs remain required.
+
 Historian starts/resumes for accepted recording assignments and mandatory
 demand intake, not every human turn. Full transcript access/capture remains
 separately authorized. The security hook does not log prompts or tool payloads

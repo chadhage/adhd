@@ -42,6 +42,12 @@ boundaries, provenance, mandatory demand history and separate release approval.
 Continuous production means cumulative verified outcomes within this contract,
 not a claim that a returned model invocation remains alive.
 
+Use [Shared Product Planning and Squad Kanban](../kanban-one-factory-many-squads/SKILL.md#shared-product-planning-and-squad-kanban)
+for multiple Squads/Factories and
+[Handoff Continuity](../kanban-one-factory-many-squads/SKILL.md#handoff-continuity)
+for scoped, interruption-safe transfers. Product planning stays shared; board
+writers and ready-task dispatch are scoped, not whole-Factory barriers.
+
 An existing accepted contract must not be silently changed by a new template,
 configuration default or unavailable capability. Changing its guarantees needs
 a human-approved profile amendment, preserved evidence and renewed affected
@@ -75,6 +81,79 @@ operating limits; qualify the evidence and obtain missing owner decisions.
 Use the shipped diagnostics first, then the applicable
 [real-host assurance](../factory-real-host-assurance/SKILL.md) checks. A passing
 static test or preflight is not an activation certificate or release approval.
+
+## Repeat-Run Continuation
+
+Use this procedure on entry, resume/context restoration and assignment return.
+Distinguish the invocation/assignment ID, Factory operating run ID and
+iteration/value-cycle ID in the existing records. A child return or checkpoint
+is not by itself a new run. A successful first cycle does not establish
+repeatability, authorize the next cycle or keep a returned worker alive.
+
+| Entry condition | Required continuation decision |
+| --- | --- |
+| Child/member returns within an active run | Reconcile its evidence and unfinished work, then dispatch the next authorized action before the accepted checkpoint. Reuse still-valid terms, the live grant and that run's fresh rate version; obtain actual receiver acceptance. |
+| Planned bounded checkpoint is resumed | Reload the saved cursor and current authority. Determine whether this continues an active run or is a real restart; do not rerun completed setup or infer a live worker from the prior return. |
+| Actual restart or runtime/session loss | Preserve Factory identity, completed work and history; verify the current host grant and required capabilities. Obtain the shared human rate confirmation for the restarted run under the rate policy, even within 24 hours. |
+| Value cycle completes | Check remaining explicit iteration authority, budget and current readiness. Reuse a still-valid next-cycle authorization only within its stated scope; a provisional plan, backlog or no-stop directive supplies none. Obtain genuinely missing authority before exhaustion. |
+| Prior shutdown, scoped stop or inhibit exists | Verify the actual human decision, affected scope and any explicit lifting/revocation. Do not erase it, infer approval from history or restart an unsafe/revoked action. A scoped stop does not stop independent authorized work. |
+
+1. Read the canonical index and relevant records, compare their revisions with
+   the last checkpoint, and identify what actually changed. Revalidate mandatory
+   and freshness-bound gates when required; reuse unaffected valid evidence.
+   Do not recreate the engagement, intake register, board, history or observation
+   journal, replay verified consequential operations, or repeat answered setup
+   questions merely because another invocation began.
+2. Reconcile remaining authority, current/next assignments, ready reserve,
+   pending intake/events, rate freshness and runtime capacity with their owners.
+   A completed invocation's old acceptance is not acceptance by a new instance.
+   Give one-shot delegates a complete assignment and the existing acceptance
+   protocol, not an acceptance-only call awaiting a later activation message.
+3. Record one continuation decision in the existing cycle/restart record:
+   entry condition and run/cycle/assignment IDs; authority source and remaining
+   horizon; changed records and valid evidence; next action, accountable owner,
+   actual executor, acceptance, success signal and checkpoint; scoped blockers,
+   pending decisions and unsaved gaps. A proposed next owner is not accepted
+   custody, and an accepted handoff is not proof of execution after return.
+4. While an authorized action can advance before the agreed checkpoint,
+   Factory dispatches it and verifies progress rather than returning only a
+   status report or an unexecuted plan. Routine continuation is not an impasse
+   requiring a new recovery panel. A material blocker uses the existing recovery
+   and exception rules; no new blanket readiness, approval or quorum gate is
+   introduced by this procedure.
+
+| Role | Continuation responsibility |
+| --- | --- |
+| FactoryLauncher | Recover the existing binding, external conditions and actual production executor; do not restart the interview or reclaim accepted Factory control. |
+| Factory | Reconcile each return, remaining authority and next dispatch; retain ownership until an accepted handoff or an explicit restriction. |
+| Squad | Reconcile member evidence/partial work and integrated gates; obtain the next assignment through Factory/Kanban rather than furlough members. |
+| Kanban | Return executable eligible IDs or exact readiness/authority gaps with owners, not counts alone; preserve completion IDs, shared allocation and the bound Squad boards. |
+| VOC | Resume pending receipts, evidence and acknowledgement/disposition cursors; refresh from delivered outcomes before proposing new discovery. |
+| ProductOwner | Revalidate authorized scope/order and economics; prepare the smallest missing next-cycle decision before the current horizon expires. |
+| AssociateProductOwner | Continue the accepted charter and candidate cursor; route material amendments to the chief without repeating an unchanged scaling assessment. |
+| Fullstacker | Resume incomplete work at the last valid gate, preserve integrated results and return evidence; do not replay completed side effects. |
+| Historian | Resume verified source cursors, pending events, daily/index and archive receipts without duplicating registers or claiming a persistent listener. |
+
+Before return, classify the result as an agreed bounded checkpoint, accepted
+handoff, scoped owner-decision blocker, runtime interruption or invoker-approved
+stoppage. Include the actual next executor/trigger and first safe action; never
+use a generic "resume later" as evidence of continuity. An early unexplained
+return while authorized work can advance remains an unapproved-halt defect.
+A planned bounded return is not that defect and does not force another turn.
+
+At the tooling boundary, only `factory-shutdown-approval` suppresses
+whole-Factory halt detection/restart. A `stoppage-approval` remains binding on
+its affected actions, not a whole-Factory shutdown; the resumed executor must
+read and honor those scopes before dispatch. An inhibit file still prevents
+all supervised restarts: use it only for the applicable Factory-wide restriction
+and never clear it without the required authority.
+
+Repeatability assurance exercises the first run and at least two subsequent
+continuations within an explicitly authorized trial horizon, preserving prior
+outputs, pending decisions and control state. Include scoped stops, full
+shutdown/inhibit, exhausted authority and absent runtime as negative controls.
+Fixture and wording checks are not live-host repeatability evidence; use the
+separately authorized real-host procedure and preserve failed attempts.
 
 ## Launch and Health Procedure
 
@@ -239,12 +318,18 @@ and Factory reference one assignment, not duplicate workers for the same work.
 Associates return proposals unless their charter expressly permits a decision
 or record edit; they do not administer the board or recursively delegate.
 
-Keep one authoritative two-bucket board. Squad and Fullstacker queues are
-assignment views, not separate boards or copies of cards. Kanban remains the
-sole board writer; serialize shared backlog, evidence and other record writes
-through their designated owners/revisions even while independent analysis and
-delivery run concurrently. Count each card once; preserve WIP, approved
-reserve sizing, research permissions, budget and rate-freshness limits.
+Maintain one common two-bucket Kanban per Squad over the product-wide allocation
+inventory. Member/cohort queues are assignment views, not separate boards or
+copies of cards. Use one designated Kanban writer per board; independent boards
+may advance concurrently within approved aggregate capacity. Keep one shared
+product backlog and roadmap across Factories and Squads; serialize shared
+backlog, allocation, evidence and other record writes through their designated
+owners/revisions, not long delivery calls. Count each card and shared role
+assignment once; preserve WIP, approved reserve sizing, research permissions,
+budget and rate-freshness limits. Follow
+[Concurrent Dispatch](../kanban-one-factory-many-squads/SKILL.md#concurrent-dispatch)
+to release ready tasks on individual verified results rather than a full-roster
+return barrier.
 
 Use approved lead times to replenish before consumption creates a gap;
 reserve thresholds change urgency, not whether replenishment runs. Record
@@ -362,7 +447,7 @@ An imminent safety, privacy, legal, or other harm requires immediate containment
 
 Empty or exhausted queues, completed assignments, expired iteration authority, exhausted budgets, revoked access, unavailable agents, failed recovery, and runtime/session loss are recovery or owner-decision incidents, not autonomous Factory shutdown grounds. Block actions outside their permissions or resource limits and continue independently authorized safe work, including bounded discovery, reconciliation, or recovery where permitted. If no authorized action or execution runtime is available, report the actual interruption and escalation/restart route; never imply execution continues or exceed limits. The Factory remains unresolved, not legitimately shut down, until the invoker has approved shutdown or a safety containment has stopped only the affected unsafe action.
 
-A nonempty authoritative `To Do` or `In Progress` board triggers dispatch, bounded refinement, or recovery, never automatic Factory completion or Squad furlough. VOC evidence and board presence do not authorize implementation. Continue only work permitted by the active engagement. A revoked permission, exhausted budget/authority, or safety/legal/privacy risk blocks the affected action immediately; notify the invoker, request any missing authority, and keep unrelated authorized safe work moving. If nothing can safely advance, report the actual restriction, not operational continuity or queue exhaustion.
+A nonempty in-scope source or Squad `To Do` or `In Progress` inventory triggers dispatch, bounded refinement, or recovery, never automatic Factory completion or Squad furlough. VOC evidence and board presence do not authorize implementation. Continue only work permitted by the active engagement. A revoked permission, exhausted budget/authority, or safety/legal/privacy risk blocks the affected action immediately; notify the invoker, request any missing authority, and keep unrelated authorized safe work moving. If nothing can safely advance, report the actual restriction, not operational continuity or queue exhaustion.
 
 ### Stoppage Request, Record, and Rebaseline
 
@@ -433,7 +518,7 @@ Pathway classes and the required result, each a recovery or owner-decision incid
 
 ### Empty-Queue Consensus and Improvement Discovery
 
-Queue-based Factory shutdown requires unanimous, dated zero-work attestations from FactoryLauncher, Factory, every participating Squad, VOC, Kanban, and every participating ProductOwner (including delegated AssociateProductOwners). Enumerate actual required role instances from the accepted engagement/roster; never substitute one representative for all Squads or ProductOwners. FactoryLauncher coordinates and independently validates the closure packet; Factory supplies orchestration/handoff evidence. Each role attests that its reconciled in-scope unfinished work has `To Do = 0` and `In Progress = 0`, citing authoritative sources, scope, snapshot/version, timestamp, completion/disposition evidence, residual proposals/obligations, and explicit acceptance or dissent. Kanban reconciles all inventories to one authoritative board, not separate role boards. Squad attestations include member/technical residuals; ProductOwner attestations include delegated backlog obligations.
+Queue-based Factory shutdown requires unanimous, dated zero-work attestations from FactoryLauncher, Factory, every participating Squad, VOC, every in-scope Kanban, and every participating ProductOwner (including delegated AssociateProductOwners). Enumerate actual required role instances from the accepted engagement/roster; never substitute one representative for all Squads or ProductOwners. FactoryLauncher coordinates and independently validates the closure packet; Factory supplies orchestration/handoff evidence. Each role attests that its reconciled in-scope unfinished work has `To Do = 0` and `In Progress = 0`, citing authoritative sources, scope, snapshot/version, timestamp, completion/disposition evidence, residual proposals/obligations, and explicit acceptance or dissent. Kanban reconciles the indexed source queue and common Squad boards to one distinct-card product inventory, not copied role boards. A Factory-local closure does not establish product-wide exhaustion or authorize another Factory's stoppage. Squad attestations include member/technical residuals; ProductOwner attestations include delegated backlog obligations.
 
 Use one versioned closure snapshot containing the contract revision, accepted role-instance roster, board/backlog revisions, and revisions or content digests for every authoritative evidence source. Every attestation and the human invoker's sign-off references that snapshot ID. Launcher rechecks the manifest immediately before presenting sign-off and before recording queue-based shutdown. A material change in scope, roster, source inventory, or evidence invalidates the packet; create a revised snapshot and obtain fresh required attestations. Inaccessible or unversioned mutable sources without a reliable freshness check remain explicit validation gaps. Serialize canonical-record updates through their designated writers; this protocol does not freeze external sources or provide a runtime lock.
 
@@ -450,6 +535,13 @@ Each proposal records proposing agent, source/date, affected user or operational
 Obtain the human-approved operating window, roster and permitted exceptions/replacements, WIP/reserve units and limits, replenishment lead time, fallback/refinement authority and measurable exits, budget, authority-expiry checkpoints, acknowledgement/waiting/liveness deadlines, escalation route, and restart permissions. These are engagement terms, not global numeric defaults. For a missing term, measure and propose the empirically optimal value under Empirical Baselines Instead of Arbitrary Defaults and obtain the human engagement owner's confirmation or replacement while unaffected authorized work continues. Request renewal before permission, budget, or the iteration horizon expires; neither discovered work nor owner silence extends authority. Prepare demos/calibration and mandatory gates early; optional analysis or perfect certainty must not delay authorized dispatch.
 
 Completion or blockage of one assignment does not end the Squad's operating mandate. Before a handoff gap, Kanban supplies eligible next card IDs and Factory obtains the receiving Squad's explicit acceptance of authorized delivery, refinement, validation, or unblocking work. Preserve partial work, dependencies, integration ownership, authority, exit criteria, and a checkpoint/decision deadline. A proposed assignment is not an accepted handoff; a returned agent call is not a demobilization decision. A bounded card invocation may return its evidence packet, but Factory remains accountable for the next dispatch or a visible restriction. No implementation begins without authorized True Ready work admitted within WIP.
+
+Apply [Handoff Continuity](../kanban-one-factory-many-squads/SKILL.md#handoff-continuity):
+prepare next work early, reconcile each return promptly, and use the accepted
+Squad-Kanban channel for routine in-scope continuation. Factory retains
+allocation/recovery accountability without serializing every member return.
+Refresh only affected bindings and retain sender custody until actual receiver
+acceptance; a pending offer never frees ownership or permits duplicate work.
 
 Waiting members must have a recorded reason, owner, next action, and engagement-approved deadline; queued time is not progress. Use useful pairing/review or bounded authorized fallback where possible, never redundant activity. On missed acknowledgement, progress, or waiting deadlines, Factory convenes recovery or escalates the precise decision immediately. Unknown deadlines are visible contract gaps, not permission to wait indefinitely or invent an arbitrary timeout; derive a provisional deadline from observed durations under Empirical Baselines Instead of Arbitrary Defaults.
 
@@ -501,11 +593,19 @@ Exercise these in an authorized product test engagement before claiming operatio
 | Assignment completes with unfinished authorized cards | Factory obtains an accepted next assignment or records the exact restriction; no automatic furlough. |
 | Four replenishment roles overlap with active delivery | Actual accepted VOC, ProductOwner, AssociateProductOwner and Kanban assignments show source-backed progress intervals overlapping one another and Squad/Fullstacker delivery; sequential calls or configured roles do not pass. |
 | A long delivery invocation remains active or the reserve is full | Replenishment continues without awaiting the delivery result; current/next assignments and meaningful evidence remain within authority, budget and approved liveness deadlines. |
+| Two Factories and multiple Squads serve the same product | Every binding references the same backlog/roadmap; each card has one canonical allocation and owning Squad board, with aggregate WIP/reserve and non-duplicated usage reconciled. |
+| One Squad has multiple independent admitted card cohorts | Ready members run concurrently within actual capacity and WIP, with disjoint ownership and per-card integrated gates; member count does not authorize extra cards. |
+| A member or Squad returns while siblings remain active | Reconcile that result and dispatch its newly eligible next action without waiting for all siblings; dependent evidence and scoped writers remain enforced. |
+| A handoff is duplicated, interrupted or unacknowledged | Reuse its ID/cursor, preserve the current custodian and partial work, freeze only conflicting writes and reconcile actual execution before transfer or retry. |
+| One Squad is healthy while another misses its deadline | Scoped liveness reports/recovery expose the stalled lane; sibling progress does not reset its deadline or retry budget. |
+| An unrelated records-index entry changes | Only affected agents refresh/acknowledge dependent bindings; unrelated accepted work continues without a whole-roster barrier. |
 | New candidate depends on unfinished peer work | Kanban rejects ready-reserve admission, preserves the gap and owner, and obtains authorized atomic re-slicing or verified prerequisites; no mock-only independence or hidden unfinished work. |
 | To Do exists but reserve is unready | Kanban assigns permitted refinement and exposes the deficit; no premature implementation. |
 | All WIP blocked or dependency/write ownership conflicts | Recovery routes bounded unblocking and independent work without exceeding or hiding WIP. |
 | Required role unavailable or handoff unaccepted | Missing acceptance stays visible; approved replacement/exception or precise escalation, never fictional participation. |
 | Session ends, execution crashes, or call returns | Authorized supervisor checkpoints and safely reinvokes within limits, or runtime interruption and the real resume route are disclosed. |
+| First run succeeds, then second and third continuations occur | Recover the same canonical identity/cursors, preserve completed evidence, reconcile remaining authority and fresh run-specific rates, obtain actual next acceptance and observe progress; no fresh setup or inferred persistent worker. |
+| One card/action has an approved scoped stoppage | Preserve and honor that stop before dispatch; halt detection and the supervisor do not suppress independent authorized work as if the Factory had shutdown approval. |
 | Authority/budget expires or renewal is unanswered | Affected work stops; only independently authorized work continues; silence is not approval. |
 | Voluntary stop request, revocation, or safety incident | Voluntary stoppage is not performed until the invoker receives justification/resume guidance and explicitly approves; revoked or unsafe actions are contained immediately, supervisor restarts are inhibited in the affected scope, and ownership/state is preserved. |
 | Validated queue exhaustion without invoker-approved shutdown | All required role instances provide dated zero-work attestations; Launcher presents unanimous consensus, justification, and resume guidance for explicit invoker approval; no autonomous halt. |

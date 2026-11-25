@@ -315,6 +315,45 @@ test('positive: [AC-7] a recorded human stoppage approval is honored by both the
   assert.equal(json(ws.tool('supervisor.mjs', ['tick', '--execute'])).status, 'stoppage-approved');
 });
 
+test('negative: [AC-5/AC-7] a scoped pause cannot prevent successive process resumes or erase earlier evidence', { timeout: 30_000 }, async (t) => {
+  const worker = `
+    const fs = require('node:fs');
+    const evidence = process.argv[2];
+    const prior = fs.existsSync(evidence) ? fs.readFileSync(evidence, 'utf8').trim().split('\\n') : [];
+    const id = 'FIXTURE-' + (prior.length + 1);
+    fs.appendFileSync(evidence, JSON.stringify({ id }) + '\\n');
+    fs.appendFileSync(process.argv[1], JSON.stringify({ ts: new Date().toISOString(), event: 'gate-passed', id }) + '\\n');
+  `;
+  const ws = await installWorkspace(t, {
+    operatingProfile: 'supervised',
+    supervisor: resume(['-e', worker, join('.docs', 'progress.jsonl'), join('.docs', 'fixture-evidence.jsonl')], { deadlineMs: 1 }),
+  });
+  await stall(ws);
+  const approval = `${human('stoppage-approval', { scope: 'CARD-1' })}\n`;
+  const pids = new Set();
+  try {
+    for (let pass = 1; pass <= 3; pass += 1) {
+      const run = ws.tool('supervisor.mjs', ['tick', '--execute']);
+      const result = json(run);
+      if (result.attempt?.pid) pids.add(result.attempt.pid);
+      assert.equal(result.status, 'restarted', run.stdout + run.stderr);
+      await waitUntilDead(result.attempt.pid);
+      const state = JSON.parse(await readFile(ws.docs('state.json'), 'utf8'));
+      assert.deepEqual(state.restarts.map((attempt) => attempt.attempt), Array.from({ length: pass }, (_, index) => index + 1));
+      const evidence = (await readFile(ws.docs('fixture-evidence.jsonl'), 'utf8')).trim().split('\n').map((line) => JSON.parse(line));
+      assert.deepEqual(evidence.map((entry) => entry.id), Array.from({ length: pass }, (_, index) => `FIXTURE-${index + 1}`));
+      if (pass === 1) await writeFile(ws.docs('approvals.jsonl'), approval);
+    }
+    assert.equal(await readFile(ws.docs('approvals.jsonl'), 'utf8'), approval);
+    assert.equal(json(ws.stop(stopEvent(ws.root))).decision, 'block');
+  } finally {
+    for (const pid of pids) {
+      if (alive(pid)) process.kill(pid);
+      await waitForExit(pid);
+    }
+  }
+});
+
 // AC-8: validated queue exhaustion without invoker-approved shutdown -> no autonomous halt
 test('negative: [AC-8] an empty board without an invoker-approved shutdown is still blocked', async (t) => {
   const ws = await installWorkspace(t, {}, { board: emptyBoard });

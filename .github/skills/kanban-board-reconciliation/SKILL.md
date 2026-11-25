@@ -15,6 +15,11 @@ Produce a complete, non-duplicative inventory of unfinished work and reconcile t
 For delivery reserve apply
 [Atomic and Independent Cards](../factory-mvp-and-recovery/SKILL.md#atomic-and-independent-cards)
 before counting eligible IDs; task decomposition alone does not prove readiness.
+For multiple Squads/Factories bind
+[Shared Product Planning and Squad Kanban](../kanban-one-factory-many-squads/SKILL.md#shared-product-planning-and-squad-kanban).
+Reconcile the indexed source inventory and one common board per Squad, not
+copied member boards or Factory-local product backlogs. Every card has one
+canonical allocation; rollups count distinct IDs once.
 
 ## Procedure
 
@@ -24,7 +29,7 @@ before counting eligible IDs; task decomposition alone does not prove readiness.
 4. Match source items to cards by stable ID first, then by explicit parent and source references. Flag uncertain semantic matches rather than merging them silently.
 5. Identify omissions, duplicate cards, conflicting facts, stale records, orphaned children, untraceable cards, and parent-child scope overlap. Parent and child cards may coexist only when their scopes do not double-count the total lot.
 6. Create or update cards only from authorized backlog, iteration, or recovery decisions. Each card must record a stable ID, source/decision reference, outcome, bucket, owner, acceptance/exit criteria, dependencies, status evidence, blocker, next action, and last-updated date. Preserve parent references where applicable. Mark missing facts unresolved with a decision owner, or record evidenced `None`/`Not applicable`; never fabricate them. Incomplete records cannot count as True Ready.
-7. Apply only authorized corrections through the designated single board writer and preserve unrelated content. Record board/source revisions or content digests when reading and recheck them under exclusive write ownership before applying corrections. If a source changed, reread and reconcile rather than writing stale results; record the resulting board revision. If edits or exclusive ownership are unavailable or evidence conflicts, return a proposed reconciliation with the minimum decisions needed. Follow [Kanban Card Flow](../kanban-card-flow/SKILL.md) for admission and recoverable completion-record-first removal; reconciliation alone cannot authorize a transition.
+7. Apply corrections through the designated writer for each affected board; shared allocation changes use its designated writer. Preserve unrelated content and permit disjoint board updates concurrently within approved capacity. Record board/source revisions and recheck them under exclusive ownership before applying corrections. Reconcile changed sources rather than overwrite; record resulting revisions. If edits/ownership are unavailable or evidence conflicts, return the minimum proposed reconciliation. Follow [Kanban Card Flow](../kanban-card-flow/SKILL.md) for admission and recoverable completion-record-first removal; reconciliation alone cannot authorize a transition.
 8. Recount the resulting board and prove that every known in-scope unfinished item appears exactly once. Record source gaps that prevent completeness from being established.
 9. Kanban owns reserve reconciliation: list distinct authorized `To Do` IDs with complete records and current True Ready evidence under the approved criteria. Exclude current `In Progress` assignments, blocked/unready candidates, and overlapping scopes. Reconcile reserve and WIP counts to IDs and approved units/scopes; planned refinement is not ready reserve.
 10. Check at assignment handoff, material state/dependency/authority changes, and each cycle checkpoint. Trigger replenishment before the current assignment finishes using approved lead time, and when the next authorized True Ready assignment is absent or reserve is below or forecast to fall below its approved threshold. Record forecast evidence/uncertainty; do not wait for an empty queue.

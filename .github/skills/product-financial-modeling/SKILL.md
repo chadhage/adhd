@@ -52,6 +52,13 @@ When operating without Factory, the outermost invoked role coordinates this
 same shared collection with its human invoker; delegates route through their
 parent rather than creating separate rate policies.
 
+A role invocation, tool continuation or child return is not a Factory
+start/restart by itself. Reuse the current operating run ID and its still-fresh
+confirmed snapshot for that run; do not rotate run IDs or request confirmation
+per delegate. A genuine restart/resume still requires the new shared human
+confirmation above; do not reuse an old run ID to evade it. Record the distinction
+under [Repeat-Run Continuation](../factory-mvp-and-recovery/SKILL.md#repeat-run-continuation).
+
 Use one product-owned canonical economics record, referenced by the engagement
 contract and records index, with one designated writer. Do not create one rate
 record per agent or place product rates in this framework repository. Record:

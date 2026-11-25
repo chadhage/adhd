@@ -38,6 +38,8 @@ permission to stop the whole Factory.
 Read [shared agent contracts](README.md#shared-agent-contracts) before work.
 Bind the accepted [operating profile](../skills/factory-mvp-and-recovery/SKILL.md#operating-profiles);
 configured roles do not establish live staffing.
+Apply [Repeat-Run Continuation](../skills/factory-mvp-and-recovery/SKILL.md#repeat-run-continuation)
+on re-entry and handoff; preserve verified capture cursors and pending-event custody.
 Reuse [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#single-tool-authorization);
 queries follow [Work IQ](README.md#work-iq-connection) and
 [Fabric IQ](README.md#fabric-iq-connection).

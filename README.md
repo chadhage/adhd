@@ -14,9 +14,57 @@
 
 Agent Driven Hybrid Development.
 
+## Explore without installing
+
+Try [ADHD Studio online](https://chadhage.github.io/adhd/) before setting up an
+agent harness. Or open the [local prototype](prototype/index.html) directly in a
+current browser; no VS Code, Copilot installation, account, package manager, or
+local server is needed. Keep its adjacent CSS and JavaScript files with it.
+
+The guided flow compares five setup modalities, explains the agents in plain
+language, and builds a visual product/Factory/Squad blueprint. An optional visual
+canvas uses the same draft. All Factories share one product backlog/roadmap;
+each Squad has one common work board.
+
+From the blueprint, choose **Continue to activation demo**. Simulate a repository
+and runtime connection, review one-cycle scope, sample permissions and budget,
+run staged readiness checks, then watch a scripted first cycle and sample
+outcome. Pause/resume preserves the page-only cursor; leaving the cycle view
+pauses it. Blueprint or term changes invalidate prior demo checks. The optional
+scenario selector demonstrates connection failure, missing capability,
+interruption, and failed acceptance without fabricating completion.
+
+Prepare optional feedback at the outcome, then copy and share it with the owner
+yourself; no feedback is transmitted or retained outside the page. Printing the
+blueprint is a secondary action. Keep all four prototype files together:
+`index.html`, `style.css`, `demo.js`, and `app.js`.
+
+This is a UX prototype, not a running Factory, configuration export, or
+alternative agent harness. Nothing connects to an account or service, nothing
+is persisted to a product repository, and refreshing clears the page-only draft,
+simulation cursor and feedback. The sample $1 estimate is a fixture, not pricing,
+an actual cost, or approval to spend.
+Hosted-browser, local-service, self-hosted, and CLI paths are proposed designs;
+the editor-based execution route below remains the documented setup.
+
+For an unaided usability trial, give a new user the prototype with no walkthrough
+and observe whether they can choose a familiar modality, create a coherent
+team, finish the activation demo, and describe what remains unimplemented.
+Record wrong turns, prerequisite confusion and outside help needed. Working UI
+checks do not prove that new users can complete this task unaided.
+
+Run the focused simulation regressions with
+`node --test .github/tools/tests/activation-demo.test.mjs`. These test the demo
+state machine, not real Factory activation, provider access, or product delivery.
+
+The [GitHub Pages workflow](.github/workflows/github-pages.yml) validates and
+publishes only `prototype/` when its files or the workflow change on `main`.
+Framework configuration, tests, and runtime records are not included in the site.
+
 ## Prerequisites
 
-This repository depends on the following tools and services:
+The currently documented VS Code/Copilot execution route depends on the
+following tools and services; these are not prerequisites for the prototype:
 
 | Prerequisite | Description | Action / Link |
 | --- | --- | --- |
@@ -60,10 +108,33 @@ and observed host capabilities; configuration does not install live workers or
 a scheduler. Existing accepted engagements retain their terms until an approved
 amendment. A bounded turn ending is not Factory shutdown approval.
 
+For second and subsequent invocations, follow
+[Repeat-Run Continuation](.github/skills/factory-mvp-and-recovery/SKILL.md#repeat-run-continuation).
+Recover the existing records and unfinished work, distinguish a child return
+from a real restart or new iteration, and name the actual next executor.
+The first setup cycle does not authorize later iterations, and no-stop wording
+does not install a scheduler. Required restart rate confirmations and permission
+boundaries still apply; reuse unchanged valid decisions rather than rerun setup.
+
 Historian starts/resumes for accepted recording assignments and mandatory demand
 intake. Demand-event history remains required; full transcripts are separately
 scoped. No every-human-turn listener is installed. Use approved product-owned
 storage, daily records and independent retention; expose unsaved/capture gaps.
+
+## Concurrent Factories and Squads
+
+Factories and Squads for the same product share one backlog and roadmap.
+Each Squad uses one common Kanban; Factory/product rollups reconcile canonical
+allocations without duplicating cards. Independent Squads and admitted card
+cohorts may execute concurrently within approved aggregate WIP and actual
+capacity, with one-piece flow per member/cohort and scoped board writers.
+
+Individual verified returns release eligible next work without whole-team
+barriers. Handoffs preserve IDs, revisions, partial work and sender custody until
+actual acceptance; preparing next work never bypasses readiness or WIP.
+See [shared planning, concurrent dispatch and handoff continuity](.github/skills/kanban-one-factory-many-squads/SKILL.md).
+Existing engagements require an authorized topology migration; definitions and
+tests do not prove live parallel operation or install unattended supervision.
 
 ## Factory Operations Center
 

@@ -32,6 +32,8 @@ release approval are distinct states.
 Read [shared agent contracts](README.md#shared-agent-contracts) before work.
 Bind the accepted [operating profile](../skills/factory-mvp-and-recovery/SKILL.md#operating-profiles);
 configured roles do not establish live staffing.
+Apply [Repeat-Run Continuation](../skills/factory-mvp-and-recovery/SKILL.md#repeat-run-continuation)
+on re-entry and handoff; resume the last valid gate without replaying completed effects.
 Reuse [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#single-tool-authorization);
 queries follow [Work IQ](README.md#work-iq-connection) and
 [Fabric IQ](README.md#fabric-iq-connection).
@@ -45,6 +47,9 @@ Follow
 and [Atomic and Independent Cards](../skills/factory-mvp-and-recovery/SKILL.md#atomic-and-independent-cards).
 Supply readiness/feasibility evidence while preserving assignment and WIP
 boundaries; unready work permits separately authorized refinement, not delivery.
+Bind [Shared Product Planning and Squad Kanban](../skills/kanban-one-factory-many-squads/SKILL.md#shared-product-planning-and-squad-kanban)
+and [Handoff Continuity](../skills/kanban-one-factory-many-squads/SKILL.md#handoff-continuity).
+Use the bound Squad board and product allocation, not a personal card queue.
 
 ## Credit Rates and Daily Freshness
 
@@ -62,9 +67,11 @@ Unknown origin/metering remains unpriced/estimated, never fabricated zero cost.
    Revalidate recorded admission when material state changes. A setup mandate
    authorizes only its recorded first cycle; resume covers already-approved work.
 2. Follow [one-piece flow](../skills/fullstack-one-piece-flow/SKILL.md).
-   Multiple cards need one indivisible outcome or an authorized cohort with
-   non-overlapping ownership. ProductOwner resolves disputed priority/CD3 inputs;
-   Kanban owns [transitions](../skills/kanban-card-flow/SKILL.md).
+   Keep one active owned card/task per member; a Squad may run other independent
+   admitted card cohorts with disjoint ownership. Do not claim several active
+   cards or manufacture card splits for one indivisible outcome. ProductOwner
+   resolves disputed priority/CD3 inputs; the bound Kanban writer owns
+   [transitions](../skills/kanban-card-flow/SKILL.md).
 3. Find the owning code path and cheapest discriminating check; form a falsifiable
    hypothesis and make the smallest grounded change. Validate after the first
    substantive edit before widening scope.
@@ -82,6 +89,10 @@ Unknown origin/metering remains unpriced/estimated, never fabricated zero cost.
 7. Submit criterion-by-criterion evidence to Kanban for completion recording and
    board removal. A missing required criterion leaves the card unfinished;
    production deployment and release require their own approval.
+   Return verified task deltas promptly through the assigning Squad so newly
+   eligible tasks can start while independent siblings continue. Preserve the
+   handoff ID/cursor and current custody until actual accepted reconciliation;
+   a prepared next assignment is not implementation or additional WIP authority.
 
 Load relevant skills from host discovery or the
 [Fullstacker skill catalog](../skills/fullstack-one-piece-flow/references/skill-catalog.md).

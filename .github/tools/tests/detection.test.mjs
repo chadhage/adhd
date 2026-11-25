@@ -71,10 +71,21 @@ test('positive: board modification time counts as progress', () => {
   assert.equal(checkLiveness({ boardText: headingBoard, progressText: progress('2026-10-13T00:00:00Z'), extraProgressMs: [now - 1000], ...base }).status, 'ok');
 });
 
-test('positive: a valid human stoppage approval explains the silence', () => {
-  const result = checkLiveness({ boardText: headingBoard, progressText: progress('2026-10-13T00:00:00Z'), approvalsText: `${human('stoppage-approval')}\n`, ...base });
+test('positive: a valid human Factory shutdown approval explains the silence', () => {
+  const result = checkLiveness({ boardText: headingBoard, progressText: progress('2026-10-13T00:00:00Z'), approvalsText: `${human(factoryShutdownType)}\n`, ...base });
   assert.equal(result.status, 'ok');
   assert.equal(result.approval.approver, 'Chad');
+});
+
+test('negative: a scoped stoppage cannot hide a suspected halt of the whole Factory', () => {
+  const result = checkLiveness({
+    boardText: headingBoard,
+    progressText: progress('2026-10-13T10:00:00Z'),
+    approvalsText: `${human('stoppage-approval', { scope: 'CARD-1' })}\n`,
+    ...base,
+  });
+  assert.equal(result.status, 'halt-suspected');
+  assert.equal(result.approval, undefined);
 });
 
 test('positive: an empty board is ok but not a shutdown', () => {

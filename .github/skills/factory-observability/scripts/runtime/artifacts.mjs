@@ -209,6 +209,7 @@ export function createArtifactReader(store) {
       }
       if (before.isSymbolicLink() || before.nlink > 1 && before.isFile()) throw new ObservationError('Artifact links and junctions are not readable', 403);
     }
+    await boundRepository(path);
     const actual = await realpath(target);
     const local = relative(root, actual);
     if (!local || local.startsWith('..') || isAbsolute(local)) throw new ObservationError('Artifact escaped the product workspace', 403);
@@ -237,8 +238,8 @@ export function createArtifactReader(store) {
 
   async function bytes(entry, revision) {
     if (!entry.cataloged) throw new ObservationError('Artifact was reported but is not in the reviewed content catalog', 403);
-    await boundRepository(entry.path);
     if (revision === 'working') return currentBytes(entry.path);
+    await boundRepository(entry.path);
     if (!entry.commits.includes(revision)) throw new ObservationError('Revision is not recorded for this Factory artifact', 404);
     const verified = await git(['rev-parse', '--verify', `${revision}^{commit}`], [128]);
     if (verified.code) throw new ObservationError('Recorded commit is not available locally; no fetch was attempted', 404);

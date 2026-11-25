@@ -14,6 +14,13 @@ Produce a report in which the item-level detail and aggregate totals agree. Obta
 
 For a Factory engagement, also obtain the approved reserve threshold/unit/scope, readiness criteria, replenishment lead time, current/next accepted assignments, progress evidence, acknowledgement/waiting/liveness deadlines, recovery ownership, and actual runtime monitoring availability. Bind the report to board/source revisions or content digests; changed sources require a refreshed report, not a claim of current status from a stale snapshot.
 
+For multiple Squads/Factories use
+[Shared Product Planning and Squad Kanban](../kanban-one-factory-many-squads/SKILL.md#shared-product-planning-and-squad-kanban).
+Report each common Squad board and the indexed source queue, then reconcile
+Factory/product totals by distinct card IDs. Identify shared backlog/roadmap
+revisions, canonical allocations, scoped writers and all applicable WIP/reserve
+limits. Do not duplicate cards or count a shared role/reserve twice.
+
 ## Procedure
 
 1. Validate that the board uses `To Do` and `In Progress` as its only live buckets. Treat blocked, waiting, review, paused, stale, and at-risk as attributes.
@@ -39,6 +46,7 @@ Return:
 - Snapshot: board/source revisions or digests, reporting scope, and unresolved changes or inaccessible evidence.
 - Reserve: approved threshold/unit/scope and authority reference, current/next assignment IDs and acceptance, eligible reserve IDs/count and readiness evidence, replenishment trigger/lead time, forecast/uncertainty, deficit owner, and next action.
 - Liveness: last observed progress/evidence, accepted handoffs, next checkpoint, approved acknowledgement/waiting/progress deadlines and breaches, recovery owner, runtime monitoring availability, and any approved furlough with custody/reopen evidence. For non-Factory reports, mark these fields not applicable with rationale.
+- Scope continuity by Factory/Squad/card/cohort: ready/active tasks, actual executor/overlap, offered versus accepted handoffs, transfer cursor and latency, pending capacity reservations, and independent next actions. A healthy sibling never masks another scope's missed deadline.
 - The next required action or human decision.
 
 ## Quality Gate

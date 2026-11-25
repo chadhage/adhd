@@ -11,9 +11,9 @@ None of these tools grants authority or approves anything. Only `supervisor.mjs`
 | `approval-queue.mjs` | Append-only queue of blocked non-read actions with exact (secret-redacted) parameters, purpose, and card, so a human can decide them together. A denied action cannot be re-queued without changed evidence. Recording a request or decision never executes or approves anything. | Ready |
 | `revision-lock.mjs` | Revision-checked writes with an advisory lock. A held lock or moved revision returns the proposed change instead of mutating. | Ready |
 | `baseline-calc.mjs` | Computes a median or nearest-rank percentile baseline from observed samples, with n, range, exclusions, and optional seeded random sampling, and drafts the Yes/No/replace request for the owner. | Ready |
-| `liveness-check.mjs` | Read-only detector for a suspected unapproved halt: unfinished work, no valid approval, no progress within a supplied deadline. Detection only; it never resumes work. | Detection only |
+| `liveness-check.mjs` | Read-only detector for a suspected unapproved halt: unfinished work, no valid Factory shutdown approval, no progress within a supplied deadline. A scoped stoppage does not hide a whole-Factory halt. Detection only; it never resumes work. | Detection only |
 | `stop-gate.mjs` | `agentStop` hook script. An explicitly bounded turn may return; this is not Factory shutdown approval or proof of a saved checkpoint. Parallel/supervised and legacy profiles require shutdown approval or a pending human decision; otherwise the gate blocks once and releases a forced retry with an incident, never trapping the session. Inert without a configured board. | **Registered** in `tool-policy.json` |
-| `supervisor.mjs` | One supervisor pass for an external scheduler (`tick`). Resumes the Factory only when unfinished work, no valid approval, and no progress within the deadline all hold. Honors an inhibit file, valid stoppage approvals, duplicate-run prevention, a cooldown, and a retry bound. Dry run unless `--execute`. Never uses a shell, never stores credentials, never kills a stalled run. | Built; **not scheduled** (needs your values and exact command) |
+| `supervisor.mjs` | One supervisor pass for an external scheduler (`tick`). Checks each Squad board independently and resumes the Factory only for overdue unfinished work without shutdown approval. Honors inhibit, duplicate-run, cooldown and retry bounds; healthy siblings cannot mask stalled boards or reset their retry budget. Scoped stops remain binding on affected actions. Dry run unless `--execute`; no shell, credentials or stalled-run killing. | Built; **not scheduled** (needs your values and exact command) |
 
 ## Per-Factory Operations Center
 
@@ -37,10 +37,10 @@ One reviewed file configures Factory records, the stop gate, and the supervisor 
 | Field | Meaning |
 |---|---|
 | `operatingProfile` | `bounded` is the new template's default proposal; `parallel` and `supervised` require accepted terms and observed capabilities under [Operating Profiles](../skills/factory-mvp-and-recovery/SKILL.md#operating-profiles). Missing legacy selection preserves old stop/supervisor semantics; invalid values are explicit problems, never a bounded fallback. Configuration does not accept or amend an engagement. |
-| `boardPaths` | Exact board files (`.md`, inside the workspace) for Factory operations and structural checks, not a tool-approval allowlist. Entries under agent, skill, hook, tool, `.vscode`, secret, or key paths, or that collide with the approvals, queue, progress, or config files, are dropped with a reason. |
+| `boardPaths` | Exact common Squad board files/partitions (`.md`, inside the workspace) in this Factory's accepted scope, not copied member boards or a tool-approval allowlist. Bind them through the product allocation index. Protected/sensitive targets and collisions with approvals, queue, progress or config are rejected with reasons. |
 | `approvalsPath` | Human approval records (`factory-shutdown-approval`, `stoppage-approval`). Keep it where agents cannot write. |
 | `approvalQueuePath` | Approval queue file. |
-| `progressPath` | Optional progress ledger (JSONL with `ts`) for the supervisor. Board modification time also counts as progress. |
+| `progressPath` | Optional progress ledger (JSONL with `ts` and `boardPath`). For multiple boards, `boardPath` must match that board's canonical absolute or workspace-relative path; unscoped entries cannot establish every Squad's progress. Each board's own modification time also counts as heuristic progress. Unscoped legacy entries remain usable for a single-board configuration. |
 | `unattended` | Declares that no interactive human is present for capability reporting. Host-permitted calls still proceed. Host-blocked requests can be recorded explicitly with the approval-queue tool when permitted; the pre-tool hook cannot observe host approval results and does not automatically queue calls. |
 | `supervisor` | `null` until configured. Requires `owner`, `authorizedBy`, `resume` (`command`, `args`, optional `cwd`), `statePath`, `logPath`, `inhibitPath`, and `deadline`/`retry` values with `status` and `source`. `restartPacketPath` is optional and its absence remains a recovery-evidence gap. Operating limits have no numeric defaults. |
 
@@ -50,6 +50,33 @@ parallel profiles do not require an unused supervisor. A selected bounded or
 parallel profile cannot execute or audit a supervisor restart; supervised
 operation still needs separate authorization and a tested external scheduler.
 No scheduler, live worker, MCP login or broader approval is installed.
+
+### Shared planning and scoped continuity
+
+Use [Shared Product Planning and Squad Kanban](../skills/kanban-one-factory-many-squads/SKILL.md#shared-product-planning-and-squad-kanban):
+one product backlog/roadmap across Factories, one common board per Squad, one
+canonical allocation per card and scoped writers inside aggregate WIP/capacity.
+The revision helper locks only its target record, so a held Squad board need
+not block another board. Cross-record allocation/transfer still requires its
+designated writer and recoverable handoff protocol; the helper is not a
+multi-record transaction or automatic dispatcher.
+
+The supervisor returns/audits `boardLiveness` with each board's counts, freshness
+and incident scope. It parses boards separately, never borrows missing buckets
+from a sibling, and reports missing configured boards rather than dropping
+them. A healthy board or unscoped Factory heartbeat cannot hide another Squad's
+deadline breach. Retry accounting uses the oldest currently stalled board's
+progress, not a healthy sibling's activity.
+
+Scoped progress references use canonical board paths, so relative and absolute
+references through workspace aliases still identify the same board.
+
+This intentionally tightens legacy multi-board diagnostics: attribute progress
+to `boardPath` before relying on ledger freshness. Missing/unparseable inventory
+blocks an automatic restart claim, not independently authorized work already
+running. Configure separate state/audit/inhibit custody and a scoped resume
+command for each Factory; sharing product planning does not install a global
+supervisor or authorize duplicate workers.
 
 Preflight reports configuration and explicit unknowns. Its `--strict` exit
 checks reported degraded configuration; an unknown live capability remains
@@ -128,6 +155,7 @@ node .github/tools/liveness-check.mjs --board <kanban.md> --progress <progress.j
 - **No arbitrary defaults.** `liveness-check.mjs` requires a deadline, `revision-lock.mjs` has no stale-age timeout, and `baseline-calc.mjs` requires a statistic and unit. Operating values are measured and owner-confirmed, per Empirical Baselines.
 - **Board format.** The board parser counts cards under `To Do` and `In Progress` headings as nested headings, table rows, or column-0 list items, and ignores `None` placeholders. It reports `parsed: false` rather than guessing when a bucket is missing.
 - **Approval records** (`factory-shutdown-approval`, `stoppage-approval`) must name a human approver, a source, and a timestamp. The tools cannot verify authorship; keep the file in a path agents cannot write to (for example CODEOWNERS-protected).
+- **Stop scope.** Only `factory-shutdown-approval` suppresses whole-Factory detection/restart. A `stoppage-approval` does not authorize a broader halt; the resumed executor must reconcile and honor its affected actions before dispatch. An inhibit file still blocks all restarts. Do not delete approvals or clear an inhibit merely to make a subsequent run proceed.
 - **Stop hook.** Verified against the GitHub Copilot hooks reference: `agentStop` (VS Code `Stop`) takes `stop_hook_active` and `cwd`, honors `{"decision":"block","reason":"..."}`, and the runtime overrides after 8 consecutive blocks. The script accepts both documented payload shapes. A live end-to-end block has not been observed in a Factory workspace; confirm it the first time a board is configured.
 - **Supervisor.** `supervisor.mjs tick` is meant to be run by an external scheduler that you install; this repository does not install one. Use the full path to the resume executable (no shell is used, so `.cmd` shims may not run). The resumed run inherits the scheduler user's environment and the supervisor stores no credentials. The resume command must use the owner's intended host permissions; the supervisor and hooks never add an autonomy grant. Unattended mode does not replace host approvals with blanket denials. A stalled resumed run is reported as `child-stalled`, never killed.
 
@@ -161,7 +189,8 @@ billing meter, scheduled human refresh, or proof of actual agent compliance.
 checks all nine agents' routing/permission metadata, explicit shared-contract
 loading, local guards, relocated procedures/catalogs and relative links.
 [`parallel-replenishment-contract.test.mjs`](tests/parallel-replenishment-contract.test.mjs)
-checks concurrent-stream and independent-readiness wiring. These static checks
+checks concurrent-stream/readiness wiring, shared planning, common Squad boards,
+ready-task dispatch, aggregate capacity and interruption-safe handoffs. These static checks
 are not proof of simultaneous execution or outcome equivalence in a live host.
 [`historian-contract.test.mjs`](tests/historian-contract.test.mjs) checks the
 history procedure and the accepted assignment/mandatory-intake startup contract,
@@ -174,12 +203,31 @@ loading, baseline obligations, editor/CI settings, unchanged query-only MCP
 surfaces and the separation of configuration, authority and live evidence.
 These are fixture/static checks, not a live-host assurance verdict.
 
+Second/third-pass regressions in
+[`detection.test.mjs`](tests/detection.test.mjs),
+[`supervisor.test.mjs`](tests/supervisor.test.mjs) and
+[`acceptance.test.mjs`](tests/acceptance.test.mjs) cover the scoped-pause/global-stop
+boundary. The acceptance fixture drives three real child-process resumptions,
+retains earlier synthetic gate evidence and leaves the scoped approval intact;
+this is process/tooling evidence, not three live Factory value cycles.
+[`framework-contract.test.mjs`](tests/framework-contract.test.mjs) checks that
+all nine roles load the shared continuation procedure. Use
+[Repeat-Run Continuation](../skills/factory-mvp-and-recovery/SKILL.md#repeat-run-continuation)
+and the separately authorized real-host checks for operational assurance.
+
 The acceptance suite counts real spawned child PIDs independently of the
 supervisor's final status. Post-spawn state-lock contention may correctly leave
 one reservation and require explicit recovery, rather than report `restarted`.
 Tests exercise that case and prohibit another launch or blind replay; independent
 worker entrypoints must also exit cleanly. This proves the scoped process/state
 behavior, not unattended Factory-session or customer-outcome assurance.
+
+Multi-Squad regressions in
+[`supervisor.test.mjs`](tests/supervisor.test.mjs) cover per-board counts/progress,
+healthy-sibling masking, missing/incomplete inventory and retained retry bounds.
+[`lock-and-queue.test.mjs`](tests/lock-and-queue.test.mjs) checks that a held board
+lock does not block an independent board writer. These are scoped tool/fixture
+results, not proof of live Factory/Squad swarming or throughput improvements.
 
 [`pricing-skill-contract.test.mjs`](tests/pricing-skill-contract.test.mjs) checks
 PricingAIPoweredServices discovery, source/page provenance and conditional

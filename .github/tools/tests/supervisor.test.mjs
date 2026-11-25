@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, symlink, utimes, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -41,6 +41,13 @@ async function setup(t, { supervisor = supervisorConfig(), boardText = headingBo
 const stale = () => Date.now() + 10 * hour;
 const logOf = async (root) => (await readFile(join(root, '.docs', 'supervisor-log.jsonl'), 'utf8')).trim().split('\n').map((line) => JSON.parse(line));
 const stateOf = async (root) => JSON.parse(await readFile(join(root, '.docs', 'supervisor-state.json'), 'utf8'));
+
+async function addSquadBoard(root, ops, content = headingBoard) {
+  const path = join(root, '.docs', 'squad-b.md');
+  await writeFile(path, content);
+  ops.boardPaths.push(path);
+  return path;
+}
 
 // ---- configuration ----
 
@@ -131,6 +138,127 @@ test('positive: fresh progress from a progress ledger entry means no restart is 
   assert.equal(calls.length, 0);
 });
 
+test('positive: multiple Squad boards retain independent counts across different Markdown formats', async (t) => {
+  const { root, ops, spawnFn } = await setup(t);
+  await addSquadBoard(root, ops, '## To Do\n| ID | Title |\n|---|---|\n| CARD-B | B |\n## In Progress\n- CARD-C\n');
+  const result = await tick({ ops, now: stale(), spawnFn });
+  assert.equal(result.status, 'would-restart');
+  assert.deepEqual(result.boardLiveness.map(({ board }) => board), [
+    { parsed: true, todo: 2, inProgress: 1 },
+    { parsed: true, todo: 1, inProgress: 1 },
+  ]);
+});
+
+test('positive: board-scoped progress can keep each Squad healthy without modifying its board', async (t) => {
+  const { root, ops, calls, spawnFn } = await setup(t);
+  const sibling = await addSquadBoard(root, ops);
+  const now = stale();
+  await writeFile(ops.progressPath, [
+    { ts: new Date(now).toISOString(), boardPath: join('.docs', 'kanban.md') },
+    { ts: new Date(now).toISOString(), boardPath: sibling },
+  ].map((entry) => JSON.stringify(entry)).join('\n'));
+  const result = await tick({ ops, execute: true, now, spawnFn });
+  assert.equal(result.status, 'ok');
+  assert.ok(result.boardLiveness.every(({ status }) => status === 'ok'));
+  assert.equal(calls.length, 0);
+});
+
+test('positive: scoped progress through workspace aliases matches the canonical board', async (t) => {
+  const { root, calls, spawnFn } = await setup(t);
+  const alias = join(await tempDir(t, 'adhd-sup-alias-'), 'workspace');
+  await symlink(root, alias, 'junction');
+  const ops = loadFactoryOps({ root: alias, configPath: join(alias, 'factory-ops.json') });
+  const now = stale();
+  for (const boardPath of [join('.docs', 'kanban.md'), join(alias, '.docs', 'kanban.md')]) {
+    await writeFile(ops.progressPath, JSON.stringify({ ts: new Date(now).toISOString(), boardPath }));
+    const result = await tick({ ops, execute: true, now, spawnFn });
+    assert.equal(result.status, 'ok');
+    assert.equal(calls.length, 0);
+  }
+});
+
+test('negative: a healthy sibling board cannot conceal a stalled Squad', async (t) => {
+  const { root, ops, calls, spawnFn } = await setup(t);
+  const sibling = await addSquadBoard(root, ops);
+  const now = stale();
+  await utimes(sibling, new Date(now), new Date(now));
+  const result = await tick({ ops, now, spawnFn });
+  assert.equal(result.status, 'would-restart');
+  assert.equal(result.incident.boardPath, ops.boardPaths[0]);
+  assert.deepEqual(result.boardLiveness.map(({ status }) => status), ['halt-suspected', 'ok']);
+  assert.equal(calls.length, 0);
+});
+
+test('negative: unscoped Factory progress cannot certify every Squad board as healthy', async (t) => {
+  const { root, ops, spawnFn } = await setup(t);
+  await addSquadBoard(root, ops);
+  const now = stale();
+  await writeFile(ops.progressPath, JSON.stringify({ ts: new Date(now).toISOString() }));
+  const result = await tick({ ops, now, spawnFn });
+  assert.equal(result.status, 'would-restart');
+  assert.ok(result.boardLiveness.every(({ status }) => status === 'halt-suspected'));
+});
+
+test('negative: progress attributed to another Squad cannot refresh a stalled board', async (t) => {
+  const { root, ops, spawnFn } = await setup(t);
+  const sibling = await addSquadBoard(root, ops);
+  const now = stale();
+  await writeFile(ops.progressPath, JSON.stringify({ ts: new Date(now).toISOString(), boardPath: sibling }));
+  const result = await tick({ ops, now, spawnFn });
+  assert.equal(result.status, 'would-restart');
+  assert.equal(result.incident.boardPath, ops.boardPaths[0]);
+  assert.deepEqual(result.boardLiveness.map(({ status }) => status), ['halt-suspected', 'ok']);
+});
+
+test('negative: progress for an aliased sibling cannot refresh a stalled Squad', async (t) => {
+  const { root, ops, calls, spawnFn } = await setup(t);
+  await addSquadBoard(root, ops);
+  const alias = join(await tempDir(t, 'adhd-sup-alias-'), 'workspace');
+  await symlink(root, alias, 'junction');
+  const now = stale();
+  await writeFile(ops.progressPath, JSON.stringify({
+    ts: new Date(now).toISOString(),
+    boardPath: join(alias, '.docs', 'squad-b.md'),
+  }));
+  const result = await tick({ ops, now, spawnFn });
+  assert.equal(result.status, 'would-restart');
+  assert.equal(result.incident.boardPath, ops.boardPaths[0]);
+  assert.deepEqual(result.boardLiveness.map(({ status }) => status), ['halt-suspected', 'ok']);
+  assert.equal(calls.length, 0);
+});
+
+test('negative: a missing Squad board cannot disappear from the configured inventory', async (t) => {
+  const { root, ops, calls, spawnFn } = await setup(t);
+  const missing = join(root, '.docs', 'missing-squad.md');
+  ops.boardPaths.push(missing);
+  const result = await tick({ ops, execute: true, now: stale(), spawnFn });
+  assert.equal(result.status, 'missing-board');
+  assert.deepEqual(result.missingBoards, [missing]);
+  assert.equal(calls.length, 0);
+});
+
+test('negative: an incomplete Squad board cannot borrow a bucket from a sibling', async (t) => {
+  const { root, ops, calls, spawnFn } = await setup(t);
+  const sibling = await addSquadBoard(root, ops, '## To Do\n- CARD-B\n');
+  const result = await tick({ ops, execute: true, now: stale(), spawnFn });
+  assert.equal(result.status, 'unverifiable');
+  assert.equal(result.boardPath, sibling);
+  assert.equal(calls.length, 0);
+});
+
+test('negative: healthy sibling progress cannot reset the stalled Squad restart budget', async (t) => {
+  const { root, ops, calls, spawnFn } = await setup(t, {
+    supervisor: supervisorConfig({ retry: { maxRestarts: 1, minIntervalMs: 1000, status: 'confirmed', source: 'synthetic owner' } }),
+  });
+  const sibling = await addSquadBoard(root, ops);
+  const now = stale();
+  for (const [time, expected] of [[now, 'restarted'], [now + 2000, 'restart-limit-reached']]) {
+    await writeFile(ops.progressPath, JSON.stringify({ ts: new Date(time).toISOString(), boardPath: sibling }));
+    assert.equal((await tick({ ops, execute: true, now: time, spawnFn })).status, expected);
+  }
+  assert.equal(calls.length, 1);
+});
+
 // ---- rails ----
 
 test('negative: healthy progress never restarts', async (t) => {
@@ -160,14 +288,28 @@ test('negative: an inhibit file blocks every restart', async (t) => {
   assert.equal(calls.length, 0);
 });
 
-for (const type of ['factory-shutdown-approval', 'stoppage-approval']) {
-  test(`negative: a valid human ${type} blocks every restart`, async (t) => {
-    const { root, ops, calls, spawnFn } = await setup(t);
-    await writeFile(join(root, '.docs', 'approvals.jsonl'), `${human(type)}\n`);
-    assert.equal((await tick({ ops, execute: true, now: stale(), spawnFn })).status, 'stoppage-approved');
-    assert.equal(calls.length, 0);
-  });
-}
+test('negative: a valid human Factory shutdown approval blocks every restart', async (t) => {
+  const { root, ops, calls, spawnFn } = await setup(t);
+  await writeFile(join(root, '.docs', 'approvals.jsonl'), `${human('factory-shutdown-approval')}\n`);
+  assert.equal((await tick({ ops, execute: true, now: stale(), spawnFn })).status, 'stoppage-approved');
+  assert.equal(calls.length, 0);
+});
+
+test('negative: a scoped pause cannot suppress the second and third recovery passes', async (t) => {
+  const { root, ops, calls, spawnFn } = await setup(t);
+  const t0 = stale();
+  assert.equal((await tick({ ops, execute: true, now: t0, spawnFn })).status, 'restarted');
+  const approval = `${human('stoppage-approval', { scope: 'CARD-1' })}\n`;
+  await writeFile(join(root, '.docs', 'approvals.jsonl'), approval);
+  for (const pass of [2, 3]) {
+    const now = t0 + (pass - 1) * 2000;
+    await writeFile(join(root, '.docs', 'progress.jsonl'), `${JSON.stringify({ ts: new Date(now - 1500).toISOString(), event: 'gate-passed' })}\n`);
+    assert.equal((await tick({ ops, execute: true, now, spawnFn })).status, 'restarted');
+  }
+  assert.equal(calls.length, 3);
+  assert.deepEqual((await stateOf(root)).restarts.map((attempt) => attempt.attempt), [1, 2, 3]);
+  assert.equal(await readFile(join(root, '.docs', 'approvals.jsonl'), 'utf8'), approval);
+});
 
 test('negative: a resumed run that is still alive prevents a duplicate run', async (t) => {
   const { root, ops, calls } = await setup(t);

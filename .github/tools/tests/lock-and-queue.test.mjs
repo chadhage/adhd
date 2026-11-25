@@ -98,6 +98,22 @@ test('negative: concurrent writers cannot both apply against the same base revis
   assert.equal(results.filter((result) => result.ok).length, 1);
 });
 
+test('negative: a held Squad board lock cannot block a different Squad board writer', async (t) => {
+  const root = await tempDir(t);
+  const blocked = join(root, 'squad-a.md');
+  const independent = join(root, 'squad-b.md');
+  await Promise.all([writeFile(blocked, 'a\n'), writeFile(independent, 'b\n')]);
+  await writeFile(`${blocked}.lock`, JSON.stringify({ pid: process.pid, host: os.hostname(), owner: 'squad-a' }));
+  const results = await Promise.all([
+    applyIfRevision(blocked, revisionOf('a\n'), 'a-started\n', { owner: 'squad-a' }),
+    applyIfRevision(independent, revisionOf('b\n'), 'b-started\n', { owner: 'squad-b' }),
+  ]);
+  assert.equal(results[0].reason, 'locked');
+  assert.equal(results[1].ok, true);
+  assert.equal(await readFile(blocked, 'utf8'), 'a\n');
+  assert.equal(await readFile(independent, 'utf8'), 'b-started\n');
+});
+
 test('negative: reading a path that is not a file surfaces the error instead of pretending it is absent', async (t) => {
   await assert.rejects(readWithRevision(await tempDir(t)), (error) => error.code !== 'ENOENT');
 });

@@ -23,7 +23,8 @@ does not authorize future iterations, indefinite operation, spending or release.
 ## Charter
 
 - Investigate whether the Factory and product already exist; reconcile identity,
-  ownership, workspace and records before creating or replacing anything.
+  ownership, workspace and records before creating or replacing anything. Bind
+  existing shared product planning when another Factory already serves it.
 - Inventory all configured ADHD agent roles and verify callable capabilities,
   capacity and accepted assignments. Definitions are not active workers.
 - Establish and revalidate authorizations, their sources, limits, expiry,
@@ -43,6 +44,8 @@ does not authorize future iterations, indefinite operation, spending or release.
 Read [shared agent contracts](README.md#shared-agent-contracts) before work.
 Bind the accepted [operating profile](../skills/factory-mvp-and-recovery/SKILL.md#operating-profiles);
 configured roles do not establish live staffing.
+Apply [Repeat-Run Continuation](../skills/factory-mvp-and-recovery/SKILL.md#repeat-run-continuation)
+on re-entry and handoff; restore the existing binding and production executor.
 Reuse [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#single-tool-authorization);
 enterprise queries follow [Work IQ](README.md#work-iq-connection) and
 [Fabric IQ](README.md#fabric-iq-connection).
@@ -52,6 +55,10 @@ For setup, resume, discovery, validation and health modes, read
 It owns the interview, readiness matrix, iteration 1-10 plan, cadence and
 iteration-36 calibration, artifact placement and activation procedure.
 Detailed fields belong there, not in a second local checklist.
+Bind [Shared Product Planning and Squad Kanban](../skills/kanban-one-factory-many-squads/SKILL.md#shared-product-planning-and-squad-kanban)
+and [Handoff Continuity](../skills/kanban-one-factory-many-squads/SKILL.md#handoff-continuity).
+Preserve one backlog/roadmap across sibling Factories, common boards per Squad,
+scoped allocation/health custody and independent execution within accepted limits.
 Except for the minimum-history bootstrap, required engagement and memory
 binding precede dependent work; the bootstrap still requires approved storage,
 sources and the effective host grant.
@@ -108,10 +115,14 @@ An online center is not proof of production.
    the actual instruction. Load the canonical index/contract and relevant
    source revisions; do not repeat answered setup questions.
 2. Apply the mode's readiness procedure. Obtain accountable specialist evidence,
-   accepted assignments and any genuinely missing owner decision.
+   accepted assignments and any genuinely missing owner decision. Collect
+   independent evidence concurrently where supported; optional planning or an
+   unrelated roster item must not hold a complete authorized handoff.
 3. For setup/resume, invoke `Factory <name> Start [directive]` with the approved
    manifest/revision, mode, authority and first safe action. Verify acceptance
-   and actual production, not just a returned invocation.
+   and actual production, not just a returned invocation. Use nonblocking
+   dispatch when the accepted runtime permits production and health work to
+   overlap; do not await a whole production run before maintaining conditions.
 4. Record production/readiness custody, current/next health checkpoint, actual
    executor and renewal responsibilities. Continue the health procedure within
    the approved window.

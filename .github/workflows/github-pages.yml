@@ -1,0 +1,64 @@
+name: Publish prototype to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'prototype/**'
+      - '.github/workflows/github-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Validate and package prototype
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the published revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22.21.0
+      - name: Check prototype JavaScript syntax
+        shell: pwsh
+        run: |
+          node --check (Join-Path 'prototype' 'app.js')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node --check (Join-Path 'prototype' 'demo.js')
+      - name: Test activation demo
+        shell: pwsh
+        run: node --test (Join-Path '.github' 'tools' 'tests' 'activation-demo.test.mjs')
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
+      - name: Upload only the prototype
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b
+        with:
+          path: prototype
+
+  deploy:
+    name: Deploy prototype
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e

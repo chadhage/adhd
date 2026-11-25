@@ -52,6 +52,8 @@ scenario pass. Retain unknowns, failures and exact primary evidence.
 | Scenario | Required observation |
 | --- | --- |
 | Bounded assignment reaches its accepted checkpoint | Actual result, unfinished work, saved checkpoint or unsaved gap, custody and real resume route; the turn may return without claiming Factory shutdown or continued execution. |
+| First cycle followed by two authorized continuations | Preserve the same Factory/records identity and completed evidence; distinguish child returns, real restarts and new iterations, verify remaining authority/rate freshness and observe fresh assignment acceptance and progress. Record each outcome; three tooling fixtures are not three live value cycles. |
+| A scoped stop persists into a subsequent run | Keep the affected action stopped and its approval/evidence intact while independent authorized work advances; full shutdown/inhibit still prevents restart. Do not infer authority to lift either control. |
 | Existing parallel contract meets a new bounded template | Existing accepted terms are preserved; only a human-approved amendment can change its guarantees. |
 | Parallel profile has configured but unavailable workers | No readiness/overlap claim; record the missing capability and owner decision while unaffected authorized work continues. |
 | Parallel roles and delivery actually overlap | Record accepted instance/tool IDs, source-backed productive intervals, quota/latency/cost and outcomes; sequential fixtures do not pass. |
