@@ -68,6 +68,9 @@ them. A healthy board or unscoped Factory heartbeat cannot hide another Squad's
 deadline breach. Retry accounting uses the oldest currently stalled board's
 progress, not a healthy sibling's activity.
 
+Scoped progress references use canonical board paths, so relative and absolute
+references through workspace aliases still identify the same board.
+
 This intentionally tightens legacy multi-board diagnostics: attribute progress
 to `boardPath` before relying on ledger freshness. Missing/unparseable inventory
 blocks an automatic restart claim, not independently authorized work already

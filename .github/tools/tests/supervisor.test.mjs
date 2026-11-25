@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
-import { mkdir, readFile, utimes, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, symlink, utimes, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -163,6 +163,20 @@ test('positive: board-scoped progress can keep each Squad healthy without modify
   assert.equal(calls.length, 0);
 });
 
+test('positive: scoped progress through workspace aliases matches the canonical board', async (t) => {
+  const { root, calls, spawnFn } = await setup(t);
+  const alias = join(await tempDir(t, 'adhd-sup-alias-'), 'workspace');
+  await symlink(root, alias, 'junction');
+  const ops = loadFactoryOps({ root: alias, configPath: join(alias, 'factory-ops.json') });
+  const now = stale();
+  for (const boardPath of [join('.docs', 'kanban.md'), join(alias, '.docs', 'kanban.md')]) {
+    await writeFile(ops.progressPath, JSON.stringify({ ts: new Date(now).toISOString(), boardPath }));
+    const result = await tick({ ops, execute: true, now, spawnFn });
+    assert.equal(result.status, 'ok');
+    assert.equal(calls.length, 0);
+  }
+});
+
 test('negative: a healthy sibling board cannot conceal a stalled Squad', async (t) => {
   const { root, ops, calls, spawnFn } = await setup(t);
   const sibling = await addSquadBoard(root, ops);
@@ -194,6 +208,23 @@ test('negative: progress attributed to another Squad cannot refresh a stalled bo
   assert.equal(result.status, 'would-restart');
   assert.equal(result.incident.boardPath, ops.boardPaths[0]);
   assert.deepEqual(result.boardLiveness.map(({ status }) => status), ['halt-suspected', 'ok']);
+});
+
+test('negative: progress for an aliased sibling cannot refresh a stalled Squad', async (t) => {
+  const { root, ops, calls, spawnFn } = await setup(t);
+  await addSquadBoard(root, ops);
+  const alias = join(await tempDir(t, 'adhd-sup-alias-'), 'workspace');
+  await symlink(root, alias, 'junction');
+  const now = stale();
+  await writeFile(ops.progressPath, JSON.stringify({
+    ts: new Date(now).toISOString(),
+    boardPath: join(alias, '.docs', 'squad-b.md'),
+  }));
+  const result = await tick({ ops, now, spawnFn });
+  assert.equal(result.status, 'would-restart');
+  assert.equal(result.incident.boardPath, ops.boardPaths[0]);
+  assert.deepEqual(result.boardLiveness.map(({ status }) => status), ['halt-suspected', 'ok']);
+  assert.equal(calls.length, 0);
 });
 
 test('negative: a missing Squad board cannot disappear from the configured inventory', async (t) => {

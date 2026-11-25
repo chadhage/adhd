@@ -3,7 +3,7 @@ import { existsSync, readFileSync, statSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
-import { loadFactoryOps } from '../hooks/factory-ops.mjs';
+import { canonicalPath, loadFactoryOps } from '../hooks/factory-ops.mjs';
 import { factoryShutdownType, findApprovals, parseJsonLines } from './lib/approvals.mjs';
 import { checkLiveness } from './liveness-check.mjs';
 import { applyIfRevision, readWithRevision } from './revision-lock.mjs';
@@ -183,9 +183,10 @@ export async function tick({ ops = loadFactoryOps(), execute = false, now = Date
   }
   const progress = parseJsonLines(readIfPresent(ops.progressPath)).entries;
   boardLiveness = boards.map((path) => {
+    const boardKey = pathKey(canonicalPath(path));
     const scopedProgress = progress.filter((entry) => entry.boardPath === undefined
       ? boards.length === 1
-      : nonEmpty(entry.boardPath) && pathKey(resolve(ops.root, entry.boardPath)) === pathKey(path));
+      : nonEmpty(entry.boardPath) && pathKey(canonicalPath(resolve(ops.root, entry.boardPath))) === boardKey);
     const result = checkLiveness({
       boardText: readFileSync(path, 'utf8'),
       progressText: scopedProgress.map((entry) => JSON.stringify(entry)).join('\n'),
