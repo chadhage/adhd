@@ -16,10 +16,10 @@ Agent Driven Hybrid Development.
 
 ## Explore without installing
 
-Try the [ADHD Studio interactive prototype](prototype/index.html) before setting
-up an agent harness. Open `prototype/index.html` directly in a current browser;
-no VS Code, Copilot installation, account, package manager, or local server is
-needed. Keep its adjacent CSS and JavaScript files with it.
+Try [ADHD Studio online](https://chadhage.github.io/adhd/) before setting up an
+agent harness. Or open the [local prototype](prototype/index.html) directly in a
+current browser; no VS Code, Copilot installation, account, package manager, or
+local server is needed. Keep its adjacent CSS and JavaScript files with it.
 
 The guided flow compares five setup modalities, explains the agents in plain
 language, and builds a visual product/Factory/Squad blueprint. An optional visual
@@ -56,6 +56,10 @@ checks do not prove that new users can complete this task unaided.
 Run the focused simulation regressions with
 `node --test .github/tools/tests/activation-demo.test.mjs`. These test the demo
 state machine, not real Factory activation, provider access, or product delivery.
+
+The [GitHub Pages workflow](.github/workflows/github-pages.yml) validates and
+publishes only `prototype/` when its files or the workflow change on `main`.
+Framework configuration, tests, and runtime records are not included in the site.
 
 ## Prerequisites
 
