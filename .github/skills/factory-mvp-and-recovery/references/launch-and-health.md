@@ -25,10 +25,19 @@ existing terms are not silently migrated. A bounded checkpoint returns evidence
 and a real resume route, not Factory closure or setup MVP without a verified
 first value increment.
 
+For resume and assignment return, use
+[Repeat-Run Continuation](../SKILL.md#repeat-run-continuation) to distinguish
+an active-run continuation, a real restart and a new iteration. Reconcile
+changed prerequisites and remaining authority rather than restarting setup.
+
 Distinguish the human owner, Factory, product owner and product workspace.
 For an agentic product, identify its runtime agents and architecture separately
 from ADHD development agents. Investigate an existing Factory/product before
 creating either; preserve identity, history and unfinished work.
+When another Factory already serves this product, bind the same canonical
+backlog, roadmap, ProductOwner decisions and allocation inventory under
+[Shared Product Planning and Squad Kanban](../../kanban-one-factory-many-squads/SKILL.md#shared-product-planning-and-squad-kanban).
+Do not create a second product direction merely to add delivery capacity.
 
 ## Interview and evidence collection
 
@@ -66,8 +75,8 @@ result/status, gap and next action. All applicable mandatory criteria must pass.
 | Mandate | Approved assignment mode and operating profile, scope/exclusions, decision rights, operating and iteration horizons, resources/budget, checkpoints/resume owner, consequential approvals and revocation route. |
 | Value | Baseline or authorized measurement, smallest cumulative increment, outcome measure, threshold, counterevidence and review rule. Intent is not verified benefit. |
 | Records | Product-owned repository/workspace and guidance; canonical index/contract, designated writers, privacy-safe Git evidence and compatible existing paths. |
-| Roster and runtime | Actual accepted role assignments and callable tools for the selected profile. Bounded work invokes accountable roles as needed; parallel/supervised work requires VOC, ProductOwner, chief-chartered AssociateProductOwner, Kanban and Squad/Fullstacker with observed overlap. Default one Squad of three unless an approved exception applies. |
-| Flow | Authoritative backlog/board, approved WIP/reserve units and limits, eligible True Ready IDs/evidence, priority, readiness-assignment authority, lead time/triggers and completion destination. |
+| Roster and runtime | Actual accepted assignments/tools for the selected profile. Bounded work invokes roles as needed; parallel/supervised work requires VOC, ProductOwner, chief-chartered AssociateProductOwner, Kanban and Squad/Fullstacker with observed overlap. One Squad of three is the initial proposal, not a ceiling; multiple Squads/cohorts require approved capacity without duplicated members or shared roles. |
+| Flow | Shared product backlog/roadmap, indexed source and common Squad boards, one allocation per card, scoped writers and aggregate WIP/reserve limits, eligible True Ready IDs/evidence, priority, readiness authority, lead time/triggers and completion destination. |
 | Continuity | Current/next accepted assignments, permitted fallback exits, deadlines, resource/authority renewal, health custody and executor, recovery panel and real restart route. |
 | Technical gates | Applicable acceptance/Definition of Done, architecture/security/testability, completed prerequisites, independent bounded scope, environment access, validation and integration owner. |
 | Observation and history | Product-owned Operations Center readiness/capture gaps and accepted Historian assignment for mandatory demand intake/events. Full transcript capture remains separately scoped; no every-turn listener is implied. |
@@ -125,8 +134,10 @@ At each boundary:
    Reassess scale from demand, readiness, dependencies, bottlenecks, quality,
    runtime and incremental burn. Dedicated subproduct splits retain the
    associate scaling gate and ProductOwner agreement.
-6. Obtain next-iteration authorization after its scope, measures, demo/feedback,
-   roster, skills, budget and permissions reflect the latest evidence.
+6. Verify next-iteration authorization against the latest scope, measures,
+   demo/feedback, roster, skills, budget and permissions. Reuse an explicit,
+   still-valid authorization covering that iteration; obtain only missing or
+   materially changed authority. A provisional theme or cadence is not approval.
 
 Before iteration 1, record cadence and the decision route. Before the initial
 10-iteration horizon ends, obtain the invoker's continuation/cadence decision;
@@ -159,8 +170,8 @@ not a requirement to create a file per row:
 | Manifest/charter/index | Identity, purpose, beneficiaries, mode, scope/exclusions, value hypothesis, limits and authoritative record locators; Launcher consolidates approved decisions. |
 | Authority/engagement | Decision provenance, permitted/prohibited actions, scope/validity/expiry, revocation/renewal, acceptance, writers and consequential checkpoints; canonical contract schema applies. |
 | Evidence/demand | Source-linked observations/hypotheses, counterevidence, consent/access, limitations and next validation; VOC owns custody and analysis. |
-| Backlog/economics | Stable IDs, outcomes/dispositions/order, criteria, dependencies, compatible costs/benefits, policy status and review terms; ProductOwner owns decisions. |
-| Board/completion/gates | Kanban's complete two-bucket inventory, readiness/WIP evidence, completion destination and gate/DoD evidence; delivery supplies technical proof. |
+| Backlog/roadmap/economics | One canonical product plan across Factories/Squads: stable IDs, outcomes/dispositions/order, criteria, dependencies, costs/benefits, policy and review terms; ProductOwner owns decisions. |
+| Allocation/boards/completion/gates | Product-wide distinct-card allocation, common two-bucket Squad boards and scoped writers, aggregate readiness/WIP/reserve, completion and gate/DoD evidence; delivery supplies technical proof. |
 | Iteration/demo/adaptation | Planned versus actual cumulative demos, feedback, decisions, retained/pruned/overlaid work, cadence and calibration; accountable owners supply evidence. |
 | Operating/cycle/health | Accepted production/readiness custody, actual executor, resources/authority, current/next assignments, reserves, fallback, deadlines, outcomes, burn, recovery and next checkpoint. |
 | Product references | Every invocable product's starting reference/version, workspace/layout, invocation surface, runtime agents, deviations and verification. |
@@ -173,6 +184,10 @@ action. Give one-shot delegates their complete assignment and predeclared
 acceptance-event protocol; do not depend on a later activation message.
 Validate saved coverage, links, identity, approvals, limits, Git state and
 specialist evidence before claiming readiness.
+Prepare next assignments and reconcile individual returns under
+[Handoff Continuity](../../kanban-one-factory-many-squads/SKILL.md#handoff-continuity);
+unchanged authorized work needs neither another setup interview nor a full-roster
+return/acknowledgement barrier.
 
 ## Operating readiness and health
 

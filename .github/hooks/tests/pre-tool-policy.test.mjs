@@ -269,7 +269,8 @@ test('positive: Factory mandate and charter optimize concurrent Squads for one i
   assert.match(mandate, /not Squad count, utilization,\s+or isolated completions/);
   for (const responsibility of [
     /one ProductOwner-led product\s+direction/,
-    /one authoritative Kanban board/,
+    /backlog and roadmap shared across all Factories and Squads/,
+    /one authoritative Kanban board per Squad/,
     /shared integrated product\s+baseline/,
     /common Definition of Done/,
     /measured baseline/,

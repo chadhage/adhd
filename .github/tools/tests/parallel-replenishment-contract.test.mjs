@@ -13,6 +13,10 @@ const launcher = agent('factory-launcher');
 const shared = read('skills', 'factory-mvp-and-recovery', 'SKILL.md');
 const parallel = normalized(section(shared, 'Concurrent Replenishment and Delivery'));
 const atomic = normalized(section(shared, 'Atomic and Independent Cards'));
+const coordination = read('skills', 'kanban-one-factory-many-squads', 'SKILL.md');
+const planning = normalized(section(coordination, 'Shared Product Planning and Squad Kanban'));
+const dispatch = normalized(section(coordination, 'Concurrent Dispatch'));
+const continuity = normalized(section(coordination, 'Handoff Continuity'));
 
 test('positive: Factory can dispatch replenishment roles and binds continuous staffing to the selected profile', () => {
   const allowed = factory.match(/^agents: \[([^\]]+)\]$/m)?.[1].split(',').map((name) => name.trim()) ?? [];
@@ -84,12 +88,64 @@ test('negative: standing associate support cannot bypass chief ownership or the 
   assert.ok(/same assignment.*twice/.test(chief), 'Factory and chief must not create duplicate associate workers');
 });
 
-test('negative: parallel roles and member queues cannot create competing boards or concurrent shared-record writers', () => {
-  assert.ok(/one authoritative two-bucket board/.test(parallel), 'parallel streams need one board');
-  assert.ok(/assignment views, not separate boards/.test(parallel), 'role/member queues must be projections, not copied cards');
-  assert.ok(/Kanban remains the sole board writer/.test(parallel), 'replenishment roles must not bypass board ownership');
+test('negative: parallel roles and member queues cannot create competing Squad boards or concurrent writers of the same record', () => {
+  assert.ok(/one common two-bucket Kanban per Squad/.test(parallel), 'each Squad needs one common board');
+  assert.ok(/assignment views, not separate boards/.test(parallel), 'member queues must be projections, not copied cards');
+  assert.ok(/one designated Kanban writer per board/.test(parallel), 'same-board writers must serialize');
   assert.ok(/serialize shared.*writes/.test(parallel), 'independent activity does not authorize concurrent shared writes');
   assert.ok(/WIP.*budget/.test(parallel), 'always-on operation must retain resource limits');
+});
+
+test('positive: Factory and Squad share product planning and bind to executable concurrent coordination', () => {
+  assert.match(planning, /one product backlog and one roadmap/);
+  assert.match(planning, /across all Factories and Squads/);
+  for (const role of ['factory', 'factory-launcher', 'squad', 'kanban', 'product-owner', 'associate-product-owner', 'fullstacker']) {
+    assert.ok(agent(role).includes('kanban-one-factory-many-squads/SKILL.md#shared-product-planning-and-squad-kanban'), role);
+  }
+  assert.match(normalized(agent('squad')), /multiple independent card cohorts/);
+  assert.match(dispatch, /ready set/);
+  assert.match(dispatch, /one-piece flow per member/);
+});
+
+test('negative: Factory-local planning copies cannot create independent product direction or double-count capacity', () => {
+  assert.match(planning, /Do not fork.*backlog.*roadmap/);
+  assert.match(planning, /single accountable ProductOwner/);
+  assert.match(planning, /shared role assignment.*once/);
+  assert.match(planning, /Existing.*migration.*authority/);
+});
+
+test('negative: independent boards cannot duplicate cross-Factory card ownership or bypass aggregate WIP', () => {
+  assert.match(planning, /one owning Squad board/);
+  assert.match(planning, /product-wide allocation/);
+  assert.match(planning, /count.*once/);
+  assert.match(planning, /product.*Factory.*Squad.*WIP/);
+  assert.match(planning, /capacity reservations/);
+  assert.match(planning, /Independent board writers may run concurrently/);
+});
+
+test('negative: a slow sibling, a full batch or optional analysis cannot hold ready task dispatch', () => {
+  assert.match(dispatch, /Launch independent.*before waiting/);
+  assert.match(dispatch, /Do not wait for every member.*Squad/);
+  assert.match(dispatch, /each result.*dependent tasks/);
+  assert.match(dispatch, /Optional analysis.*must not delay/);
+  assert.match(dispatch, /actual runtime/);
+});
+
+test('negative: offered handoffs and prepared next work cannot masquerade as accepted custody or active WIP', () => {
+  assert.match(continuity, /offered.*accepted.*started.*reconciled/);
+  assert.match(continuity, /sender retains custody until.*acceptance/);
+  assert.match(continuity, /Preparation.*(?:does|do) not start implementation/);
+  assert.match(continuity, /completion.*before.*removal/);
+  assert.match(continuity, /same handoff ID/);
+});
+
+test('negative: interrupted transfers and unrelated index updates cannot permit duplicate writes or whole-roster barriers', () => {
+  assert.match(continuity, /freeze.*affected writes/);
+  assert.match(continuity, /expected.*revisions/);
+  assert.match(continuity, /unknown launch outcome.*must not.*replay/);
+  assert.match(continuity, /only affected.*bindings/);
+  assert.match(continuity, /not a whole-roster barrier/);
+  assert.match(continuity, /authority.*budget.*revocation/);
 });
 
 test('negative: unfinished peer prerequisites, collisions and layer-only splits cannot pass independent-card readiness', () => {

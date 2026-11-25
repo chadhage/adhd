@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="description" content="Explore ADHD and design your first AI-assisted product team. An installation-free, interactive UX prototype.">
+  <title>ADHD Studio | From idea to team</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="demo.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="icon-spark" viewBox="0 0 32 32"><path d="m16 2 4 10 10 4-10 4-4 10-4-10L2 16l10-4Z" fill="currentColor"/></symbol>
+    <symbol id="icon-cloud" viewBox="0 0 48 48"><path d="M13 36a10 10 0 0 1-1-20 13 13 0 0 1 25 2 9 9 0 0 1-1 18Z" fill="currentColor" opacity=".18"/><path d="M13 36a10 10 0 0 1-1-20 13 13 0 0 1 25 2 9 9 0 0 1-1 18H13Z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="m18 26 5 5 9-10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="icon-laptop" viewBox="0 0 48 48"><rect x="9" y="9" width="30" height="24" rx="4" fill="currentColor" opacity=".18"/><rect x="9" y="9" width="30" height="24" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M4 38h40M19 21l4 4 7-8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="icon-network" viewBox="0 0 48 48"><path d="M24 17v12M10 29v-6h28v6" fill="none" stroke="currentColor" stroke-width="2.5"/><rect x="16" y="4" width="16" height="13" rx="4" fill="currentColor" opacity=".25"/><rect x="3" y="29" width="14" height="14" rx="4" fill="currentColor" opacity=".2"/><rect x="31" y="29" width="14" height="14" rx="4" fill="currentColor" opacity=".2"/><path d="M20 10h8M7 36h6M35 36h6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></symbol>
+    <symbol id="icon-terminal" viewBox="0 0 48 48"><rect x="5" y="7" width="38" height="34" rx="6" fill="currentColor" opacity=".15"/><rect x="5" y="7" width="38" height="34" rx="6" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="m13 19 6 5-6 5M25 30h9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="icon-code" viewBox="0 0 48 48"><rect x="4" y="6" width="40" height="36" rx="6" fill="currentColor" opacity=".15"/><path d="m17 18-7 6 7 6m14-12 7 6-7 6M27 14l-6 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="icon-robot" viewBox="0 0 48 48"><path d="M24 7v6" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="5" r="3" fill="currentColor"/><rect x="7" y="13" width="34" height="27" rx="10" fill="currentColor" opacity=".18"/><rect x="7" y="13" width="34" height="27" rx="10" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="17" cy="25" r="3" fill="currentColor"/><circle cx="31" cy="25" r="3" fill="currentColor"/><path d="M19 33h10M3 23v8m42-8v8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></symbol>
+    <symbol id="icon-factory" viewBox="0 0 48 48"><path d="M6 40V20l12 6V16l12 6V9h9v31Z" fill="currentColor" opacity=".2"/><path d="M6 40V20l12 6V16l12 6V9h9v31H6ZM12 33h3m9 0h3m6 0h3" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+    <symbol id="icon-board" viewBox="0 0 48 48"><rect x="5" y="7" width="38" height="34" rx="6" fill="currentColor" opacity=".15"/><path d="M24 13v22M12 16h6m-6 7h6m12-7h6m-6 7h6m-6 7h6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></symbol>
+    <symbol id="icon-map" viewBox="0 0 48 48"><path d="m5 12 12-5 14 5 12-5v29l-12 5-14-5-12 5Z" fill="currentColor" opacity=".15"/><path d="m5 12 12-5 14 5 12-5v29l-12 5-14-5-12 5V12Zm12-5v29m14-24v29" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></symbol>
+    <symbol id="icon-heart" viewBox="0 0 48 48"><path d="M24 40 8 25C-4 12 14 0 24 13 34 0 52 12 40 25Z" fill="currentColor" opacity=".2"/><path d="M24 40 8 25C-4 12 14 0 24 13 34 0 52 12 40 25Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="icon-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  </svg>
+  <header class="site-header">
+    <a class="brand" href="#welcome" aria-label="ADHD Studio home"><span class="brand-mark"><svg aria-hidden="true"><use href="#icon-spark"/></svg></span><span>ADHD <strong>studio</strong><small>Agent Driven Hybrid Development</small></span></a>
+    <nav aria-label="Main navigation">
+      <button class="nav-link" type="button" data-dialog="team-dialog">Meet the agents</button>
+      <a class="nav-link" href="#setup/1">Build my blueprint</a>
+    </nav>
+    <span class="prototype-badge"><span aria-hidden="true"></span>Interactive prototype</span>
+  </header>
+  <div class="prototype-strip">Demo only. Connections, checks, progress, and outcomes are simulated. No real agents, accounts, Git operations, or charges.</div>
+  <main id="main" tabindex="-1">
+    <section id="welcome-view" aria-labelledby="welcome-title">
+      <div class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow purple">BIG IDEAS. A LITTLE HELP.</span>
+          <h1 id="welcome-title" tabindex="-1">Your idea.<br>Your team.<br><span>Your way.</span></h1>
+          <p>Turn an idea into a clear plan for an AI-assisted team. Find a setup that feels familiar, meet your helpers, and see how it all fits together.</p>
+          <div class="hero-actions"><a class="button primary" href="#setup/1">Build my first blueprint <svg aria-hidden="true"><use href="#icon-arrow"/></svg></a><button class="button secondary" type="button" data-dialog="how-dialog">Show me how it works</button></div>
+          <div class="hero-reassurance"><svg aria-hidden="true"><use href="#icon-check"/></svg>No code, sign-in, or prior knowledge needed to explore.</div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 620 480" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="hero-gradient" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0e8ff"/><stop offset="1" stop-color="#e1f6ee"/></linearGradient></defs>
+            <rect x="26" y="25" width="565" height="426" rx="110" fill="url(#hero-gradient)"/>
+            <circle cx="528" cy="90" r="26" fill="#ffe2a8"/><circle cx="67" cy="323" r="23" fill="#f5b9ce"/><path d="m86 79 7 19 19 7-19 7-7 19-7-19-19-7 19-7Zm457 221 6 15 15 6-15 6-6 15-6-15-15-6 15-6Z" fill="#9b7ade"/>
+            <ellipse cx="311" cy="415" rx="228" ry="18" fill="#d8cfec"/>
+            <path d="M188 162h225v128H188Z" fill="#fff"/><rect x="179" y="129" width="243" height="164" rx="18" fill="#fff" stroke="#d3c2f1" stroke-width="3"/>
+            <rect x="179" y="129" width="243" height="28" rx="14" fill="#eee5fd"/><circle cx="196" cy="143" r="4" fill="#f5a7ba"/><circle cx="209" cy="143" r="4" fill="#f3c568"/><circle cx="222" cy="143" r="4" fill="#7ccbb2"/>
+            <rect x="274" y="176" width="58" height="27" rx="9" fill="#7951bd"/><path d="M303 203v17m-77 0h154m-154 0v12m77-12v12m77-12v12" stroke="#bca1e2" stroke-width="3" fill="none"/>
+            <rect x="208" y="232" width="39" height="30" rx="8" fill="#e4d7f8"/><rect x="285" y="232" width="39" height="30" rx="8" fill="#bbebd8"/><rect x="362" y="232" width="39" height="30" rx="8" fill="#ffdaa0"/>
+            <path d="M299 293v21m-30 0h64" stroke="#a593ba" stroke-width="9" stroke-linecap="round"/>
+            <rect x="99" y="317" width="424" height="17" rx="8" fill="#9570c6"/><path d="M121 334v72m380-72v72" stroke="#c2abd9" stroke-width="13" stroke-linecap="round"/>
+            <path d="M108 282v-14m-11 1q11-21 23-4" stroke="#8060bc" stroke-width="5" fill="none"/><circle cx="108" cy="249" r="6" fill="#a888d9"/>
+            <rect x="67" y="264" width="83" height="59" rx="22" fill="#b79adf"/><rect x="75" y="271" width="67" height="43" rx="17" fill="#f5edff"/><circle cx="94" cy="288" r="5" fill="#503576"/><circle cx="122" cy="288" r="5" fill="#503576"/><path d="M101 301q7 7 15 0" stroke="#7852a7" stroke-width="3" stroke-linecap="round" fill="none"/>
+            <path d="M72 308 48 324m95-18 23 9m-81 7v47m44-47v47" stroke="#a888d9" stroke-width="11" stroke-linecap="round"/><path d="M78 367h18m27 0h17" stroke="#8060bc" stroke-width="10" stroke-linecap="round"/>
+            <circle cx="352" cy="290" r="6" fill="#51aa88"/><path d="M352 295v9" stroke="#51aa88" stroke-width="4"/>
+            <rect x="308" y="303" width="88" height="62" rx="22" fill="#70c7a6"/><rect x="317" y="311" width="70" height="44" rx="16" fill="#eafff4"/><circle cx="335" cy="328" r="5" fill="#265f4b"/><circle cx="368" cy="328" r="5" fill="#265f4b"/><path d="M344 341q8 6 15-1" stroke="#327a60" stroke-width="3" fill="none" stroke-linecap="round"/><path d="m314 356-24 16m100-18 25 13m-88-5v43m49-43v43" stroke="#55b590" stroke-width="11" stroke-linecap="round"/><path d="M321 405h20m28 0h20" stroke="#327a60" stroke-width="10" stroke-linecap="round"/>
+            <path d="M493 246v-14" stroke="#d89b45" stroke-width="4"/><circle cx="493" cy="228" r="6" fill="#e5b466"/><rect x="452" y="244" width="80" height="59" rx="20" fill="#f0c478"/><rect x="460" y="251" width="64" height="43" rx="15" fill="#fff8e7"/><circle cx="477" cy="267" r="5" fill="#896027"/><circle cx="508" cy="267" r="5" fill="#896027"/><path d="M485 282h15" stroke="#a6742e" stroke-width="3" stroke-linecap="round"/><path d="m456 292-18 20m90-20 20 16m-81-9v38m46-38v38" stroke="#e7b563" stroke-width="10" stroke-linecap="round"/>
+            <g transform="rotate(-9 131 189)"><rect x="69" y="156" width="119" height="66" rx="12" fill="#fff" stroke="#efc8d6" stroke-width="2"/><circle cx="92" cy="179" r="9" fill="#f6c7d8"/><path d="M113 176h50m-50 12h34m-53 16h67" stroke="#d8bdcb" stroke-width="5" stroke-linecap="round"/></g>
+            <g transform="rotate(9 465 133)"><rect x="418" y="94" width="111" height="72" rx="12" fill="#fff" stroke="#b8dfcf" stroke-width="2"/><path d="m434 123 6 6 11-15" stroke="#56a986" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M462 120h47m-47 13h31m-56 17h60" stroke="#c0dfd0" stroke-width="5" stroke-linecap="round"/></g>
+            <rect x="200" y="349" width="72" height="66" rx="14" fill="#f7c7d5"/><path d="M236 349v-37" stroke="#62af8d" stroke-width="5"/><path d="M237 335q-34-5-29-29 30-4 29 29Zm0-14q31-4 29-29-31 0-29 29Z" fill="#89d0ae"/><path d="M189 414h94" stroke="#d8a8ba" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+          <span class="art-sticker"><svg><use href="#icon-heart"/></svg>Small teams. Shared dreams.</span>
+        </div>
+      </div>
+      <section class="how-strip" aria-labelledby="how-strip-title">
+        <div><span class="eyebrow">A SIMPLE START</span><h2 id="how-strip-title">Three little steps.<br>A much clearer picture.</h2></div>
+        <article><span class="step-bubble lavender">1</span><h3>Find your comfort zone</h3><p>Browser, computer, terminal, or editor. You choose.</p></article>
+        <article><span class="step-bubble mint">2</span><h3>Give your idea a home</h3><p>One product, with one shared plan for all its teams.</p></article>
+        <article><span class="step-bubble peach">3</span><h3>Bring your team together</h3><p>Shape your Factory and Squads, then see your blueprint.</p></article>
+      </section>
+      <section class="comfort-section" aria-labelledby="comfort-title">
+        <div class="section-heading"><div><span class="eyebrow purple">MEET YOU WHERE YOU ARE</span><h2 id="comfort-title">More than one way in.</h2><p>Explore the same framework through a setup that suits you.</p></div><button class="button secondary" type="button" data-dialog="compare-dialog">Compare setup paths</button></div>
+        <div id="welcome-paths" class="comfort-grid"></div>
+        <p class="fine-print">The browser, local-service, self-hosted, and CLI paths are proposed architectures. The VS Code + Copilot path is documented today. This prototype does not implement or verify any agent runtime.</p>
+      </section>
+    </section>
+    <section id="setup-view" hidden aria-labelledby="setup-title">
+      <div class="wizard-intro"><div><span class="eyebrow purple">MAKE IT YOURS</span><h1 id="setup-title" tabindex="-1">Let's connect the dots.</h1><p>No perfect answers needed. You can change your plan as you go.</p></div><button class="text-button" type="button" data-dialog="how-dialog">What are we building?</button></div>
+      <nav class="wizard-progress" aria-label="Blueprint steps"><ol id="wizard-steps"></ol></nav>
+      <form id="setup-form" novalidate>
+        <div id="form-error" class="error-banner" role="alert" hidden></div>
+        <section id="path-step" class="wizard-step" aria-labelledby="path-title">
+          <div class="step-heading"><span class="eyebrow">STEP 1 OF 3</span><h2 id="path-title">Where do you feel at home?</h2><p>Choose the experience you'd like to use. For now, every choice is safe to explore.</p></div>
+          <fieldset class="path-fieldset"><legend class="sr-only">Choose your setup path</legend><div id="path-options" class="path-grid"></div></fieldset>
+          <div id="path-detail" class="path-detail" aria-live="polite"></div>
+          <button class="text-button" type="button" data-dialog="compare-dialog">I'd like to compare the requirements</button>
+        </section>
+        <section id="product-step" class="wizard-step" hidden aria-labelledby="product-title">
+          <div class="step-heading"><span class="eyebrow">STEP 2 OF 3</span><h2 id="product-title">What's your big idea?</h2><p>Start with a name and the difference you'd like to make.</p></div>
+          <div class="product-layout">
+            <div class="form-panel">
+              <label for="product-name">Product name <span class="required-note">Required</span></label>
+              <input id="product-name" name="product-name" maxlength="80" placeholder="For example, Neighborhood Helper" autocomplete="off" required aria-describedby="product-name-help">
+              <p id="product-name-help" class="field-help">A working name is absolutely fine.</p>
+              <label for="product-goal">Who will it help, and how? <span class="required-note">Required</span></label>
+              <textarea id="product-goal" name="product-goal" maxlength="400" rows="4" placeholder="Help neighbors find trusted local services without endless searching." required aria-describedby="product-goal-help"></textarea>
+              <p id="product-goal-help" class="field-help">One or two sentences. Use a sample idea, not confidential information.</p>
+              <button id="sample-idea" class="text-button" type="button">Try a sample idea</button>
+            </div>
+            <aside class="idea-note">
+              <div class="note-art"><svg aria-hidden="true"><use href="#icon-map"/></svg><svg aria-hidden="true"><use href="#icon-spark"/></svg></div>
+              <h3>One idea.<br>One shared direction.</h3>
+              <p>Every Factory and Squad works from the same product plan, not competing copies.</p>
+              <dl><dt>Shared backlog</dt><dd>The agreed list of work to tackle.</dd><dt>Shared roadmap</dt><dd>The bigger outcomes you're working toward.</dd></dl>
+              <p class="fine-print">Naming a plan here doesn't create a repository or authorize work.</p>
+            </aside>
+          </div>
+        </section>
+        <section id="team-step" class="wizard-step" hidden aria-labelledby="team-title">
+          <div class="step-heading"><span class="eyebrow">STEP 3 OF 3</span><h2 id="team-title">A little team with big potential.</h2><p>A <strong>Factory</strong> coordinates delivery. Its <strong>Squads</strong> are small teams of AI builders.</p></div>
+          <div class="team-toolbar"><p id="team-count" class="team-count"></p><div class="view-switch" role="group" aria-label="Team editor view"><button id="guided-view" type="button" aria-pressed="true">Guided setup</button><button id="canvas-view" type="button" aria-pressed="false">Visual canvas</button></div></div>
+          <p id="capacity-note" class="field-help">The starter blueprint proposes one Squad of three builders. Counts describe a plan, not running agents, approved WIP, or guaranteed parallel capacity.</p>
+          <div id="canvas-product" class="canvas-product" hidden></div>
+          <div id="teams-editor" class="teams-editor"></div>
+          <button id="add-factory" class="button secondary add-factory" type="button">+ Add another Factory</button>
+          <p class="fine-print">Prototype limits: 4 Factories, 4 Squads per Factory, 12 builders per Squad. These are preview limits, not framework policies. Each Squad shares one work board.</p>
+          <details class="explain-box"><summary>How do the agents work together?</summary><p>A product guide keeps direction shared. Research helpers clarify needs. A work organizer (Kanban) keeps each Squad's board in order. Squad coordinators help builders work on ready tasks, then check the combined result. More builders alone do not mean more throughput.</p><button class="text-button" type="button" data-dialog="team-dialog">Meet all nine agent roles</button></details>
+        </section>
+        <div class="wizard-footer"><button id="previous-step" class="button secondary" type="button">Back</button><p>Your draft stays on this page only. Refreshing clears it.</p><button id="next-step" class="button primary" type="submit">Continue <svg aria-hidden="true"><use href="#icon-arrow"/></svg></button></div>
+      </form>
+    </section>
+    <section id="blueprint-view" hidden aria-labelledby="blueprint-title">
+      <div class="blueprint-heading"><div><span class="eyebrow purple">LOOK WHAT YOU'VE PUT TOGETHER</span><h1 id="blueprint-title" tabindex="-1">Your idea, now with a plan.</h1><p>One shared direction. A team that fits. A way in that feels like you.</p></div><span class="draft-stamp"><svg aria-hidden="true"><use href="#icon-check"/></svg>Blueprint only<br><small>No agents launched</small></span></div>
+      <div id="blueprint-stats" class="blueprint-stats" aria-label="Planned team totals"></div>
+      <section class="blueprint-map" aria-label="Visual product and team blueprint"><div id="blueprint-product" class="blueprint-product"></div><div id="blueprint-factories" class="blueprint-factories"></div></section>
+      <div class="blueprint-bottom">
+        <section id="blueprint-path" class="summary-panel" aria-label="Chosen setup path"></section>
+        <section class="summary-panel" aria-labelledby="next-title"><span class="eyebrow purple">NEXT: GIVE IT A TEST DRIVE</span><h2 id="next-title">See what activation would feel like.</h2><p>Try connecting a sample workspace, reviewing boundaries, checking readiness, and watching a first cycle. Every result is staged for this demo.</p><p>You stay in control. Nothing connects, deploys, spends money, or starts a real agent.</p><a class="button primary" href="#activate/1">Try activation demo <svg aria-hidden="true"><use href="#icon-arrow"/></svg></a></section>
+      </div>
+      <section class="flow-section" aria-labelledby="flow-title"><h2 id="flow-title">How work would move through your team</h2><div class="flow-grid"><article><span class="step-bubble peach">1</span><h3>Listen to real needs</h3><p>Research helpers and your product guide agree what matters.</p></article><article><span class="step-bubble lavender">2</span><h3>Choose ready work</h3><p>Each Squad pulls authorized work from its common board.</p></article><article><span class="step-bubble mint">3</span><h3>Build together</h3><p>Independent tasks can overlap when capacity and ownership allow.</p></article><article><span class="step-bubble rose">4</span><h3>Check the outcome</h3><p>Verified completion is recorded before work leaves the board.</p></article></div></section>
+      <div class="summary-actions"><a class="button primary" href="#activate/1">Continue to activation demo <svg aria-hidden="true"><use href="#icon-arrow"/></svg></a><a class="button secondary" href="#setup/3">Edit my blueprint</a><button id="print-blueprint" class="button secondary" type="button">Print / save as PDF</button><button id="start-over" class="text-button" type="button">Start over</button></div>
+      <p class="fine-print summary-disclaimer">This is an interactive design prototype, not an executable Factory configuration. Nothing has been saved to a product repository or shared with a service.</p>
+    </section>
+    <section id="activation-view" hidden aria-labelledby="activation-title">
+      <div class="wizard-intro"><div><span class="eyebrow purple">FROM PLAN TO TEST DRIVE</span><h1 id="activation-title" tabindex="-1">Let's try your first activation.</h1><p>A guided simulation. No sign-in, installation, or real execution.</p></div><a class="text-button" href="#blueprint">Back to my blueprint</a></div>
+      <nav class="wizard-progress" aria-label="Activation demo steps"><ol id="activation-steps"></ol></nav>
+      <form id="activation-form" novalidate>
+        <div id="activation-error" class="error-banner" role="alert" hidden></div>
+        <section id="connect-panel" aria-labelledby="connect-title">
+          <div class="step-heading"><span class="eyebrow">ACTIVATION DEMO / STEP 1 OF 3</span><h2 id="connect-title">A home for your team's work.</h2><p>In a real activation, you would connect a runtime and a product-owned Git repository. Here, you can safely try a sample.</p></div>
+          <div class="activation-grid">
+            <div class="form-panel">
+              <label for="demo-repository">Repository reference for the demo</label><input id="demo-repository" type="url" maxlength="300" placeholder="https://example.invalid/demo/product" required aria-describedby="demo-repository-help">
+              <p id="demo-repository-help" class="field-help">Use a sample, not credentials or private project details. The reference is never opened or fetched.</p>
+              <button id="sample-workspace" class="text-button" type="button">Use a demo workspace</button>
+              <div id="demo-connection-status" class="demo-status" role="status"></div>
+              <div class="demo-actions"><button id="simulate-connection" class="button primary" type="button">Simulate connection</button><button id="cancel-demo-check" class="text-button" type="button" hidden>Cancel simulation</button></div>
+            </div>
+            <aside id="demo-runtime" class="summary-panel" aria-label="Selected runtime in the demo"></aside>
+          </div>
+          <details class="explain-box demo-scenarios"><summary>Try a different demo scenario</summary><label for="demo-scenario">Scripted scenario</label><select id="demo-scenario"><option value="happy">Successful first cycle</option><option value="connection-failure">Connection hiccup, then retry</option><option value="readiness-gap">Missing verification capability</option><option value="interruption">Interrupted cycle, then resume</option><option value="verification-failure">Acceptance verification fails</option></select><p class="field-help">These are deliberately injected fixtures, not live incidents. Changing the scenario resets the simulated connection and checks.</p></details>
+        </section>
+        <section id="review-panel" hidden aria-labelledby="review-title">
+          <div class="step-heading"><span class="eyebrow">ACTIVATION DEMO / STEP 2 OF 3</span><h2 id="review-title">Small scope. Clear boundaries.</h2><p>Review the kinds of decisions a real first cycle would need. These are sample terms, not financial approval or host permissions.</p></div>
+          <div class="activation-grid">
+            <div class="form-panel">
+              <label for="demo-scope">One outcome for the simulated first cycle</label><textarea id="demo-scope" maxlength="400" rows="3" required aria-describedby="demo-scope-help"></textarea><p id="demo-scope-help" class="field-help">Start with the goal from your blueprint, then narrow it to one useful first step.</p>
+              <label for="demo-budget">Sample spending limit (USD, not charged)</label><input id="demo-budget" type="number" min="0" max="10000" step="0.01" required aria-describedby="demo-budget-help"><p id="demo-budget-help" class="field-help">Scripted estimate: $1.00. These are illustration values, not vendor rates or actual costs. This demo charges nothing.</p>
+              <fieldset class="demo-permissions"><legend>Sample permissions, not real grants</legend><label><input id="demo-write" type="checkbox">Allow simulated workspace changes</label><label><input id="demo-verify" type="checkbox">Allow simulated verification</label></fieldset>
+            </div>
+            <aside class="idea-note"><div class="note-art"><svg aria-hidden="true"><use href="#icon-heart"/></svg></div><h3>You stay in control.</h3><p>One simulated cycle only. No production deployment, customer contact, purchases, credentials, or real repository writes.</p><p class="fine-print">Real implementation must verify existing authority, actual tools, budget, and provider access. These checkboxes cannot grant any of them.</p></aside>
+          </div>
+        </section>
+        <section id="readiness-panel" hidden aria-labelledby="readiness-title">
+          <div class="step-heading"><span class="eyebrow">ACTIVATION DEMO / STEP 3 OF 3</span><h2 id="readiness-title">A quick check before the test drive.</h2><p>The checks below use this page's inputs and staged fixtures. Passing them does not certify real runtime readiness.</p></div>
+          <div id="demo-review-summary" class="demo-recap"></div>
+          <div id="demo-readiness-status" class="demo-status" role="status"></div>
+          <ul id="demo-checks" class="demo-check-list" aria-label="Simulated readiness results"></ul>
+          <div class="demo-actions"><button id="run-demo-checks" class="button secondary" type="button">Run simulated checks</button><button id="restore-demo-capability" class="button secondary" type="button" hidden>Restore demo capability</button><button id="cancel-readiness-check" class="text-button" type="button" hidden>Cancel checks</button></div>
+        </section>
+        <div class="wizard-footer"><button id="activation-back" class="button secondary" type="button">Back</button><p>Demo data stays on this page. Refreshing clears it.</p><button id="activation-next" class="button primary" type="submit">Continue</button></div>
+      </form>
+    </section>
+    <section id="cycle-view" hidden aria-labelledby="cycle-title">
+      <div class="blueprint-heading"><div><span class="eyebrow purple">A FIRST CYCLE, IN DEMO MODE</span><h1 id="cycle-title" tabindex="-1">Watch the team connect the dots.</h1><p>Scripted activity, not live agents or actual product delivery.</p></div><span class="draft-stamp">SIMULATION ONLY</span></div>
+      <div id="demo-cycle-context" class="demo-recap"></div>
+      <div id="demo-cycle-status" class="demo-status" role="status" aria-live="polite"></div>
+      <div class="cycle-layout"><ol id="demo-cycle-steps" class="cycle-timeline" aria-label="Scripted cycle progress"></ol><section class="summary-panel" aria-labelledby="demo-board-title"><h2 id="demo-board-title">One demo card. One Squad board.</h2><p>Only To Do and In Progress are board columns. Completion is recorded separately.</p><div class="demo-board"><section><h3>To Do</h3><div id="demo-board-todo"></div></section><section><h3>In Progress</h3><div id="demo-board-progress"></div></section></div><p class="fine-print">An illustration only. No canonical Kanban records are read or changed.</p></section></div>
+      <div class="summary-actions"><button id="pause-demo-cycle" class="button secondary" type="button">Pause demo</button><button id="resume-demo-cycle" class="button primary" type="button" hidden>Resume demo cycle</button><button id="end-demo-cycle" class="text-button" type="button">End demo</button><a class="text-button" href="#activate/3">Review demo setup</a></div>
+      <p class="fine-print summary-disclaimer">Leaving this view pauses a running simulation. Resume continues its saved page-only cursor; editing the blueprint or demo terms invalidates previous checks. No background worker or scheduler exists.</p>
+    </section>
+    <section id="outcome-view" hidden aria-labelledby="outcome-title">
+      <div class="blueprint-heading"><div><span class="eyebrow purple">THE END OF THE TEST DRIVE</span><h1 id="outcome-title" tabindex="-1">Your activation demo result.</h1><p id="demo-outcome-description"></p></div><span class="draft-stamp">STAGED RESULT<br><small>Not a built product</small></span></div>
+      <div id="demo-outcome-summary" class="demo-recap"></div>
+      <div class="blueprint-bottom"><section id="demo-result-preview" class="summary-panel" aria-label="Sample first increment"></section><section id="demo-completion-record" class="summary-panel" aria-label="Simulated completion evidence"></section></div>
+      <div class="summary-actions"><button id="focus-demo-feedback" class="button primary" type="button">Share demo feedback</button><button id="replay-demo" class="button secondary" type="button">Replay this demo scenario</button><a class="button secondary" href="#activate/1">Change demo setup</a><a class="text-button" href="#blueprint">Back to blueprint</a></div>
+      <section class="feedback-panel" aria-labelledby="feedback-title">
+        <div class="step-heading"><span class="eyebrow purple">HELP SHAPE THE NEXT VERSION</span><h2 id="feedback-title">How did the journey feel?</h2><p>Optional feedback for the repo owner. No names, contact details, secrets, or automatic analytics.</p></div>
+        <form id="demo-feedback-form" novalidate><div id="demo-feedback-error" class="error-banner" role="alert" hidden></div><label for="demo-feedback-response">Could you get through this demo without outside guidance?</label><select id="demo-feedback-response" required><option value="">Choose your experience</option><option value="unaided">Yes, without outside help</option><option value="help-needed">I needed some help</option><option value="confusing">The journey was confusing</option></select><label for="demo-feedback-notes">What worked, and where did you get stuck?</label><textarea id="demo-feedback-notes" rows="3" maxlength="1200" placeholder="Tell us about confusing steps, missing information, or useful parts."></textarea><button class="button secondary" type="submit">Prepare feedback to share</button></form>
+        <div id="demo-feedback-receipt" hidden><p id="demo-feedback-status" class="demo-status" role="status"></p><label for="demo-feedback-text">Your feedback text</label><textarea id="demo-feedback-text" readonly rows="8"></textarea><button id="select-demo-feedback" class="text-button" type="button">Select feedback to copy</button><p class="fine-print">Copy and share this text with the owner yourself. Nothing has been sent or saved outside this page; refreshing clears it.</p></div>
+      </section>
+      <p class="fine-print summary-disclaimer">The result and cost estimate are scripted examples. No actual code, customer-value increment, runtime validation, Git-tracked evidence, or release was produced.</p>
+    </section>
+  </main>
+  <footer class="site-footer"><span><strong>ADHD studio</strong> &middot; A friendlier first step.</span><span>Explore freely. Nothing runs. Nothing leaves this page.</span></footer>
+  <p id="announcements" class="sr-only" role="status" aria-live="polite"></p>
+  <noscript><p class="error-banner">This interactive prototype needs JavaScript enabled. It does not require VS Code, Copilot, an account, or a local service.</p></noscript>
+  <dialog id="how-dialog" aria-labelledby="how-dialog-title">
+    <div class="dialog-heading"><span class="eyebrow purple">THE SHORT VERSION</span><button class="icon-button" type="button" data-close-dialog aria-label="Close explanation"><svg aria-hidden="true"><use href="#icon-close"/></svg></button></div>
+    <h2 id="how-dialog-title">An idea is easier with a team.</h2><p>ADHD means <strong>Agent Driven Hybrid Development</strong>: people set the direction, AI helpers contribute, and results still need evidence.</p>
+    <div class="explanation-grid"><article><span class="role-symbol purple"><svg aria-hidden="true"><use href="#icon-factory"/></svg></span><h3>Factory = delivery coordinator</h3><p>A Factory brings the right Squads together for one product. Multiple Factories still share the same backlog and roadmap.</p></article><article><span class="role-symbol green"><svg aria-hidden="true"><use href="#icon-robot"/></svg></span><h3>Squad = small builder team</h3><p>Each Squad shares one board with two columns: To Do and In Progress. Builders tackle ready work and verify it together.</p></article></div>
+    <p class="callout">You'll design a visual blueprint, not start live agents. The choice of runtime is separate from your product and team structure.</p><button class="button primary" type="button" id="begin-from-explanation">Got it. Let's make a blueprint.</button>
+  </dialog>
+  <dialog id="compare-dialog" class="wide-dialog" aria-labelledby="compare-title">
+    <div class="dialog-heading"><span class="eyebrow purple">YOUR COMFORT ZONE MATTERS</span><button class="icon-button" type="button" data-close-dialog aria-label="Close comparison"><svg aria-hidden="true"><use href="#icon-close"/></svg></button></div>
+    <h2 id="compare-title">Same framework. Different ways in.</h2><p>All five paths work in this prototype with a browser alone. These are the requirements for <strong>future real agent execution</strong>, not requirements for exploring this page.</p><div id="comparison-options" class="comparison-options"></div><p class="callout">Only the VS Code + Copilot setup is documented in the current framework. Alternative adapters, hosted services, container packages, and CLI orchestration still need implementation and real-host validation. No credentials are collected here.</p>
+  </dialog>
+  <dialog id="team-dialog" class="wide-dialog" aria-labelledby="agents-title">
+    <div class="dialog-heading"><span class="eyebrow purple">HELPERS, NOT A WHOLE NEW VOCABULARY</span><button class="icon-button" type="button" data-close-dialog aria-label="Close agent guide"><svg aria-hidden="true"><use href="#icon-close"/></svg></button></div>
+    <h2 id="agents-title">Meet the people-shaped jobs.</h2><p>Learn each helper's purpose first. The technical role names are here when you need them. These are definitions, not connected or running agents.</p><div id="agent-cards" class="agent-grid"></div>
+  </dialog>
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title">
+    <div class="dialog-heading"><span class="eyebrow purple">JUST CHECKING</span></div><h2 id="confirm-title">Remove this part of the plan?</h2><p id="confirm-copy"></p><div class="dialog-actions"><button class="button secondary" type="button" data-close-dialog>Keep it</button><button id="confirm-action" class="button danger" type="button">Remove</button></div>
+  </dialog>
+</body>
+</html>

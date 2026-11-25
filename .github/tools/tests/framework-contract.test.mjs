@@ -20,6 +20,43 @@ test('positive: all nine roles explicitly load the same operating-profile contra
   ]) assert.ok(read(...parts).includes(profileLink), parts.join('/'));
 });
 
+test('positive: all nine roles load one repeat-run continuation procedure with explicit custody', () => {
+  const link = 'factory-mvp-and-recovery/SKILL.md#repeat-run-continuation';
+  for (const role of roles) assert.ok(read('.github', 'agents', `${role}.agent.md`).includes(link), role);
+  const continuation = normalize(read('.github', 'skills', 'factory-mvp-and-recovery', 'SKILL.md')
+    .split('## Repeat-Run Continuation\n')[1]?.split('\n## ')[0] ?? '');
+  for (const name of ['FactoryLauncher', 'Factory', 'Squad', 'Kanban', 'VOC', 'ProductOwner', 'AssociateProductOwner', 'Fullstacker', 'Historian']) {
+    assert.ok(continuation.includes(`| ${name} |`), name);
+  }
+  for (const field of ['invocation/assignment ID', 'operating run ID', 'iteration/value-cycle ID', 'remaining horizon', 'actual executor', 'success signal']) {
+    assert.ok(continuation.includes(field), field);
+  }
+  assert.match(continuation, /before the agreed checkpoint/);
+  assert.match(continuation, /actual next executor\/trigger/);
+});
+
+test('negative: repeat-run guidance cannot manufacture iteration authority, rate freshness or a persistent worker', () => {
+  const continuation = normalize(read('.github', 'skills', 'factory-mvp-and-recovery', 'SKILL.md')
+    .split('## Repeat-Run Continuation\n')[1]?.split('\n## ')[0] ?? '');
+  assert.match(continuation, /A child return or checkpoint is not by itself a new run/);
+  assert.match(continuation, /provisional plan, backlog or no-stop directive supplies none/);
+  assert.match(continuation, /human rate confirmation.*even within 24 hours/);
+  assert.match(continuation, /old acceptance is not acceptance by a new instance/);
+  assert.match(continuation, /A planned bounded return is not that defect/);
+  assert.match(continuation, /not live-host repeatability evidence/);
+  const launch = normalize(read('.github', 'skills', 'factory-mvp-and-recovery', 'references', 'launch-and-health.md'));
+  assert.match(launch, /Reuse an explicit, still-valid authorization covering that iteration/);
+});
+
+test('negative: a scoped stoppage cannot become shutdown authority or permission to erase stop controls', () => {
+  const continuation = normalize(read('.github', 'skills', 'factory-mvp-and-recovery', 'SKILL.md')
+    .split('## Repeat-Run Continuation\n')[1]?.split('\n## ')[0] ?? '');
+  assert.match(continuation, /only `factory-shutdown-approval` suppresses whole-Factory/);
+  assert.match(continuation, /`stoppage-approval` remains binding on its affected actions, not a whole-Factory shutdown/);
+  assert.match(continuation, /inhibit file still prevents all supervised restarts/);
+  assert.match(continuation, /never clear it without the required authority/);
+});
+
 test('positive: editor schema, shipped defaults and runtime recognize the same named profiles', () => {
   const settings = JSON.parse(read('.vscode', 'settings.json'));
   const association = settings['json.schemas']?.find((item) => item.fileMatch.includes('/.github/hooks/factory-ops.json'));

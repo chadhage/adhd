@@ -29,9 +29,16 @@ Factory invocation, Factory coordinates this responsibility with the designated
 record owners. Do not infer a location from the reference checkout, Factory name,
 another Factory, or an agent's recollection.
 
+Factories serving the same product bind the same canonical product backlog,
+roadmap, ProductOwner decisions and product-wide allocation inventory. Each
+index identifies its Factory scope and common Squad boards without copying
+planning authority. Use
+[Shared Product Planning and Squad Kanban](../kanban-one-factory-many-squads/SKILL.md#shared-product-planning-and-squad-kanban);
+separate Factory engagements retain their own accepted authority/resource limits.
+
 The index records:
 
-- Stable Factory and engagement IDs, product repository identity and approved
+- Stable product, Factory, Squad/board and engagement IDs, product repository identity and approved
   workspace binding, storage-guidance source, its own canonical location,
   revision/digest, designated writer, and update/verification time.
 - Each record's purpose and stable ID, authoritative path/URI, owning repository
@@ -41,7 +48,8 @@ The index records:
   separately; a copied summary is not a second authority.
 - Locations for the engagement contract and authority/decision ledger; launch
   manifest/charter; demand register and pending intake receipts; VOC evidence and
-  research; ProductOwner backlog and dispositions; Kanban board and completion
+  research; shared ProductOwner backlog, roadmap and dispositions; product-wide
+  allocation and common Squad Kanban boards with their scoped writers; completion
   evidence; roster, assignments and handoffs; Historian ledger, event feed and
   coverage/cursors; cycle/outcome and restart records; and the Factory Operations
   Center. Mark genuinely inapplicable records with rationale and unresolved
@@ -51,6 +59,8 @@ Every invocation, assignment, handoff, report, and restart packet carries a
 `memory_binding`: Factory ID, product repository/workspace, records-index
 location and revision/digest, relevant demand/evidence/decision/card/history IDs,
 last verification time, and unresolved access, capture or versioning gaps.
+For delivery include product/Squad/board and task/handoff IDs, shared planning
+and allocation revisions, actual executor and accepted integration ownership.
 This applies to all participants and nested delegates, not only the nine ADHD
 roles. Before dependent work, the receiving agent reads the index and relevant
 canonical records, verifies the current Factory/workspace and revisions, and
@@ -64,6 +74,9 @@ preserves prior locations/revisions and migration links, and notifies affected
 participants through the coordinator with Historian event references. Obtain
 their refreshed binding acknowledgements before dependent dispatch; do not
 claim automatic broadcast delivery or continuous synchronization.
+Refresh and acknowledge only records relevant to the affected assignment.
+An unrelated index edit is not a whole-roster barrier or a reason to reaccept
+unchanged terms; continue work whose verified bindings remain valid.
 
 For an older Factory without an index, reconcile existing records with their
 owners and establish the index in the approved product workspace without

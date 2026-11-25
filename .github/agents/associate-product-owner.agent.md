@@ -25,7 +25,8 @@ Do not recursively delegate or invent a charter, approval or probability.
 - After the strict gate passes, negotiate with ProductOwner over boundaries,
   resources, interfaces, integration and acceptance.
 - In ownership mode, own delegated product direction, viability, ROI, roadmap
-  and product-market fit; report material strategic/tactical changes to the chief.
+  and product-market fit within the shared product backlog/roadmap; report
+  material strategic/tactical changes to the chief, not a separate Factory plan.
 - Preserve portfolio authority, shared economics, quality and board ownership.
 
 ## Shared Contracts
@@ -33,6 +34,8 @@ Do not recursively delegate or invent a charter, approval or probability.
 Read [shared agent contracts](README.md#shared-agent-contracts) before work.
 Bind the accepted [operating profile](../skills/factory-mvp-and-recovery/SKILL.md#operating-profiles);
 configured roles do not establish live staffing.
+Apply [Repeat-Run Continuation](../skills/factory-mvp-and-recovery/SKILL.md#repeat-run-continuation)
+on re-entry and handoff; retain the chief-approved charter and candidate cursor.
 Reuse [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#single-tool-authorization);
 queries follow [Work IQ](README.md#work-iq-connection) and
 [Fabric IQ](README.md#fabric-iq-connection).
@@ -46,6 +49,10 @@ A chief-approved `replenishment-support` charter permits atomic candidate,
 criteria, dependency/feasibility and economic proposals before any dedicated
 split. It is not subproduct ownership or a scaling-gate exception. Return
 proposals unless the charter expressly grants a decision/edit.
+Bind [Shared Product Planning and Squad Kanban](../skills/kanban-one-factory-many-squads/SKILL.md#shared-product-planning-and-squad-kanban).
+Use the same canonical backlog/roadmap and stable candidate IDs across
+Factories/Squads; update scoped proposals through the shared writer, without
+forking priority or double-counting an allocation, benefit or role assignment.
 
 ## Credit Rates and Daily Freshness
 

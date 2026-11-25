@@ -2,14 +2,16 @@ import { existsSync, readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
-import { findApprovals, parseJsonLines, stoppageTypes } from './lib/approvals.mjs';
+import { factoryShutdownType, findApprovals, parseJsonLines } from './lib/approvals.mjs';
 import { parseBoard } from './lib/board.mjs';
 
 /**
  * Read-only halt detector. It never restarts, resumes, or edits anything; it only
- * reports a suspected unapproved halt (unfinished work, no recorded approval, no
- * progress within the supplied deadline). The deadline is required: it is an
- * operating value that must be measured (baseline-calc.mjs) or owner-approved.
+ * reports a suspected unapproved halt in the supplied board scope (unfinished
+ * work, no recorded Factory
+ * shutdown approval, no progress within the supplied deadline). The deadline is
+ * required: it is an operating value that must be measured (baseline-calc.mjs)
+ * or owner-approved.
  */
 export function checkLiveness({ boardText, progressText = '', approvalsText = '', deadlineMs, deadlineStatus, now = Date.now(), extraProgressMs = [] }) {
   const board = parseBoard(boardText);
@@ -26,7 +28,8 @@ export function checkLiveness({ boardText, progressText = '', approvalsText = ''
     return { status: 'no-deadline', exit: 3, board, reason: 'deadlineStatus must be provisional or confirmed.' };
   }
 
-  const approvals = findApprovals(parseJsonLines(approvalsText).entries, stoppageTypes);
+  // Scoped stoppages remain binding on their actions, not on the whole Factory.
+  const approvals = findApprovals(parseJsonLines(approvalsText).entries, [factoryShutdownType]);
   if (approvals.length) {
     return { status: 'ok', exit: 0, board, reason: `Stoppage approved by ${approvals.at(-1).approver}; verify scope and resume guidance.`, approval: approvals.at(-1) };
   }
@@ -57,7 +60,7 @@ export function checkLiveness({ boardText, progressText = '', approvalsText = ''
     authority: 'Detection only; a provisional deadline grants no authority.',
     incident: {
       trigger: 'unapproved halt (suspected)',
-      evidence: `Unfinished work (To Do=${board.todo}, In Progress=${board.inProgress}), no valid approval found, ${elapsedMs}ms since last progress against a ${deadlineStatus} deadline of ${deadlineMs}ms.`,
+      evidence: `Unfinished work (To Do=${board.todo}, In Progress=${board.inProgress}), no valid Factory shutdown approval found, ${elapsedMs}ms since last progress against a ${deadlineStatus} deadline of ${deadlineMs}ms.`,
       requester: 'liveness-check',
       approvalStatus: 'none found',
       nextAction: 'Factory convenes the recovery panel and resumes the affected work; resumption needs no approval.',

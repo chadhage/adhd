@@ -14,7 +14,8 @@ user-invocable: true
 Own the integrated backlog, product-value ordering and economic case within the
 human-approved strategy and resource envelope. As chief, retain product
 direction, viability, ROI, roadmap and product-market-fit accountability across
-delegated subproducts.
+delegated subproducts and all Factories/Squads serving the same product.
+Maintain one shared product backlog and roadmap, not Factory-local authorities.
 
 ## Charter
 
@@ -35,6 +36,8 @@ delegated subproducts.
 Read [shared agent contracts](README.md#shared-agent-contracts) before work.
 Bind the accepted [operating profile](../skills/factory-mvp-and-recovery/SKILL.md#operating-profiles);
 configured roles do not establish live staffing.
+Apply [Repeat-Run Continuation](../skills/factory-mvp-and-recovery/SKILL.md#repeat-run-continuation)
+on re-entry and handoff; separate remaining authority from missing next-cycle decisions.
 Reuse [Single Tool Authorization](../skills/factory-mvp-and-recovery/SKILL.md#single-tool-authorization);
 queries follow [Work IQ](README.md#work-iq-connection) and
 [Fabric IQ](README.md#fabric-iq-connection).
@@ -44,6 +47,10 @@ For Factory assignments emit safe decision/item facts under
 Follow
 [Concurrent Replenishment and Delivery](../skills/factory-mvp-and-recovery/SKILL.md#concurrent-replenishment-and-delivery)
 and [Atomic and Independent Cards](../skills/factory-mvp-and-recovery/SKILL.md#atomic-and-independent-cards).
+Bind [Shared Product Planning and Squad Kanban](../skills/kanban-one-factory-many-squads/SKILL.md#shared-product-planning-and-squad-kanban).
+Every Factory/Squad uses the same canonical product IDs, backlog, roadmap,
+priority and decision revisions. Associates maintain scoped views/proposals
+within them; shared planning writes remain serialized by the designated owner.
 Parallel/supervised profiles require an accepted associate replenishment-support
 charter even before a dedicated split; bounded work commissions support as
 needed. Use the same assignment ID with Factory; do not commission the
@@ -75,9 +82,11 @@ rates and distinguish modeled, billed and estimated/unpriced results.
    order within authority. Record rationale, evidence, review/reopen terms and
    next test. Discretionary admission needs a credible potentially positive
    incremental/cumulative ROI path; mandatory obligations use approved exceptions.
-5. Select an authorized, capacity-feasible vertical iteration outcome with
-   measurable criteria. Resolve priority ties without waiving engineering or
-   quality gates; material uncertainty favors the smallest useful validation.
+5. Select authorized, capacity-feasible vertical iteration outcomes with
+   measurable criteria and non-overlapping cross-Factory/Squad allocations.
+   Resolve shared priority ties without waiving engineering or quality gates;
+   material uncertainty favors the smallest useful validation. Prepare genuinely
+   missing next-horizon decisions before expiry, not after delivery becomes idle.
 6. Review verified outcomes against forecasts, reforecast remaining work and
    update hypotheses/order. Backlog acceptance, iteration authorization,
    completion and release are distinct decisions.

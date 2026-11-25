@@ -4,13 +4,14 @@ import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { loadFactoryOps } from '../hooks/factory-ops.mjs';
-import { findApprovals, parseJsonLines, stoppageTypes } from './lib/approvals.mjs';
+import { factoryShutdownType, findApprovals, parseJsonLines } from './lib/approvals.mjs';
 import { checkLiveness } from './liveness-check.mjs';
 import { applyIfRevision, readWithRevision } from './revision-lock.mjs';
 
 const nonEmpty = (value) => typeof value === 'string' && value.trim() !== '';
 const positiveInteger = (value) => Number.isInteger(value) && value > 0;
 const statuses = ['provisional', 'confirmed'];
+const pathKey = (path) => process.platform === 'win32' ? path.toLowerCase() : path;
 
 /**
  * Every operating value must name its status and the source that produced it
@@ -108,8 +109,8 @@ async function readSupervisorState(path) {
 
 /**
  * One supervisor pass, meant to be run by an external scheduler. It resumes a
- * Factory only when unfinished work, no valid approval, and no progress within the
- * deadline all hold; never while inhibited, approved-stopped, or already running;
+ * Factory only when unfinished work, no valid Factory shutdown approval, and no
+ * progress within the deadline all hold; never while inhibited, approved-stopped, or already running;
  * and never beyond the retry bounds. Default is a dry run.
  */
 export async function tick({ ops = loadFactoryOps(), execute = false, now = Date.now(), spawnFn = nodeSpawn } = {}) {
@@ -124,8 +125,9 @@ export async function tick({ ops = loadFactoryOps(), execute = false, now = Date
     };
   }
   const supervisor = ops.supervisor;
+  let boardLiveness;
   const finish = async (result) => {
-    const entry = { ts: new Date(now).toISOString(), execute, ...result };
+    const entry = { ts: new Date(now).toISOString(), execute, ...(boardLiveness ? { boardLiveness } : {}), ...result };
     if (supervisor && nonEmpty(supervisor.logPath) && result.status !== 'invalid-config') {
       let audit;
       try {
@@ -152,11 +154,16 @@ export async function tick({ ops = loadFactoryOps(), execute = false, now = Date
   if (problems.length) return { status: 'invalid-config', exit: 3, problems };
   const boards = ops.boardPaths.filter((path) => existsSync(path));
   if (!boards.length) return finish({ status: 'no-board', exit: 3, reason: 'No configured board file exists.' });
+  const missingBoards = ops.boardPaths.filter((path) => !existsSync(path));
+  if (missingBoards.length) {
+    return finish({ status: 'missing-board', exit: 3, missingBoards, reason: 'Configured Squad boards are missing; reconcile their custody and inventory before an automatic restart.' });
+  }
 
   if (existsSync(resolve(ops.root, supervisor.inhibitPath))) {
     return finish({ status: 'inhibited', exit: 0, reason: 'Inhibit file present: stop or revocation propagated; no restart.' });
   }
-  const approvals = findApprovals(parseJsonLines(readIfPresent(ops.approvalsPath)).entries, stoppageTypes);
+  // The resumed Factory must revalidate scoped stops before dispatching their actions.
+  const approvals = findApprovals(parseJsonLines(readIfPresent(ops.approvalsPath)).entries, [factoryShutdownType]);
   if (approvals.length) {
     return finish({ status: 'stoppage-approved', exit: 0, reason: `Stoppage approved by ${approvals.at(-1).approver}; no restart.` });
   }
@@ -174,15 +181,28 @@ export async function tick({ ops = loadFactoryOps(), execute = false, now = Date
       reason: `Restart attempt ${unresolved.attempt} has an unknown launch outcome. Reconcile its reserved state against the actual process and effects before any retry; progress or elapsed cooldown cannot resolve it.`,
     });
   }
-  const liveness = checkLiveness({
-    boardText: boards.map((path) => readFileSync(path, 'utf8')).join('\n'),
-    progressText: readIfPresent(ops.progressPath),
-    approvalsText: '',
-    deadlineMs: supervisor.deadline.ms,
-    deadlineStatus: supervisor.deadline.status,
-    now,
-    extraProgressMs: boards.map((path) => statSync(path).mtimeMs),
+  const progress = parseJsonLines(readIfPresent(ops.progressPath)).entries;
+  boardLiveness = boards.map((path) => {
+    const scopedProgress = progress.filter((entry) => entry.boardPath === undefined
+      ? boards.length === 1
+      : nonEmpty(entry.boardPath) && pathKey(resolve(ops.root, entry.boardPath)) === pathKey(path));
+    const result = checkLiveness({
+      boardText: readFileSync(path, 'utf8'),
+      progressText: scopedProgress.map((entry) => JSON.stringify(entry)).join('\n'),
+      approvalsText: '',
+      deadlineMs: supervisor.deadline.ms,
+      deadlineStatus: supervisor.deadline.status,
+      now,
+      extraProgressMs: [statSync(path).mtimeMs],
+    });
+    return { boardPath: path, ...result, ...(result.incident ? { incident: { ...result.incident, boardPath: path } } : {}) };
   });
+  const unverifiable = boardLiveness.find((result) => result.exit === 3);
+  if (unverifiable) {
+    return finish({ status: unverifiable.status, exit: unverifiable.exit, boardPath: unverifiable.boardPath, reason: unverifiable.reason });
+  }
+  const liveness = boardLiveness.filter((result) => result.status === 'halt-suspected')
+    .sort((left, right) => Date.parse(left.lastProgress) - Date.parse(right.lastProgress))[0] ?? boardLiveness[0];
   const lastRestart = state.restarts.length ? Date.parse(state.restarts.at(-1).ts) : 0;
 
   if (isAlive(state.childPid)) {

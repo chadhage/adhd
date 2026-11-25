@@ -6,6 +6,11 @@ argument-hint: "Provide the card ID, iteration authority, acceptance criteria, D
 
 # Full-stack One-piece Flow
 
+Use [Shared Product Planning and Squad Kanban](../kanban-one-factory-many-squads/SKILL.md#shared-product-planning-and-squad-kanban).
+Stay with one active owned card/task per member; other independent members and
+card cohorts may advance concurrently under approved WIP. One-piece flow is
+not a whole-Squad serialization rule or permission to duplicate card ownership.
+
 ## Procedure
 
 1. Verify the card is authorized, appears once in `To Do` or `In Progress`, has usable acceptance and done criteria, and fits the current mandate. A canonical FactoryLauncher setup mandate is authority for its one bounded first value cycle; on resume it covers only previously authorized work. Do not add a redundant approval gate or start work beyond that mandate.
@@ -15,7 +20,7 @@ argument-hint: "Provide the card ID, iteration authority, acceptance criteria, D
 5. Continue through the complete vertical outcome. Include every necessary layer and operational artifact; defer optional scope rather than leaving mandatory integration unfinished.
 6. Keep the card active through local failures. Repair supported defects and rerun the same focused check. If blocked, record the blocker, evidence, attempted resolution, accountable owner, and unblocking condition; notify Squad/Factory and continue authorized unblock or fallback work without pulling unrelated cards or exceeding WIP. A threatened Factory pause invokes the required recovery panel.
 7. Integrate and broaden validation in proportion to risk. Confirm acceptance, regressions, security, accessibility, data safety, packaging, infrastructure, deployment readiness, and observability where applicable.
-8. Produce the criterion-by-criterion empirical done evidence. Submit it to the governing Kanban role, which owns the completion-record update and board removal. Release and production changes require their own authority.
+8. Produce the criterion-by-criterion empirical done evidence. Submit it through the accepted Squad-Kanban channel; Kanban owns completion recording and board removal. Reconcile this result and the eligible next assignment without awaiting independent siblings or a full cycle report, using [Handoff Continuity](../kanban-one-factory-many-squads/SKILL.md#handoff-continuity). Release and production changes require their own authority.
 
 ## Quality Gate
 
