@@ -97,6 +97,23 @@ jobs:
             if ($LASTEXITCODE -ne 0) { throw 'Image tagging failed.' }
             docker push $Tag
             if ($LASTEXITCODE -ne 0) { throw 'Revision image publication failed.' }
+            $Remote = docker buildx imagetools inspect $Tag --format '{{json .Manifest}}'
+            if ($LASTEXITCODE -ne 0) { throw 'Registry manifest readback failed.' }
+            $Digest = ($Remote | ConvertFrom-Json).digest
+            if ($Digest -notmatch '^sha256:[a-f0-9]{64}$') { throw 'The registry image digest was not observed.' }
+            $Reference = "${env:IMAGE}@$Digest"
+            $Raw = docker buildx imagetools inspect $Reference --raw
+            if ($LASTEXITCODE -ne 0) { throw 'Immutable registry manifest readback failed.' }
+            $Manifest = $Raw | ConvertFrom-Json
+            if ($Manifest.manifests) {
+              $Platform = @($Manifest.manifests | Where-Object { $_.platform.os -eq 'linux' -and $_.platform.architecture -eq 'amd64' })
+              if ($Platform.Count -ne 1) { throw 'The registry index did not identify exactly one Linux/amd64 image.' }
+              $Raw = docker buildx imagetools inspect "${env:IMAGE}@$($Platform[0].digest)" --raw
+              if ($LASTEXITCODE -ne 0) { throw 'Registry platform manifest readback failed.' }
+              $Manifest = $Raw | ConvertFrom-Json
+            }
+            $ImageId = docker image inspect adhd-factory:assurance --format '{{.Id}}'
+            if ($LASTEXITCODE -ne 0 -or $Manifest.config.digest -ne $ImageId.Trim()) { throw 'The registry image does not match the locally tested image.' }
             $Current = gh api repos/chadhage/adhd/commits/main --jq .sha
             if ($LASTEXITCODE -ne 0) { throw 'Could not verify the current main revision.' }
             if ($Current.Trim() -eq $Revision) {
@@ -104,10 +121,10 @@ jobs:
               if ($LASTEXITCODE -ne 0) { throw 'Latest image tagging failed.' }
               docker push "${env:IMAGE}:latest"
               if ($LASTEXITCODE -ne 0) { throw 'Latest image publication failed.' }
+              $Latest = docker buildx imagetools inspect "${env:IMAGE}:latest" --format '{{json .Manifest}}'
+              if ($LASTEXITCODE -ne 0 -or ($Latest | ConvertFrom-Json).digest -ne $Digest) { throw 'Latest does not resolve to the verified registry image.' }
             }
-            $Digest = (docker image inspect $Tag --format '{{index .RepoDigests 0}}').Trim()
-            if ($LASTEXITCODE -ne 0 -or $Digest -notmatch '^ghcr\.io/chadhage/adhd-studio@sha256:[a-f0-9]{64}$') { throw 'The registry image digest was not observed.' }
-            "Published source $Revision as $Tag`n`nImmutable runtime: $Digest`n`nNo hosted service, inference, or cloud resources were started." | Add-Content $env:GITHUB_STEP_SUMMARY
+            "Published source $Revision as $Tag`n`nImmutable runtime: $Reference`n`nRegistry configuration matches the tested local image.`n`nNo hosted service, inference, or cloud resources were started." | Add-Content $env:GITHUB_STEP_SUMMARY
           } finally {
             docker logout ghcr.io
           }
