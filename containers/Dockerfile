@@ -36,7 +36,7 @@ RUN mkdir -p /opt/dotnet /opt/powershell \
     && rm dotnet.tar.gz go.tar.gz powershell.tar.gz
 RUN curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
       https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-594.0.1-linux-x86_64.tar.gz -o gcloud.tar.gz \
-    && echo 'c6fdba4cb1551b0da7c1d744eb0dfaf68b59861238d6a6b5ef6bad1ba596b567  gcloud.tar.gz' | sha256sum --check --strict \
+    && echo '8fc798fd0638428551f80277a568112d08afcf9cafd967d1cf39ae0918df2a1d  gcloud.tar.gz' | sha256sum --check --strict \
     && tar -xzf gcloud.tar.gz -C /opt \
     && rm -rf /opt/google-cloud-sdk/platform/bundledpythonunix \
     && rm gcloud.tar.gz \

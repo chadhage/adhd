@@ -77,8 +77,17 @@
       "googleCloudCli": {
         "version": "594.0.1",
         "archive": "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-594.0.1-linux-x86_64.tar.gz",
-        "sha256": "c6fdba4cb1551b0da7c1d744eb0dfaf68b59861238d6a6b5ef6bad1ba596b567",
-        "source": "https://docs.cloud.google.com/sdk/docs/downloads-versioned-archives"
+        "sha256": "8fc798fd0638428551f80277a568112d08afcf9cafd967d1cf39ae0918df2a1d",
+        "source": "https://docs.cloud.google.com/sdk/docs/downloads-versioned-archives",
+        "checksumVerification": {
+          "publishedArchive": "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz",
+          "publishedSha256": "c6fdba4cb1551b0da7c1d744eb0dfaf68b59861238d6a6b5ef6bad1ba596b567",
+          "tarPayloadSha256": "b339cb1ddc3f58bbaa2c937b4fa5916d1fa8de1c68fb7cc76411e065984b8b88",
+          "versionedObjectGeneration": "1795359660309962",
+          "versionedObjectMd5": "P8dvU6FFHt5dxInMoLOGhQ==",
+          "metadataSource": "https://storage.googleapis.com/storage/v1/b/cloud-sdk-release/o/google-cloud-cli-594.0.1-linux-x86_64.tar.gz",
+          "note": "The versioned and published archives have identical tar payloads but different gzip bytes. Pin the SHA256 of the exact versioned archive, not the unversioned download-page checksum."
+        }
       },
       "terraform": {
         "version": "1.17.2",

@@ -11,6 +11,7 @@ on:
       - '.github/agents/**'
       - '.github/skills/**'
       - '.github/workflows/factory-container.yml'
+      - '.github/workflows/factory-publish.yml'
   workflow_dispatch:
 
 permissions:
