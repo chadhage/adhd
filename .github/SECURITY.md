@@ -101,6 +101,80 @@ human authority, live role overlap, a running scheduler or successful recovery.
 MCP remains limited to the existing query/read tool lists and human-managed
 authentication; configuration is not proof of access or consent.
 
+## Studio control service
+
+The Studio service is a separate, authenticated write/control surface, not an
+extension of the read-only Factory Operations Center API. Each instance is
+private and bound to one independently owned product Git repository; the ADHD
+framework cannot be its product-record destination.
+
+Local mode binds only to loopback. Hosted and self-hosted modes require explicit
+TLS configuration and an owner-managed access token from protected secret
+storage. Tokens are not printed, embedded in the frontend, stored in browser
+local storage, or accepted in URL queries. Exact origin checks, host checks,
+body limits and failed-authentication limits apply to API requests. Model
+availability is read from the session-scoped provider catalog, not assumed
+from a successful GitHub authentication check.
+
+SDK sessions use empty mode and scoped custom tools. Unknown native tools and
+managed approval requests are denied rather than automatically approved.
+Models cannot write credentials, dependency trees, linked or parent paths,
+the canonical Studio records, or the configured acceptance program. A
+product-specific service lease and revision checks prevent competing writers
+from silently modifying accepted records.
+
+Generation runs in a registered Git worktree under one original operating
+window and credit-accounting cap. Verification waits for explicit diff review;
+acceptance separately integrates an unchanged verified candidate and reruns
+the configured command. No remote push, release, or next cycle follows
+implicitly. Restart marks interrupted work rather than replaying it.
+
+The optional cyclic Factory surface is separate from manual-card authorization.
+Owner mandates and checkpoints carry keyed integrity signatures; approval text
+inside imported records cannot authorize production. Worker credentials are
+product- and role-scoped and cannot access owner state, authorize/amend mandates
+or issue owner controls. Credential export is owner-only and is never written
+into the product Git records or deployment image.
+
+The Factory reserves the complete independent-session credit escrow before a
+concurrent delivery wave. Unknown metering is conservatively charged against that
+reservation. Expiry, revocation and acknowledged session caps bind execution;
+recovery preserves spent accounting instead of silently renewing the budget.
+Currency estimates and infrastructure reservations are distinct from provider
+billed actuals. Source-bound plan/apply adapters must preserve artifact/target
+identity; an interrupted apply is a reconciliation gap, never an automatic retry.
+
+On-loop/out-of-loop verification must use an isolated executor. The Docker
+executor builds a clean product snapshot without control records or credential
+paths, requests non-root/read-only/no-capabilities/no-network execution with
+bounded CPU/memory/PIDs, and verifies ownership before deleting its exact named
+container. Configuration and mocked executor tests do not prove live isolation.
+No host Docker socket or broad container privilege is mounted by default.
+
+Container volume leases use an actual exclusive file descriptor; PostgreSQL
+uses a product-scoped advisory connection lease and revision CAS. Neither mode
+guesses that a previous container's PID is dead. Legacy/missing/changed locks,
+conflicting projections and inaccessible worktrees are explicit recovery gaps.
+Administrative rollback/tampering and underlying storage guarantees are outside
+the local-account trust boundary; operators must protect durable authority and
+metering records and validate their storage's locking semantics.
+
+Remote container traffic requires TLS or a deliberately configured exact HTTPS
+ingress origin; forwarded header claims do not select that trust boundary.
+Transport health reveals no product data or inferred healthy production.
+ACI's Azure Files root-only mount requirement is an explicit bootstrap exception,
+not permission to run SDK agents or generated code as root; application work
+drops to UID/GID 1000. Human-only authentication and managed controls remain
+unchanged.
+
+Local verification is not an OS sandbox. Only operate on authorized sources
+and inspect generated code before executing it. Verification processes receive
+a narrow environment without service or provider token variables, but this
+does not isolate the operating-system account or protect it from arbitrary
+code the owner elects to run. Remote operators must provide appropriate worker
+isolation, access and retention controls. Do not expose a shared credentialed
+instance as anonymous multi-tenant infrastructure.
+
 ## Verification
 
 Run the hook policy regression suite from the workspace root:

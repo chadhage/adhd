@@ -1,0 +1,54 @@
+name: Factory container assembly
+
+on:
+  pull_request:
+    paths:
+      - 'studio/**'
+      - 'prototype/**'
+      - 'containers/**'
+      - '.dockerignore'
+      - 'package*.json'
+      - '.github/agents/**'
+      - '.github/skills/**'
+      - '.github/workflows/factory-container.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out the exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Build the non-published Factory runtime
+        shell: pwsh
+        run: |
+          $Revision = git rev-parse HEAD
+          $Timestamp = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ')
+          docker build --file (Join-Path 'containers' 'Dockerfile') --tag adhd-factory:assurance --build-arg "SOURCE_REVISION=$Revision" --build-arg "SOURCE_URL=https://github.com/${{ github.repository }}" --build-arg "BUILD_TIMESTAMP=$Timestamp" .
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verify installed entrypoints and browser assets without inference
+        shell: pwsh
+        run: |
+          docker run --rm --network none --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges --entrypoint node adhd-factory:assurance -e "const fs=require('node:fs');if(process.getuid()!==1000)throw Error('Runtime must be non-root');for(const f of ['studio/container.mjs','studio/worker.mjs','studio/verify-entry.mjs','prototype/factory-ui.js','provenance/source.sha256'])if(!fs.statSync('/opt/adhd/'+f).isFile())throw Error('Missing runtime asset: '+f);console.log('Entrypoints and assets observed; no AI or cloud calls made')"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Record the tested local image identity
+        shell: pwsh
+        run: docker image inspect adhd-factory:assurance --format '{{.Id}}'
+      - name: Reject critical vulnerabilities in the candidate image
+        uses: anchore/scan-action@1638637db639e0ade3258b51db49a9a137574c3e
+        env:
+          GRYPE_DB_VALIDATE_AGE: 'true'
+          GRYPE_DB_MAX_ALLOWED_BUILT_AGE: 120h
+          GRYPE_DB_VALIDATE_BY_HASH_ON_START: 'true'
+          GRYPE_DB_REQUIRE_UPDATE_CHECK: 'true'
+        with:
+          image: adhd-factory:assurance
+          grype-version: v0.122.1
+          fail-build: true
+          severity-cutoff: critical

@@ -1,0 +1,113 @@
+name: Publish Studio runtime image
+
+on:
+  workflow_run:
+    workflows: ['Factory quality']
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: studio-runtime-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: >-
+      github.repository == 'chadhage/adhd' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Check out the quality-tested revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - name: Build the source-bound runtime image
+        shell: pwsh
+        run: |
+          $Revision = git rev-parse HEAD
+          $Timestamp = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ')
+          docker build --file (Join-Path 'containers' 'Dockerfile') --tag adhd-factory:assurance --build-arg "SOURCE_REVISION=$Revision" --build-arg "SOURCE_URL=https://github.com/${{ github.repository }}" --build-arg "BUILD_TIMESTAMP=$Timestamp" .
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verify non-root runtime imports and browser assets without inference
+        shell: pwsh
+        run: |
+          docker run --rm --network none --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges --entrypoint node adhd-factory:assurance --input-type=module -e "import fs from 'node:fs';import {CopilotClient} from '@github/copilot-sdk';import '/opt/adhd/studio/server.mjs';if(process.getuid()!==1000||typeof CopilotClient!=='function')throw Error('Invalid non-root SDK runtime');for(const f of ['studio/container.mjs','studio/worker.mjs','studio/verify-entry.mjs','prototype/factory-ui.js','provenance/source.sha256'])if(!fs.statSync('/opt/adhd/'+f).isFile())throw Error('Missing runtime asset: '+f);console.log('Runtime imports and assets verified; no AI or cloud calls made')"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          docker image inspect adhd-factory:assurance --format '{{.Id}}'
+      - name: Generate an SPDX dependency and license inventory
+        id: sbom
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610
+        with:
+          image: adhd-factory:assurance
+          syft-version: v1.57.2
+          format: spdx-json
+          output-file: ${{ runner.temp }}/adhd-studio.spdx.json
+          upload-artifact: false
+          upload-release-assets: false
+      - name: Reject critical vulnerabilities in that inventory
+        id: scan
+        uses: anchore/scan-action@1638637db639e0ade3258b51db49a9a137574c3e
+        env:
+          GRYPE_DB_VALIDATE_AGE: 'true'
+          GRYPE_DB_MAX_ALLOWED_BUILT_AGE: 120h
+          GRYPE_DB_VALIDATE_BY_HASH_ON_START: 'true'
+          GRYPE_DB_REQUIRE_UPDATE_CHECK: 'true'
+        with:
+          sbom: ${{ runner.temp }}/adhd-studio.spdx.json
+          grype-version: v0.122.1
+          fail-build: true
+          severity-cutoff: critical
+          output-format: json
+          output-file: ${{ runner.temp }}/adhd-studio.grype.json
+      - name: Retain the source-bound inventory and scan report
+        if: ${{ !cancelled() && steps.sbom.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: studio-runtime-evidence-${{ github.event.workflow_run.head_sha }}
+          path: |
+            ${{ runner.temp }}/adhd-studio.spdx.json
+            ${{ runner.temp }}/adhd-studio.grype.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Publish the verified image to GHCR
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCKER_CONFIG: ${{ runner.temp }}/adhd-studio-docker
+          IMAGE: ghcr.io/chadhage/adhd-studio
+          REGISTRY_USER: ${{ github.actor }}
+        run: |
+          $Revision = (git rev-parse HEAD).Trim()
+          $Tag = "${env:IMAGE}:sha-$Revision"
+          try {
+            $env:GH_TOKEN | docker login ghcr.io --username $env:REGISTRY_USER --password-stdin
+            if ($LASTEXITCODE -ne 0) { throw 'GHCR authentication failed.' }
+            docker tag adhd-factory:assurance $Tag
+            if ($LASTEXITCODE -ne 0) { throw 'Image tagging failed.' }
+            docker push $Tag
+            if ($LASTEXITCODE -ne 0) { throw 'Revision image publication failed.' }
+            $Current = gh api repos/chadhage/adhd/commits/main --jq .sha
+            if ($LASTEXITCODE -ne 0) { throw 'Could not verify the current main revision.' }
+            if ($Current.Trim() -eq $Revision) {
+              docker tag adhd-factory:assurance "${env:IMAGE}:latest"
+              if ($LASTEXITCODE -ne 0) { throw 'Latest image tagging failed.' }
+              docker push "${env:IMAGE}:latest"
+              if ($LASTEXITCODE -ne 0) { throw 'Latest image publication failed.' }
+            }
+            $Digest = (docker image inspect $Tag --format '{{index .RepoDigests 0}}').Trim()
+            if ($LASTEXITCODE -ne 0 -or $Digest -notmatch '^ghcr\.io/chadhage/adhd-studio@sha256:[a-f0-9]{64}$') { throw 'The registry image digest was not observed.' }
+            "Published source $Revision as $Tag`n`nImmutable runtime: $Digest`n`nNo hosted service, inference, or cloud resources were started." | Add-Content $env:GITHUB_STEP_SUMMARY
+          } finally {
+            docker logout ghcr.io
+          }

@@ -14,52 +14,228 @@
 
 Agent Driven Hybrid Development.
 
-## Explore without installing
+## ADHD Studio
 
-Try [ADHD Studio online](https://chadhage.github.io/adhd/) before setting up an
-agent harness. Or open the [local prototype](prototype/index.html) directly in a
-current browser; no VS Code, Copilot installation, account, package manager, or
-local server is needed. Keep its adjacent CSS and JavaScript files with it.
+[ADHD Studio](prototype/index.html) retains the visual blueprint editor and
+offers three execution locations: **hosted**, **local companion**, and
+**self-hosted**. All use the same authenticated [Node.js service](studio/server.mjs).
+GitHub Pages hosts only the interface, not the executable service.
 
-The guided flow compares five setup modalities, explains the agents in plain
-language, and builds a visual product/Factory/Squad blueprint. An optional visual
-canvas uses the same draft. All Factories share one product backlog/roadmap;
-each Squad has one common work board.
+Planning works without signing in and saves the draft on the current device.
+Connect deliberately to a service you operate or trust, then save the blueprint
+to its product-owned Git repository. Connection does not overwrite a saved
+product blueprint automatically.
 
-From the blueprint, choose **Continue to activation demo**. Simulate a repository
-and runtime connection, review one-cycle scope, sample permissions and budget,
-run staged readiness checks, then watch a scripted first cycle and sample
-outcome. Pause/resume preserves the page-only cursor; leaving the cycle view
-pauses it. Blueprint or term changes invalidate prior demo checks. The optional
-scenario selector demonstrates connection failure, missing capability,
-interruption, and failed acceptance without fabricating completion.
+### Blueprint-generated Factory
 
-Prepare optional feedback at the outcome, then copy and share it with the owner
-yourself; no feedback is transmitted or retained outside the page. Printing the
-blueprint is a secondary action. Keep all four prototype files together:
-`index.html`, `style.css`, `demo.js`, and `app.js`.
+The **Factory control center** adds container deployment and cyclic production
+alongside the existing manual-card workflow. Save a deployment-enabled blueprint,
+export its product-Git-tracked package, and authorize a separate operating
+mandate. A blueprint is configuration, not spending or production authority.
 
-This is a UX prototype, not a running Factory, configuration export, or
-alternative agent harness. Nothing connects to an account or service, nothing
-is persisted to a product repository, and refreshing clears the page-only draft,
-simulation cursor and feedback. The sample $1 estimate is a fixture, not pricing,
-an actual cost, or approval to spend.
-Hosted-browser, local-service, self-hosted, and CLI paths are proposed designs;
-the editor-based execution route below remains the documented setup.
+The package generator emits a derived Dockerfile, runtime configuration,
+Docker Compose, Kubernetes, AKS, ACA and ACI templates, and a plan/apply script.
+It requires an owner-reviewed runtime image pinned by registry digest. Export
+does not build or publish an image, create cloud resources, or install a scheduler.
+Downloaded package files can be materialized without overwriting existing paths:
 
-For an unaided usability trial, give a new user the prototype with no walkthrough
-and observe whether they can choose a familiar modality, create a coherent
-team, finish the activation demo, and describe what remains unimplemented.
-Record wrong turns, prerequisite confusion and outside help needed. Working UI
-checks do not prove that new users can complete this task unaided.
+```powershell
+node .\studio\package.mjs materialize C:\downloads\adhd-factory-package.json C:\products\factory-deployment
+```
 
-Run the focused simulation regressions with
-`node --test .github/tools/tests/activation-demo.test.mjs`. These test the demo
-state machine, not real Factory activation, provider access, or product delivery.
+The source runtime image is built from `containers/Dockerfile` with explicit
+provenance arguments; a dirty worktree is not represented by its old commit alone:
 
-The [GitHub Pages workflow](.github/workflows/github-pages.yml) validates and
-publishes only `prototype/` when its files or the workflow change on `main`.
-Framework configuration, tests, and runtime records are not included in the site.
+```powershell
+$Revision = git rev-parse HEAD
+$Timestamp = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ')
+docker build --file .\containers\Dockerfile --tag adhd-factory:local --build-arg "SOURCE_REVISION=$Revision" --build-arg "SOURCE_URL=https://github.com/chadhage/adhd" --build-arg "BUILD_TIMESTAMP=$Timestamp" .
+```
+
+The image records source-file hashes and installed dependency inventories.
+The [published Linux/amd64 runtime](https://github.com/chadhage/adhd/pkgs/container/adhd-studio)
+is `ghcr.io/chadhage/adhd-studio`. Revision tags use `sha-<full Git commit>`;
+`latest` is a discovery tag, not an immutable deployment binding. Review the
+published digest and use `ghcr.io/chadhage/adhd-studio@sha256:<digest>` in your
+portable deployment. An image publication does not start a hosted backend.
+
+The [container assembly workflow](.github/workflows/factory-container.yml)
+checks a non-published PR image without AI inference or cloud provisioning.
+The [publication workflow](.github/workflows/factory-publish.yml) runs only after
+both main-branch quality gates pass. It builds that exact source revision,
+verifies non-root SDK imports and browser assets, generates an SPDX inventory,
+and blocks publication on critical Grype findings. Database hash/age checks
+remain enabled with a maximum age of five days; lower-severity findings stay
+in the retained report. Only that tested image is pushed, and an older revision
+cannot replace the current `latest` tag.
+
+GHCR initially creates private packages even for public repositories. The package
+owner must set public visibility in its settings before anonymous pulls work;
+repository visibility alone is not evidence of public image access.
+Toolchain binaries are pinned with upstream checksums; OS package inventories
+are retained. The inventory and critical-vulnerability gate do not replace
+licensing review, lower-severity triage or live operational assurance.
+
+Runtime inputs are protected files outside the product Git workspace:
+`STUDIO_CONFIG_FILE`, `STUDIO_TOKEN_FILE`, `STUDIO_COPILOT_TOKEN_FILE`,
+`STUDIO_CERT_FILE` / `STUDIO_KEY_FILE`, and optional database, executor, reviewed
+operation and signed-mandate files. `STUDIO_WORKSPACE` binds the approved product
+volume. An authenticated HTTPS executor can be selected with
+`STUDIO_EXECUTOR_ORIGIN`; an operator-owned Docker daemon may instead use a
+digest-pinned `STUDIO_VERIFICATION_IMAGE`. No Docker socket is mounted by default.
+Hosted SDK connectors require `STUDIO_COPILOT_RUNTIME_URL` and
+`STUDIO_CONNECTOR_TOKEN_FILE` plus an owner-managed authenticated loopback TLS
+tunnel: SDK 1.0.34 URI transport does not implement HTTPS itself.
+
+Owners choose the deployment shape, startup trigger, identity and persistence.
+The same blueprint supports a single container or controller/role workers;
+Studio, API or signed-mandate automatic startup; and human-in-the-loop,
+human-on-the-loop or human-out-of-the-loop operation. Owners select permitted
+work-product toolchains, clouds and redundancy, or delegate a source-backed
+technical proposal to the Fullstacker council. A technical decision does not
+itself provision or move infrastructure.
+
+The operating mandate explicitly binds cumulative AI-credit escrow, per-session
+caps, concurrency, cycle horizon, expiry, recovery retries, product write paths,
+model selection and delegated actions. Optional currency ceilings require an
+owner-confirmed credit rate and infrastructure reserve. Unknown billing consumes
+the entire reserved session cap; it is not reported as zero. Independently capped
+sessions require at least the runtime's 30-credit minimum each, and the available
+escrow must fund the complete configured concurrent roster before delivery starts.
+
+Factory production registers VOC intake, obtains dependent readiness handoffs,
+starts independent role assignments, generates a candidate in a Git worktree,
+verifies it, integrates it, verifies the integrated product, and learns the next
+bounded outcome from evidence. Human-in-the-loop operation pauses at individual
+gates. On-loop/out-of-loop progression uses the accepted mandate rather than
+repeating per-card approval, but requires an isolated verification executor.
+Native and managed approvals, human-only authentication, repository protections
+and expiry remain binding. Remote publication, infrastructure and release require
+configured plan/apply adapters and explicitly delegated actions; absent adapters
+fail rather than pretending to deploy.
+
+Delivery WIP remains one product card. Role sessions and technical reviewers can
+overlap; planned team counts are not independent concurrent-card throughput.
+This is bounded cyclic operation, not a claim that a returned SDK invocation
+remains alive or that the full continuously staffed parallel/supervised framework
+profile has passed real-host assurance.
+
+Durable checkpoints, signed owner authority and state integrity live in the
+product records. PostgreSQL is an optional canonical store with an advisory
+controller lease, revision-checked writes and a Git projection. The product Git
+workspace/worktrees still require durable storage. Container volume operation
+uses an inherited exclusive POSIX file lock, not PID guesses across container
+namespaces. Legacy leases, conflicting exports, unknown effects during apply and
+missing worktrees require reconciliation instead of blind replay.
+
+Each accepted Factory installs its product-owned Operations Center. Explicit
+controller/SDK events, HTTP readiness and an in-process MCP protocol probe share
+the same journal. External host MCP discovery and ambient hook coverage remain
+separate checks. Central Studio can monitor multiple product services with
+distinct page-memory credentials; disconnecting does not stop backend production.
+
+**ACI exception:** Azure Files requires a root container mount bootstrap. Its
+template requires explicit approval of that provider constraint; the launcher
+drops to UID/GID 1000 before Git, SDK or service execution. Other deployments
+default to non-root operation. Certificates, protected secrets, compatible
+storage, executor access and actual orchestrator capacity remain operator
+prerequisites, not automatically proven by a template.
+
+Local fixture tests verify three Git-integrated increments, independent concurrent
+roles, budget containment, revocation and checkpoint recovery. They are injected
+SDK tests, not live Copilot, container or cloud operational assurance. Live image
+build/run, provider execution, Kubernetes and Azure deployment gates require
+separate observations and applicable spending/deployment authorization.
+
+### Manual card execution
+
+The manual service executes one bounded card at a time. Actual Copilot SDK role
+handoffs register intake, allocate work, hand it to a Squad, and generate a
+candidate in an isolated Git worktree. Sequential roles share one SDK context
+and credit-accounting window; planned team sizes are not live concurrency.
+Progress comes from backend observations, not scripted browser timers.
+
+Inspect the generated diff before running the owner-configured acceptance
+command. A passing candidate is Git-committed but remains unfinished until
+**Accept and integrate** is requested. Integration reruns acceptance checks
+before completion is recorded. Failed and cancelled attempts remain traceable.
+No remote push, deployment, customer contact, or automatic next cycle is implied.
+
+### Start a local companion
+
+Use Node.js 22.21+ and Git. The pinned SDK includes its compatible runtime.
+Complete any required Copilot sign-in yourself; never provide credentials in
+chat. The selected model or Auto routing entry must be reported by the
+session-scoped provider catalog. Authentication alone is not inference proof.
+
+```powershell
+npm ci --ignore-scripts
+npm start -- --workspace C:\myworkspace1\product --verify-command node --verify-args '["--test","tests/acceptance.test.mjs"]' --token-file C:\approved-secrets\studio-access-token.txt
+```
+
+The product directory must be an existing Git repository with an initial commit,
+separate from ADHD. Configure the acceptance executable and arguments for that
+product; a missing command is not replaced by a sample check. On Windows use
+a real executable, not a shell-dependent `.cmd` wrapper.
+
+Supply a 32-256 character access token from your approved secret store, either
+through `--token-file` or `STUDIO_ACCESS_TOKEN`. Keep the token outside Git.
+The service never prints it. Enter it only in the trusted service's interface;
+the browser retains it in memory, not local storage or URL parameters.
+
+Open the actual loopback URL printed by the service. Local mode cannot bind to
+all interfaces. If using the separately hosted Pages interface, explicitly allow
+its exact origin with `--allow-origin https://chadhage.github.io`; browser local
+network access consent, if required, remains human-only.
+
+### Hosted and self-hosted instances
+
+Deploy the same source and lockfile to approved Node.js infrastructure with Git,
+a private product workspace, provider authentication, an operations owner, and
+protected secrets. Choose `--mode hosted` or `--mode self-hosted` and provide
+`--cert <certificate-file>` and `--key <private-key-file>`. Remote modes refuse
+to start without TLS. Set `--host` and `--port` deliberately and restrict network
+access; the default bind remains loopback.
+
+The interface asks users to select their location and trusted service origin.
+It rejects credential-bearing URLs, insecure non-loopback addresses, and
+service/mode mismatches. Instances are private, single-owner/product-scoped
+services, not an anonymous multi-tenant SaaS. This repository does not provision
+cloud resources or grant a hosting budget.
+
+### Records, recovery, and limits
+
+Canonical records live in the product's `.adhd/studio/records.json`; the
+records index identifies its blueprint, demand register, runs, history, and
+completion sections. Product records are committed independently of candidate
+code. Local record reads and writes share one queue so concurrent observations
+do not mistake authorized writes for external drift. A per-product service lease
+and revision checks still reject competing writers and external record changes.
+Worktree, credential, dependency, linked-file, and
+parent-path boundaries constrain model tools; native and managed approvals
+are not bypassed.
+
+The runtime currently requires at least a **30 AI-credit cap**. A cap is not an
+estimated charge or a dollar price. Missing billing stays unknown. The original
+30-900 second generation window remains binding through pause/resume; service
+restart records interruption without replaying work. Reconnect with the token
+to recover durable state. Leaving a page does not cancel a backend run.
+
+Review generated code before verification: local execution is **not an OS
+sandbox**. Copilot retains its own host-side session history for recovery.
+Studio's durable history stores operational metadata rather than full transcripts.
+Optional feedback is explicitly saved to the product demand register as
+`Pending VOC`; receipt is not research, acceptance, or authorization for new work.
+
+Run focused backend/client/SDK regressions with `npm run test:studio`; the
+existing framework quality gate also includes them through `npm test`.
+The framework tool/hook coverage thresholds retain their existing scope.
+Browser and live inference observations are separate evidence, not inferred
+from mocked SDK integration tests.
+
+The [Pages workflow](.github/workflows/github-pages.yml) checks the interface and
+publishes only `prototype/`. Backend code, product records, credentials, and
+runtime state are not part of the static site.
 
 ## Prerequisites
 

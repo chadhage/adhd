@@ -8,7 +8,7 @@ import { evaluateQuality, failureDiagnostics, parseTap } from './lib/test-report
 const policy = { threshold: 85, minNegativePerPositive: 2 };
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const testDirectories = ['.github/tools/tests', '.github/hooks/tests'];
+const testDirectories = ['.github/tools/tests', '.github/hooks/tests', 'studio/tests'];
 
 function findTests(directory) {
   return readdirSync(directory).flatMap((name) => {
@@ -45,7 +45,7 @@ const verdict = evaluateQuality(parseTap(output), policy);
 process.stdout.write(`${files.length} test files, ${verdict.stats.total} tests: ${verdict.stats.passed} passed, ${verdict.stats.failed} failed\n`);
 process.stdout.write(`positive=${verdict.stats.positive} negative=${verdict.stats.negative} (negative/positive = ${verdict.stats.ratio}, required >= ${policy.minNegativePerPositive})\n`);
 if (verdict.ok && run.status === 0) {
-  process.stdout.write(`Quality gate PASSED: all tests pass, every source file >= ${policy.threshold}% lines/branches/functions.\n`);
+  process.stdout.write(`Quality gate PASSED: all tests pass, every covered framework source file >= ${policy.threshold}% lines/branches/functions.\n`);
 } else {
   for (const violation of verdict.violations) process.stdout.write(`VIOLATION: ${violation}\n`);
   for (const diagnostic of failureDiagnostics(output)) process.stderr.write(`${diagnostic}\n`);

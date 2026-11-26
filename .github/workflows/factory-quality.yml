@@ -36,6 +36,9 @@ jobs:
         run: |
           git rev-parse HEAD
           node --version
+      - name: Restore the pinned Studio SDK
+        shell: pwsh
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Run the existing quality gate
         shell: pwsh
         run: node (Join-Path '.github' 'tools' 'run-tests.mjs')

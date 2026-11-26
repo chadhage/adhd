@@ -35,10 +35,14 @@ jobs:
         run: |
           node --check (Join-Path 'prototype' 'app.js')
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          node --check (Join-Path 'prototype' 'demo.js')
-      - name: Test activation demo
+          node --check (Join-Path 'prototype' 'service.js')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node --check (Join-Path 'prototype' 'live-ui.js')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node --check (Join-Path 'prototype' 'factory-ui.js')
+      - name: Test the real service client
         shell: pwsh
-        run: node --test (Join-Path '.github' 'tools' 'tests' 'activation-demo.test.mjs')
+        run: node --test (Join-Path 'studio' 'tests' 'client.test.mjs')
       - name: Configure GitHub Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
       - name: Upload only the prototype
