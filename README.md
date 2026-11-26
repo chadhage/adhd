@@ -70,9 +70,10 @@ and blocks publication on critical Grype findings. Database hash/age checks
 remain enabled with a maximum age of five days; lower-severity findings stay
 in the retained report. Only that tested image is pushed, and an older revision
 cannot replace the current `latest` tag.
-Registry readback resolves the remote manifest or image index and checks its
-configuration digest against the exact locally tested image before reporting
-publication; local tag aliases are not accepted as registry evidence.
+Registry readback resolves the remote manifest or image index and matches the
+tested local image ID to its manifest digest (containerd store) or configuration
+digest (classic store) before reporting publication; local tag aliases are not
+accepted as registry evidence.
 
 GHCR initially creates private packages even for public repositories. The package
 owner must set public visibility in its settings before anonymous pulls work;
