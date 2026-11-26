@@ -113,7 +113,7 @@ jobs:
               $Manifest = $Raw | ConvertFrom-Json
             }
             $ImageId = docker image inspect adhd-factory:assurance --format '{{.Id}}'
-            if ($LASTEXITCODE -ne 0 -or $Manifest.config.digest -ne $ImageId.Trim()) { throw 'The registry image does not match the locally tested image.' }
+            if ($LASTEXITCODE -ne 0 -or ($Digest -ne $ImageId.Trim() -and $Manifest.config.digest -ne $ImageId.Trim())) { throw 'Neither the registry manifest nor configuration matches the locally tested image.' }
             $Current = gh api repos/chadhage/adhd/commits/main --jq .sha
             if ($LASTEXITCODE -ne 0) { throw 'Could not verify the current main revision.' }
             if ($Current.Trim() -eq $Revision) {
@@ -124,7 +124,7 @@ jobs:
               $Latest = docker buildx imagetools inspect "${env:IMAGE}:latest" --format '{{json .Manifest}}'
               if ($LASTEXITCODE -ne 0 -or ($Latest | ConvertFrom-Json).digest -ne $Digest) { throw 'Latest does not resolve to the verified registry image.' }
             }
-            "Published source $Revision as $Tag`n`nImmutable runtime: $Reference`n`nRegistry configuration matches the tested local image.`n`nNo hosted service, inference, or cloud resources were started." | Add-Content $env:GITHUB_STEP_SUMMARY
+            "Published source $Revision as $Tag`n`nImmutable runtime: $Reference`n`nRegistry content identity matches the tested local image.`n`nNo hosted service, inference, or cloud resources were started." | Add-Content $env:GITHUB_STEP_SUMMARY
           } finally {
             docker logout ghcr.io
           }
