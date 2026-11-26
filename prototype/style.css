@@ -57,7 +57,7 @@ p { color: var(--muted); }
 .brand small { display: block; font-weight: 450; font-size: .58rem; color: var(--muted); letter-spacing: .015em; margin-top: 8px; }
 .brand-mark { display: grid; place-items: center; border-radius: 14px; color: #fff; background: var(--purple); width: 43px; height: 43px; transform: rotate(-6deg); }
 .brand-mark svg { width: 26px; height: 26px; }
-.site-header nav { display: flex; align-items: center; gap: 20px; margin-left: auto; }
+.site-header nav { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; margin-left: auto; }
 .nav-link { padding: 10px 0; min-height: 44px; text-decoration: none; background: none; border: 0; color: var(--muted); font-size: .87rem; font-weight: 600; }
 .nav-link:hover { color: var(--purple); }
 .prototype-badge { display: inline-flex; gap: 8px; align-items: center; font-size: .72rem; font-weight: 600; color: var(--orange); background: var(--peach); padding: 7px 12px; border: 1px solid #ead7b7; border-radius: 40px; white-space: nowrap; }
@@ -450,4 +450,28 @@ dialog > p { font-size: .9rem; margin-bottom: 20px; }
   .blueprint-bottom { grid-template-columns: 1fr 1fr; }
   .flow-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .summary-disclaimer { color: #333; }
+}
+.live-output {
+  max-height: 24rem;
+  min-width: 0;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: .85rem;
+}
+.factory-layout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: start; margin: 24px 0; }
+.factory-layout > *, .factory-fields > * { min-width: 0; }
+.factory-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.factory-layout select { display: block; width: 100%; max-width: 100%; margin-bottom: 18px; min-height: 44px; }
+.factory-check { display: flex; align-items: start; gap: 10px; padding-block: 8px; }
+.factory-check input[type="checkbox"] { width: 20px; height: 20px; min-height: 20px; padding: 0; margin-top: 3px; flex-shrink: 0; }
+.factory-operations, #factory-package-form { margin-block: 26px; }
+.factory-agent-list { list-style: none; padding: 0; display: grid; gap: 10px; }
+.factory-assignment { display: grid; gap: 4px; border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+.factory-assignment small { color: var(--muted); overflow-wrap: anywhere; }
+.factory-fleet { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; margin-top: 16px; }
+.factory-fleet-card { border: 1px solid var(--border); border-radius: 12px; padding: 16px; min-width: 0; }
+.factory-fleet-card button { margin: 8px 6px 0 0; }
+@media (max-width: 760px) {
+  .factory-layout, .factory-fields { grid-template-columns: minmax(0, 1fr); }
 }

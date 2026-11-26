@@ -20,39 +20,25 @@ function icon(name) {
 
 const paths = [
   {
-    id: 'hosted', title: 'Just a browser', caption: 'Open a page. Leave the machinery to a hosted service.',
-    symbol: 'cloud', color: 'purple', status: 'Concept path', documented: false,
+    id: 'hosted', title: 'Just a browser', caption: 'Connect to your owner-hosted execution service.',
+    symbol: 'cloud', color: 'purple', status: 'Hosted service', documented: true,
     install: 'No local installation', runner: 'A separately hosted agent service',
-    consideration: 'A hosting owner must define data access, storage, costs, and service permissions.',
-    requirements: ['A browser and internet access', 'An implemented, approved hosted agent service', 'Provider sign-in and a product-owned Git workspace'],
+    consideration: 'Use a private HTTPS service you operate or trust. Its owner supplies the product workspace, Copilot account, access token, and operating limits.',
+    requirements: ['A browser and internet access', 'A deployed HTTPS Studio service and its owner-issued access token', 'Copilot authentication and a product-owned Git workspace on the service host'],
   },
   {
     id: 'local', title: 'Browser + my computer', caption: 'A browser workspace, with an agent service on your device.',
-    symbol: 'laptop', color: 'green', status: 'Concept path', documented: false,
+    symbol: 'laptop', color: 'green', status: 'Local companion', documented: true,
     install: 'A lightweight local agent service', runner: 'Your device, through that service',
-    consideration: 'Local tooling and provider access still need setup. An editor would not be required.',
-    requirements: ['A browser', 'An implemented local service and compatible agent runtime', 'Provider sign-in, Git, and an approved local product workspace'],
+    consideration: 'Run the Studio companion on loopback with a separate product repository and an owner-configured acceptance command. No editor is required.',
+    requirements: ['A browser and Node.js', 'The installed Studio companion and its access token', 'Copilot sign-in, Git, and a separate product workspace'],
   },
   {
     id: 'self-hosted', title: "My team's infrastructure", caption: 'A shared workspace on infrastructure your team manages.',
-    symbol: 'network', color: 'orange', status: 'Concept path', documented: false,
+    symbol: 'network', color: 'orange', status: 'Self-hosted service', documented: true,
     install: 'Team-managed hosting or containers', runner: 'Your approved team infrastructure',
-    consideration: 'A team owner must manage deployment, isolation, secrets, access, and operating costs.',
-    requirements: ['An approved hosting or container environment', 'An implemented team service and runtime adapters', 'Team authentication, protected Git storage, and an operations owner'],
-  },
-  {
-    id: 'cli', title: 'My terminal', caption: 'Stay close to your tools with a command-line workflow.',
-    symbol: 'terminal', color: 'pink', status: 'Concept path', documented: false,
-    install: 'A compatible CLI and orchestration adapter', runner: 'The environment where your CLI runs',
-    consideration: 'Command-line access alone does not load these roles or prove nested-agent support.',
-    requirements: ['An installed, compatible agent CLI', 'Implemented role loading and Factory/Squad orchestration', 'Provider authentication, Git, and verified tool permissions'],
-  },
-  {
-    id: 'vscode', title: 'VS Code + Copilot', caption: 'Use the editor-based starting point documented in this repo.',
-    symbol: 'code', color: 'blue', status: 'Documented path', documented: true,
-    install: 'VS Code and the GitHub Copilot extension', runner: 'Your configured Copilot session harness',
-    consideration: 'The current route still needs actual host, nested-tool, permission, and capacity checks.',
-    requirements: ['VS Code with GitHub Copilot installed', 'A GitHub account and eligible Copilot access', 'The framework checkout, product workspace, and active harness verification'],
+    consideration: 'A designated owner manages a private Studio instance, TLS, secrets, Git storage, provider access, and costs. This is not an anonymous multi-tenant service.',
+    requirements: ['An approved team-managed Node.js hosting environment', 'TLS certificates and a protected service access token', 'An authenticated Copilot runtime, product Git workspace, and operations owner'],
   },
 ];
 
@@ -79,16 +65,9 @@ let plan = initialPlan();
 let currentStep = 0;
 let editorView = 'guided';
 let pendingAction = null;
-const activation = new ActivationDemo();
+const activation = new StudioClient();
 let activationStep = 0;
 let activeView = 'welcome';
-let simulationTimer = null;
-const cycleStages = [
-  ['Understand the need', 'A research helper frames the sample need.', 'VOC / ProductOwner'],
-  ['Choose one ready card', 'A product guide and work organizer allocate one demo card.', 'ProductOwner / AssociateProductOwner / Kanban'],
-  ['Build a small increment', 'The assigned Squad illustrates a small product introduction.', 'Squad / Fullstacker'],
-  ['Verify and record the result', 'A scripted check passes or fails; completion stays separate from the board.', 'Squad / Kanban'],
-];
 
 function announce(message) {
   $('announcements').textContent = message;
@@ -109,7 +88,7 @@ function pathFacts(path) {
   for (const [label, value] of [
     ['On your device, for real use', path.install],
     ['Where agents would run', path.runner],
-    ['Current framework support', path.documented ? 'Documented; live capability still needs verification' : 'Proposed; integration is not implemented here'],
+    ['Runtime support', 'The same authenticated Studio backend; readiness is checked at connection time'],
   ]) {
     const group = element('div');
     group.append(element('dt', label), element('dd', value));
@@ -120,7 +99,7 @@ function pathFacts(path) {
 
 function choosePath(id) {
   if (!paths.some((path) => path.id === id)) {
-    announce('That setup path is not available in this prototype. Choose one of the five shown.');
+    announce('Choose one of the three supported hosting locations.');
     return;
   }
   plan.path = id;
@@ -137,8 +116,8 @@ function renderPathDetail() {
   const path = paths.find((entry) => entry.id === plan.path);
   if (!path) {
     $('path-detail').replaceChildren(
-      element('h3', "You don't need to install anything to try this."),
-      element('p', 'Choose a path to see what it would need for real use. Browser-only, local, team-hosted, terminal, and editor options are all yours to explore.'),
+      element('h3', 'Choose where your execution service will run.'),
+      element('p', 'Planning works in this browser. Real execution connects to a hosted service, local companion, or self-hosted instance.'),
     );
     return;
   }
@@ -530,254 +509,6 @@ function renderBlueprint() {
   );
 }
 
-function clearSimulationTimer() {
-  if (simulationTimer !== null) window.clearTimeout(simulationTimer);
-  simulationTimer = null;
-}
-
-function syncDemoBlueprint() {
-  const binding = firstMissingStep() === 3 ? JSON.stringify([plan.path, plan.name, plan.goal, plan.factories]) : '';
-  const changed = activation.bind(binding);
-  if (changed) {
-    clearSimulationTimer();
-    activation.setReview({ ...activation.review, scope: plan.goal });
-  }
-  return changed;
-}
-
-function clearActivationError() {
-  $('activation-error').hidden = true;
-  $('activation-error').textContent = '';
-  for (const field of $('activation-form').querySelectorAll('[aria-invalid="true"]')) {
-    field.removeAttribute('aria-invalid');
-    const ids = (field.getAttribute('aria-describedby') ?? '').split(' ').filter((id) => id && id !== 'activation-error');
-    if (ids.length) field.setAttribute('aria-describedby', ids.join(' '));
-    else field.removeAttribute('aria-describedby');
-  }
-}
-
-function showActivationError(result) {
-  clearActivationError();
-  $('activation-error').textContent = result.error;
-  $('activation-error').hidden = false;
-  if (result.field && $(result.field)) {
-    const field = $(result.field);
-    field.setAttribute('aria-invalid', 'true');
-    field.setAttribute('aria-describedby', `${field.getAttribute('aria-describedby') ?? ''} activation-error`.trim());
-    field.focus();
-  }
-}
-
-function demoStatus(id, text, tone = '') {
-  $(id).textContent = text;
-  $(id).className = `demo-status${tone ? ` is-${tone}` : ''}`;
-}
-
-function recap(id, entries) {
-  $(id).replaceChildren(...entries.map(([label, text]) => {
-    const group = element('div');
-    group.append(element('small', label), element('strong', text));
-    return group;
-  }));
-}
-
-function earliestActivationStep() {
-  return activation.connection !== 'connected' ? 0 : activation.reviewIssue() ? 1 : 2;
-}
-
-function renderActivationProgress(step) {
-  $('activation-steps').replaceChildren(...['Workspace and runtime', 'Review boundaries', 'Demo readiness', 'First demo cycle'].map((label, index) => {
-    const item = element('li');
-    const button = element('button');
-    button.type = 'button';
-    button.disabled = index > earliestActivationStep() && !(index === 3 && activation.status !== 'idle');
-    if (index === step) button.setAttribute('aria-current', 'step');
-    if (index < step) item.className = 'complete';
-    const number = element('span', index < step ? undefined : String(index + 1), 'step-number');
-    number.setAttribute('aria-hidden', 'true');
-    if (index < step) number.append(icon('check'));
-    button.append(number, element('span', label));
-    button.addEventListener('click', () => navigate(index === 3 ? ['complete', 'failed', 'cancelled'].includes(activation.status) ? '#demo-outcome' : '#demo-cycle' : `#activate/${index + 1}`));
-    item.append(button);
-    return item;
-  }));
-}
-
-function renderActivation(step = activationStep) {
-  activationStep = step;
-  renderActivationProgress(step);
-  for (const [index, id] of ['connect-panel', 'review-panel', 'readiness-panel'].entries()) $(id).hidden = index !== step;
-  const path = paths.find((entry) => entry.id === plan.path);
-  $('demo-runtime').replaceChildren(
-    element('span', 'YOUR CHOSEN PATH / DEMO ONLY', 'eyebrow purple'), pathIcon(path),
-    element('h2', path.title), availability(path), element('p', 'The same activation demo works for every modality. None connects to an actual runtime.'), pathFacts(path),
-  );
-  $('demo-repository').value = activation.repository;
-  $('demo-scope').value = activation.review.scope;
-  $('demo-budget').value = activation.review.budget;
-  $('demo-write').checked = activation.review.write;
-  $('demo-verify').checked = activation.review.verify;
-  $('demo-scenario').value = activation.scenario;
-  const connectionText = {
-    idle: 'No simulated link yet. Use a sample reference and run the connection demo.',
-    checking: 'Simulating a connection. No network request or authentication is happening.',
-    connected: 'Simulated connection established. Real repository and runtime access remain unverified.',
-    failed: 'The injected connection attempt failed. Retry explicitly to continue this scenario.',
-  };
-  demoStatus('demo-connection-status', connectionText[activation.connection], activation.connection === 'connected' ? 'good' : activation.connection === 'failed' ? 'warning' : '');
-  $('simulate-connection').disabled = ['checking', 'connected'].includes(activation.connection);
-  $('simulate-connection').textContent = activation.connection === 'failed' ? 'Retry simulated connection' : 'Simulate connection';
-  $('demo-scenario').disabled = activation.connection === 'checking';
-  $('cancel-demo-check').hidden = activation.connection !== 'checking';
-  recap('demo-review-summary', [
-    ['Demo scope', activation.review.scope],
-    ['Sample limit / never charged', `$${Number(activation.review.budget).toFixed(2)}`],
-    ['Operating window', 'One scripted first cycle'],
-  ]);
-  const readinessText = {
-    unchecked: 'Not checked yet. Run the simulated checks before starting.',
-    checking: 'Running staged checks against the current page-only inputs.',
-    ready: 'All demo checks pass. This is not real-host readiness or launch approval.',
-    blocked: 'The demo has a readiness gap. Review the failed item before starting.',
-  };
-  demoStatus('demo-readiness-status', readinessText[activation.readiness], activation.readiness === 'ready' ? 'good' : activation.readiness === 'blocked' ? 'warning' : '');
-  $('demo-checks').replaceChildren(...activation.checks.map((check, index) => {
-    const row = element('li');
-    const badge = element('span', check.ok ? undefined : String(index + 1), `step-bubble ${check.ok ? 'mint' : 'peach'}`);
-    if (check.ok) badge.append(icon('check'));
-    badge.setAttribute('aria-hidden', 'true');
-    const detail = element('div');
-    detail.append(element('h3', check.title), element('p', check.note), element('span', check.ok ? 'DEMO PASS / not live verification' : 'DEMO GAP / not ready', 'check-label'));
-    row.append(badge, detail);
-    return row;
-  }));
-  $('run-demo-checks').disabled = activation.readiness === 'checking' || activation.status !== 'idle';
-  $('restore-demo-capability').hidden = activation.scenario !== 'readiness-gap' || activation.capabilityRestored || activation.readiness !== 'blocked';
-  $('cancel-readiness-check').hidden = activation.readiness !== 'checking';
-  $('activation-back').textContent = step === 0 ? 'Blueprint' : 'Back';
-  $('activation-next').textContent = step < 2 ? 'Continue' : activation.status === 'idle' ? 'Start simulated first cycle' : 'Return to demo cycle';
-  $('activation-next').disabled = step === 0 ? activation.connection !== 'connected' : step === 2 ? activation.readiness !== 'ready' : false;
-}
-
-function demoAssignment() {
-  const factory = plan.factories[0];
-  return `${factory.name} / ${factory.squads[0].name}`;
-}
-
-function renderCycle() {
-  const focusedControl = document.activeElement;
-  recap('demo-cycle-context', [
-    ['Product in the illustration', plan.name],
-    ['Assigned demo team', demoAssignment()],
-    ['Scripted cycle', `DEMO-${activation.runNumber}`],
-    ['Real charge', 'None / example estimate $1.00'],
-  ]);
-  const message = activation.status === 'paused'
-    ? `Demo paused at ${activation.phase}/4 stages. Resume continues this cursor; it does not restart completed stages.`
-    : `Simulated cycle running: ${activation.phase}/4 scripted stages complete. No real agents are executing.`;
-  demoStatus('demo-cycle-status', message, activation.status === 'paused' ? 'warning' : '');
-  $('demo-cycle-steps').replaceChildren(...cycleStages.map(([title, description, roles], index) => {
-    const passed = index < activation.phase;
-    const row = element('li', undefined, index === activation.phase ? 'is-current' : '');
-    const badge = element('span', passed ? undefined : String(index + 1), `step-bubble ${passed ? 'mint' : 'lavender'}`);
-    if (passed) badge.append(icon('check'));
-    badge.setAttribute('aria-hidden', 'true');
-    const detail = element('div');
-    detail.append(element('h2', title), element('p', description), element('small', `${roles} / ${passed ? 'scripted pass' : 'simulated, not live'}`));
-    row.append(badge, detail);
-    return row;
-  }));
-  for (const id of ['demo-board-todo', 'demo-board-progress']) $(id).replaceChildren(element('p', 'No demo card in this column.'));
-  if (activation.status !== 'complete') {
-    const card = element('article', undefined, 'demo-card');
-    card.append(element('strong', `DEMO-${activation.runNumber} / simulated card`), element('p', activation.review.scope));
-    $(activation.phase < 2 ? 'demo-board-todo' : 'demo-board-progress').replaceChildren(card);
-  }
-  $('pause-demo-cycle').hidden = activation.status !== 'running';
-  $('resume-demo-cycle').hidden = activation.status !== 'paused';
-  $('end-demo-cycle').hidden = !['running', 'paused'].includes(activation.status);
-  if (focusedControl === $('pause-demo-cycle') && activation.status === 'paused') $('resume-demo-cycle').focus();
-  if (focusedControl === $('resume-demo-cycle') && activation.status === 'running') $('pause-demo-cycle').focus();
-}
-
-function renderOutcome() {
-  const complete = activation.status === 'complete';
-  $('outcome-title').textContent = complete ? "You've completed the activation demo." : activation.status === 'failed' ? 'The demo verification did not pass.' : 'The demo ended before completion.';
-  $('demo-outcome-description').textContent = complete
-    ? 'A staged first-cycle outcome. No real product was built or validated.'
-    : 'Unfinished work stays unfinished. No completion or delivered value is claimed.';
-  recap('demo-outcome-summary', [
-    ['Scripted cycle', `DEMO-${activation.runNumber}`],
-    ['Simulated result', activation.status],
-    ['Stages completed', `${activation.phase}/4`],
-    ['Real execution / charges', 'None'],
-  ]);
-  $('demo-result-preview').replaceChildren(
-    element('span', 'SAMPLE FIRST INCREMENT / NOT GENERATED CODE', 'eyebrow purple'),
-    element('h2', 'A small product introduction'),
-    element('p', 'This static preview illustrates a potential first increment. It does not establish that your idea was implemented.'),
-  );
-  const sample = element('div', undefined, 'sample-increment');
-  sample.append(element('h3', plan.name), element('p', activation.review.scope));
-  $('demo-result-preview').append(sample);
-  $('demo-completion-record').replaceChildren(
-    element('span', 'STAGED EVIDENCE / NOT EMPIRICAL DONE', 'eyebrow purple'),
-    element('h2', complete ? `Sample completion: SIM-COMP-${activation.runNumber}` : 'No completion record'),
-    element('p', complete ? 'All four scripted stages passed. The illustrated card is removed from the unfinished board; this is not Git-tracked or independently verified evidence.' : 'The sample card remains unfinished. A failed or cancelled demo does not produce completion evidence.'),
-    element('p', 'Real delivery would need attributable sources, integrated acceptance checks, actual tool/permission evidence, and separate release authority.'),
-  );
-}
-
-function queueCycle(token) {
-  simulationTimer = window.setTimeout(() => {
-    if (token !== activation.generation) return;
-    simulationTimer = null;
-    if (syncDemoBlueprint()) { navigate('#activate/1'); announce('Blueprint changed. Reconnect and recheck the activation demo.'); return; }
-    const result = activation.advance(token);
-    if (result.stale) return;
-    renderCycle();
-    if (['complete', 'failed'].includes(activation.status)) navigate('#demo-outcome');
-    else if (activation.status === 'paused') announce('The scripted interruption paused the demo. Resume from the saved stage.');
-    else queueCycle(token);
-  }, 800);
-}
-
-function simulateConnection() {
-  clearActivationError();
-  const result = activation.beginConnection();
-  if (!result.ok) { showActivationError(result); return; }
-  clearSimulationTimer();
-  renderActivation();
-  simulationTimer = window.setTimeout(() => {
-    if (result.token !== activation.generation) return;
-    simulationTimer = null;
-    syncDemoBlueprint();
-    const finished = activation.finishConnection(result.token);
-    renderActivation();
-    if (!finished.ok && !finished.stale) showActivationError(finished);
-  }, 600);
-}
-
-function simulateChecks() {
-  clearActivationError();
-  const result = activation.beginChecks();
-  if (!result.ok) { showActivationError(result); return; }
-  clearSimulationTimer();
-  renderActivation();
-  simulationTimer = window.setTimeout(() => {
-    if (result.token !== activation.generation) return;
-    simulationTimer = null;
-    syncDemoBlueprint();
-    const finished = activation.finishChecks(result.token);
-    renderActivation();
-    if (!finished.ok && !finished.stale) announce('The staged checks found a gap. Review the demo results.');
-  }, 600);
-}
-
-function readDemoReview() {
-  return { scope: $('demo-scope').value, budget: $('demo-budget').value, write: $('demo-write').checked, verify: $('demo-verify').checked };
-}
-
 function renderRoute() {
   const hash = window.location.hash;
   if (hash === '#main') {
@@ -786,48 +517,40 @@ function renderRoute() {
   }
   const match = /^#setup\/([1-3])$/.exec(hash);
   const activationMatch = /^#activate\/([1-3])$/.exec(hash);
-  let view = !hash || hash === '#welcome' ? 'welcome' : hash === '#blueprint' ? 'blueprint' : match ? 'setup' : activationMatch ? 'activation' : hash === '#demo-cycle' ? 'cycle' : hash === '#demo-outcome' ? 'outcome' : 'welcome';
+  let view = !hash || hash === '#welcome' ? 'welcome' : hash === '#factory' ? 'factory' : hash === '#blueprint' ? 'blueprint' : match ? 'setup' : activationMatch ? 'activation' : ['#cycle', '#demo-cycle'].includes(hash) ? 'cycle' : ['#outcome', '#demo-outcome'].includes(hash) ? 'outcome' : 'welcome';
   let step = match ? Number(match[1]) - 1 : 0;
   let demoStep = activationMatch ? Number(activationMatch[1]) - 1 : 0;
   let redirected = false;
   const missing = firstMissingStep();
-  if ((['blueprint', 'activation', 'cycle', 'outcome'].includes(view) && missing < 3) || (view === 'setup' && step > missing)) {
+  if ((['blueprint', 'activation', 'cycle', 'outcome', 'factory'].includes(view) && missing < 3) || (view === 'setup' && step > missing)) {
     view = 'setup';
     step = missing;
     window.history.replaceState(null, '', `#setup/${step + 1}`);
     redirected = true;
   } else if (view === 'welcome' && hash && hash !== '#welcome') {
     window.history.replaceState(null, '', '#welcome');
-    announce("That link isn't part of this prototype. Start here to build your blueprint.");
+    announce("That link isn't part of Studio. Start here to build your blueprint.");
   }
-  syncDemoBlueprint();
+  syncBlueprint();
   if (['activation', 'cycle', 'outcome'].includes(view)) {
     const terminal = ['complete', 'failed', 'cancelled'].includes(activation.status);
     if (view === 'cycle' && terminal) view = 'outcome';
-    if (view === 'outcome' && ['running', 'paused'].includes(activation.status)) view = 'cycle';
+    if (view === 'outcome' && ['running', 'paused', 'interrupted', 'review-required', 'verifying', 'verified'].includes(activation.status)) view = 'cycle';
     if ((['cycle', 'outcome'].includes(view) && activation.status === 'idle') || (view === 'activation' && demoStep > earliestActivationStep())) {
       view = 'activation';
       demoStep = earliestActivationStep();
       window.history.replaceState(null, '', `#activate/${demoStep + 1}`);
     }
   }
-  if (activation.status === 'running' && view !== 'cycle') {
-    clearSimulationTimer();
-    activation.pause();
-    announce('Demo paused while you review another view. Its page-only cursor is preserved.');
-  }
-  if (view !== 'activation' && (activation.connection === 'checking' || activation.readiness === 'checking')) {
-    clearSimulationTimer();
-    activation.interruptPending();
-  }
   activeView = view;
-  for (const name of ['welcome', 'setup', 'blueprint', 'activation', 'cycle', 'outcome']) $(`${name}-view`).hidden = name !== view;
+  for (const name of ['welcome', 'setup', 'blueprint', 'activation', 'cycle', 'outcome', 'factory']) $(`${name}-view`).hidden = name !== view;
   clearError();
   if (view === 'setup') {
     currentStep = step;
     renderProgress(step);
     for (const [index, id] of ['path-step', 'product-step', 'team-step'].entries()) $(id).hidden = index !== step;
-    renderPathDetail();
+    if (plan.path) choosePath(plan.path);
+    else renderPathDetail();
     $('product-name').value = plan.name;
     $('product-goal').value = plan.goal;
     if (step === 2) renderTeams();
@@ -844,15 +567,19 @@ function renderRoute() {
     clearActivationError();
     renderActivation(demoStep);
     $('activation-title').focus();
-    document.title = `Activation demo ${demoStep + 1}/3 | ADHD Studio`;
+    document.title = `Activation ${demoStep + 1}/3 | ADHD Studio`;
+  } else if (view === 'factory') {
+    renderFactory();
+    $('factory-title').focus();
+    document.title = 'Factory control center | ADHD Studio';
   } else if (view === 'cycle') {
     renderCycle();
     $('cycle-title').focus();
-    document.title = 'Simulated first cycle | ADHD Studio';
+    document.title = 'Live bounded cycle | ADHD Studio';
   } else if (view === 'outcome') {
     renderOutcome();
     $('outcome-title').focus();
-    document.title = 'Activation demo outcome | ADHD Studio';
+    document.title = 'Cycle outcome | ADHD Studio';
   } else {
     $('welcome-title').focus();
     document.title = 'ADHD Studio | From idea to team';
@@ -934,24 +661,28 @@ $('add-factory').addEventListener('click', () => {
 });
 $('start-over').addEventListener('click', () => confirmChange(
   { kind: 'reset' }, 'Start a fresh blueprint?',
-  'Your product name, idea, and team drawing will be cleared from this page. No real files or agents are affected. Print your current blueprint first if you want a copy.', 'Start over',
+  'Clear this browser draft and disconnect? Product records are retained. Cancel or accept any unfinished cycle first.', 'Start over',
 ));
 $('confirm-action').addEventListener('click', () => {
   const action = pendingAction;
   pendingAction = null;
   $('confirm-dialog').close();
   if (action?.kind === 'reset') {
+    if (activation.run && !['complete', 'failed', 'cancelled'].includes(activation.status)) {
+      announce('An unfinished cycle remains. Cancel or accept it before clearing this draft.');
+      return;
+    }
     plan = initialPlan();
     editorView = 'guided';
-    clearSimulationTimer();
-    activation.reset('');
+    disconnectFactoryFleet(activation.endpoint);
+    activation.disconnect();
     $('demo-feedback-form').reset();
     $('demo-feedback-text').value = '';
     $('demo-feedback-receipt').hidden = true;
     for (const radio of $('path-options').querySelectorAll('input')) radio.checked = false;
     for (const card of $('path-options').children) card.classList.remove('selected');
     navigate('#welcome');
-    announce('Fresh start. Your previous page-only draft is cleared.');
+    announce('Browser draft cleared. Product Git records and history were preserved.');
     return;
   }
   const factory = plan.factories.find((entry) => entry.id === action?.factoryId);
@@ -980,151 +711,11 @@ for (const dialog of document.querySelectorAll('dialog')) {
 }
 $('begin-from-explanation').addEventListener('click', () => { $('how-dialog').close(); navigate('#setup/1'); });
 $('print-blueprint').addEventListener('click', () => window.print());
-$('sample-workspace').addEventListener('click', () => {
-  const sample = 'https://example.invalid/demo/product';
-  if (activation.repository !== sample) clearSimulationTimer();
-  activation.setRepository(sample);
-  clearActivationError();
-  renderActivation();
-  $('demo-repository').focus();
-});
-$('demo-repository').addEventListener('input', (event) => {
-  if (event.target.value === activation.repository) return;
-  clearSimulationTimer();
-  activation.setRepository(event.target.value);
-  clearActivationError();
-  demoStatus('demo-connection-status', 'Reference changed. Run the simulated connection again; nothing is fetched.');
-  $('simulate-connection').disabled = false;
-  $('activation-next').disabled = true;
-});
-$('demo-scenario').addEventListener('change', (event) => {
-  if (event.target.value !== activation.scenario) clearSimulationTimer();
-  const result = activation.setScenario(event.target.value);
-  renderActivation();
-  if (!result.ok) showActivationError(result);
-});
-for (const id of ['demo-scope', 'demo-budget', 'demo-write', 'demo-verify']) {
-  $(id).addEventListener('input', () => {
-    const review = readDemoReview();
-    if (JSON.stringify(review) === JSON.stringify(activation.review)) return;
-    clearSimulationTimer();
-    activation.setReview(review);
-    clearActivationError();
-  });
-}
-$('simulate-connection').addEventListener('click', simulateConnection);
-$('run-demo-checks').addEventListener('click', simulateChecks);
-for (const id of ['cancel-demo-check', 'cancel-readiness-check']) {
-  $(id).addEventListener('click', () => {
-    clearSimulationTimer();
-    activation.interruptPending();
-    renderActivation();
-    $(id === 'cancel-demo-check' ? 'simulate-connection' : 'run-demo-checks').focus();
-    announce('Pending simulation cancelled. No link or readiness is claimed.');
-  });
-}
-$('restore-demo-capability').addEventListener('click', () => {
-  activation.restoreCapability();
-  renderActivation();
-  $('run-demo-checks').focus();
-  announce('The injected sample capability is restored. Run the checks again; real permissions are unchanged.');
-});
-$('activation-back').addEventListener('click', () => navigate(activationStep === 0 ? '#blueprint' : `#activate/${activationStep}`));
-$('activation-form').addEventListener('submit', (event) => {
-  event.preventDefault();
-  clearActivationError();
-  if (activationStep === 0) {
-    if (activation.connection !== 'connected') { showActivationError({ error: 'Complete the simulated connection first.' }); return; }
-    navigate('#activate/2');
-  } else if (activationStep === 1) {
-    activation.setReview(readDemoReview());
-    const issue = activation.reviewIssue();
-    if (issue) { showActivationError(issue); return; }
-    navigate('#activate/3');
-  } else {
-    if (activation.readiness !== 'ready') { showActivationError({ error: 'Pass the current demo checks before starting.' }); return; }
-    if (activation.status !== 'idle') {
-      navigate(['complete', 'failed', 'cancelled'].includes(activation.status) ? '#demo-outcome' : '#demo-cycle');
-      return;
-    }
-    const started = activation.start();
-    if (!started.ok) { showActivationError(started); return; }
-    $('activation-next').disabled = true;
-    navigate('#demo-cycle');
-    queueCycle(started.token);
-  }
-});
-$('pause-demo-cycle').addEventListener('click', () => {
-  const result = activation.pause();
-  if (!result.ok) { demoStatus('demo-cycle-status', result.error, 'warning'); return; }
-  clearSimulationTimer();
-  renderCycle();
-  $('resume-demo-cycle').focus();
-});
-$('resume-demo-cycle').addEventListener('click', () => {
-  const result = activation.resume();
-  if (!result.ok) { demoStatus('demo-cycle-status', result.error, 'warning'); return; }
-  renderCycle();
-  $('pause-demo-cycle').focus();
-  queueCycle(result.token);
-});
-$('end-demo-cycle').addEventListener('click', () => {
-  const result = activation.cancel();
-  if (!result.ok) { demoStatus('demo-cycle-status', result.error, 'warning'); return; }
-  clearSimulationTimer();
-  navigate('#demo-outcome');
-});
-$('replay-demo').addEventListener('click', () => {
-  const result = activation.replay();
-  if (!result.ok) { announce(result.error); return; }
-  navigate('#activate/3');
-});
-$('focus-demo-feedback').addEventListener('click', () => {
-  $('demo-feedback-response').focus();
-  $('feedback-title').scrollIntoView({ block: 'start' });
-});
-$('demo-feedback-form').addEventListener('submit', (event) => {
-  event.preventDefault();
-  const response = $('demo-feedback-response');
-  const labels = { unaided: 'Reported completion without outside guidance', 'help-needed': 'Reported needing help', confusing: 'Reported a confusing journey' };
-  if (!labels[response.value] || !['complete', 'failed', 'cancelled'].includes(activation.status)) {
-    $('demo-feedback-error').textContent = 'Choose your experience after finishing or ending the activation demo.';
-    $('demo-feedback-error').hidden = false;
-    response.setAttribute('aria-invalid', 'true');
-    response.setAttribute('aria-describedby', 'demo-feedback-error');
-    response.focus();
-    return;
-  }
-  $('demo-feedback-error').hidden = true;
-  response.removeAttribute('aria-invalid');
-  response.removeAttribute('aria-describedby');
-  const path = paths.find((entry) => entry.id === plan.path);
-  $('demo-feedback-text').value = [
-    'ADHD Studio activation demo feedback', 'Mode: simulation only',
-    `Setup path: ${path.title}`, `Scenario: ${activation.scenario}`,
-    `Scripted cycle: DEMO-${activation.runNumber}`, `Scripted result: ${activation.status}`,
-    `Participant response: ${labels[response.value]}`,
-    '', 'What worked / where I got stuck:', $('demo-feedback-notes').value.trim() || '(No additional notes supplied)',
-    '', 'No real agents, runtime access, Git changes, costs, or customer-value delivery were verified.',
-  ].join('\n');
-  $('demo-feedback-receipt').hidden = false;
-  demoStatus('demo-feedback-status', 'Feedback prepared on this page only. Copy it to keep or share it; nothing was submitted.', 'good');
-  $('demo-feedback-text').focus();
-});
-$('select-demo-feedback').addEventListener('click', () => {
-  $('demo-feedback-text').focus();
-  $('demo-feedback-text').select();
-  announce('Feedback text selected. Copy with Ctrl+C or Command+C. It is not sent automatically.');
-});
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden && activation.status === 'running') {
-    clearSimulationTimer();
-    activation.pause();
-    if (activeView === 'cycle') renderCycle();
-  }
-});
 window.addEventListener('hashchange', renderRoute);
 
-renderPathChoices();
-renderAgents();
-renderRoute();
+document.addEventListener('DOMContentLoaded', () => {
+  initializeLiveUI();
+  renderPathChoices();
+  renderAgents();
+  renderRoute();
+});

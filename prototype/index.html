@@ -4,12 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
-  <meta name="description" content="Explore ADHD and design your first AI-assisted product team. An installation-free, interactive UX prototype.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https: http://127.0.0.1:* http://localhost:*; base-uri 'none'; form-action 'none'">
+  <meta name="description" content="Design your AI-assisted product team and run bounded, verified work through a product-scoped Copilot service.">
   <title>ADHD Studio | From idea to team</title>
   <link rel="stylesheet" href="style.css">
-  <script src="demo.js" defer></script>
+  <script src="service.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="live-ui.js" defer></script>
+  <script src="factory-ui.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
@@ -34,10 +36,11 @@
     <nav aria-label="Main navigation">
       <button class="nav-link" type="button" data-dialog="team-dialog">Meet the agents</button>
       <a class="nav-link" href="#setup/1">Build my blueprint</a>
+      <a class="nav-link" href="#factory">Factory controls</a>
     </nav>
-    <span class="prototype-badge"><span aria-hidden="true"></span>Interactive prototype</span>
+    <span class="prototype-badge"><span aria-hidden="true"></span>Product-scoped execution</span>
   </header>
-  <div class="prototype-strip">Demo only. Connections, checks, progress, and outcomes are simulated. No real agents, accounts, Git operations, or charges.</div>
+  <div class="prototype-strip">Plan first. Export a container deployment or connect to your product service. Manual cards and policy-governed cyclic Factories have separate authorization.</div>
   <main id="main" tabindex="-1">
     <section id="welcome-view" aria-labelledby="welcome-title">
       <div class="hero">
@@ -75,14 +78,14 @@
       </div>
       <section class="how-strip" aria-labelledby="how-strip-title">
         <div><span class="eyebrow">A SIMPLE START</span><h2 id="how-strip-title">Three little steps.<br>A much clearer picture.</h2></div>
-        <article><span class="step-bubble lavender">1</span><h3>Find your comfort zone</h3><p>Browser, computer, terminal, or editor. You choose.</p></article>
+        <article><span class="step-bubble lavender">1</span><h3>Find your comfort zone</h3><p>Hosted, local, or self-managed. You choose.</p></article>
         <article><span class="step-bubble mint">2</span><h3>Give your idea a home</h3><p>One product, with one shared plan for all its teams.</p></article>
         <article><span class="step-bubble peach">3</span><h3>Bring your team together</h3><p>Shape your Factory and Squads, then see your blueprint.</p></article>
       </section>
       <section class="comfort-section" aria-labelledby="comfort-title">
         <div class="section-heading"><div><span class="eyebrow purple">MEET YOU WHERE YOU ARE</span><h2 id="comfort-title">More than one way in.</h2><p>Explore the same framework through a setup that suits you.</p></div><button class="button secondary" type="button" data-dialog="compare-dialog">Compare setup paths</button></div>
         <div id="welcome-paths" class="comfort-grid"></div>
-        <p class="fine-print">The browser, local-service, self-hosted, and CLI paths are proposed architectures. The VS Code + Copilot path is documented today. This prototype does not implement or verify any agent runtime.</p>
+        <p class="fine-print">Choose hosted, local, or self-hosted execution. Each connects to the same private, authenticated Studio service. The service owner supplies Git storage, Copilot access, certificates where needed, and operating limits.</p>
       </section>
     </section>
     <section id="setup-view" hidden aria-labelledby="setup-title">
@@ -105,7 +108,7 @@
               <p id="product-name-help" class="field-help">A working name is absolutely fine.</p>
               <label for="product-goal">Who will it help, and how? <span class="required-note">Required</span></label>
               <textarea id="product-goal" name="product-goal" maxlength="400" rows="4" placeholder="Help neighbors find trusted local services without endless searching." required aria-describedby="product-goal-help"></textarea>
-              <p id="product-goal-help" class="field-help">One or two sentences. Use a sample idea, not confidential information.</p>
+              <p id="product-goal-help" class="field-help">One or two sentences. Do not include credentials or unnecessary personal data. You review provider access before execution.</p>
               <button id="sample-idea" class="text-button" type="button">Try a sample idea</button>
             </div>
             <aside class="idea-note">
@@ -124,10 +127,10 @@
           <div id="canvas-product" class="canvas-product" hidden></div>
           <div id="teams-editor" class="teams-editor"></div>
           <button id="add-factory" class="button secondary add-factory" type="button">+ Add another Factory</button>
-          <p class="fine-print">Prototype limits: 4 Factories, 4 Squads per Factory, 12 builders per Squad. These are preview limits, not framework policies. Each Squad shares one work board.</p>
+          <p class="fine-print">Blueprint limits: 4 Factories, 4 Squads per Factory, 12 planned builders per Squad. This service runs one bounded card at a time; planned team sizes do not claim live concurrency.</p>
           <details class="explain-box"><summary>How do the agents work together?</summary><p>A product guide keeps direction shared. Research helpers clarify needs. A work organizer (Kanban) keeps each Squad's board in order. Squad coordinators help builders work on ready tasks, then check the combined result. More builders alone do not mean more throughput.</p><button class="text-button" type="button" data-dialog="team-dialog">Meet all nine agent roles</button></details>
         </section>
-        <div class="wizard-footer"><button id="previous-step" class="button secondary" type="button">Back</button><p>Your draft stays on this page only. Refreshing clears it.</p><button id="next-step" class="button primary" type="submit">Continue <svg aria-hidden="true"><use href="#icon-arrow"/></svg></button></div>
+        <div class="wizard-footer"><button id="previous-step" class="button secondary" type="button">Back</button><p>Draft saved on this device. Connect to save it in your product Git repository.</p><button id="next-step" class="button primary" type="submit">Continue <svg aria-hidden="true"><use href="#icon-arrow"/></svg></button></div>
       </form>
     </section>
     <section id="blueprint-view" hidden aria-labelledby="blueprint-title">
@@ -136,85 +139,151 @@
       <section class="blueprint-map" aria-label="Visual product and team blueprint"><div id="blueprint-product" class="blueprint-product"></div><div id="blueprint-factories" class="blueprint-factories"></div></section>
       <div class="blueprint-bottom">
         <section id="blueprint-path" class="summary-panel" aria-label="Chosen setup path"></section>
-        <section class="summary-panel" aria-labelledby="next-title"><span class="eyebrow purple">NEXT: GIVE IT A TEST DRIVE</span><h2 id="next-title">See what activation would feel like.</h2><p>Try connecting a sample workspace, reviewing boundaries, checking readiness, and watching a first cycle. Every result is staged for this demo.</p><p>You stay in control. Nothing connects, deploys, spends money, or starts a real agent.</p><a class="button primary" href="#activate/1">Try activation demo <svg aria-hidden="true"><use href="#icon-arrow"/></svg></a></section>
+        <section class="summary-panel" aria-labelledby="next-title"><span class="eyebrow purple">NEXT: PACKAGE YOUR FACTORY</span><h2 id="next-title">From blueprint to a governed runtime.</h2><p>Configure a portable Factory deployment, connect to its product-owned service, and approve one bounded operating mandate.</p><p>Routine cycles can progress on-loop or out-of-loop only inside that mandate. Manual card activation remains available.</p><a class="button primary" href="#factory">Configure Factory deployment <svg aria-hidden="true"><use href="#icon-arrow"/></svg></a></section>
       </div>
       <section class="flow-section" aria-labelledby="flow-title"><h2 id="flow-title">How work would move through your team</h2><div class="flow-grid"><article><span class="step-bubble peach">1</span><h3>Listen to real needs</h3><p>Research helpers and your product guide agree what matters.</p></article><article><span class="step-bubble lavender">2</span><h3>Choose ready work</h3><p>Each Squad pulls authorized work from its common board.</p></article><article><span class="step-bubble mint">3</span><h3>Build together</h3><p>Independent tasks can overlap when capacity and ownership allow.</p></article><article><span class="step-bubble rose">4</span><h3>Check the outcome</h3><p>Verified completion is recorded before work leaves the board.</p></article></div></section>
-      <div class="summary-actions"><a class="button primary" href="#activate/1">Continue to activation demo <svg aria-hidden="true"><use href="#icon-arrow"/></svg></a><a class="button secondary" href="#setup/3">Edit my blueprint</a><button id="print-blueprint" class="button secondary" type="button">Print / save as PDF</button><button id="start-over" class="text-button" type="button">Start over</button></div>
-      <p class="fine-print summary-disclaimer">This is an interactive design prototype, not an executable Factory configuration. Nothing has been saved to a product repository or shared with a service.</p>
+      <div class="summary-actions"><a class="button primary" href="#factory">Configure my deployable Factory <svg aria-hidden="true"><use href="#icon-arrow"/></svg></a><a class="button secondary" href="#activate/1">Manual card activation</a><a class="button secondary" href="#setup/3">Edit my blueprint</a><button id="print-blueprint" class="button secondary" type="button">Print / save as PDF</button><button id="start-over" class="text-button" type="button">Clear local draft</button></div>
+      <p class="fine-print summary-disclaimer">A blueprint describes planned teams, not active workers. Saving to a service commits product records. Broader Factory profiles, deployments, and future cycles retain their own authorization requirements.</p>
     </section>
     <section id="activation-view" hidden aria-labelledby="activation-title">
-      <div class="wizard-intro"><div><span class="eyebrow purple">FROM PLAN TO TEST DRIVE</span><h1 id="activation-title" tabindex="-1">Let's try your first activation.</h1><p>A guided simulation. No sign-in, installation, or real execution.</p></div><a class="text-button" href="#blueprint">Back to my blueprint</a></div>
-      <nav class="wizard-progress" aria-label="Activation demo steps"><ol id="activation-steps"></ol></nav>
+      <div class="wizard-intro"><div><span class="eyebrow purple">FROM PLAN TO EXECUTION</span><h1 id="activation-title" tabindex="-1">Connect your product runtime.</h1><p>Real Git records, real Copilot work, and explicit verification.</p></div><a class="text-button" href="#blueprint">Back to my blueprint</a></div>
+      <nav class="wizard-progress" aria-label="Activation steps"><ol id="activation-steps"></ol></nav>
       <form id="activation-form" novalidate>
         <div id="activation-error" class="error-banner" role="alert" hidden></div>
         <section id="connect-panel" aria-labelledby="connect-title">
-          <div class="step-heading"><span class="eyebrow">ACTIVATION DEMO / STEP 1 OF 3</span><h2 id="connect-title">A home for your team's work.</h2><p>In a real activation, you would connect a runtime and a product-owned Git repository. Here, you can safely try a sample.</p></div>
+          <div class="step-heading"><span class="eyebrow">ACTIVATION / STEP 1 OF 3</span><h2 id="connect-title">A home for your team's work.</h2><p>The service owner binds one separate product Git repository and an acceptance command. Hosted and self-hosted services require HTTPS.</p></div>
           <div class="activation-grid">
             <div class="form-panel">
-              <label for="demo-repository">Repository reference for the demo</label><input id="demo-repository" type="url" maxlength="300" placeholder="https://example.invalid/demo/product" required aria-describedby="demo-repository-help">
-              <p id="demo-repository-help" class="field-help">Use a sample, not credentials or private project details. The reference is never opened or fetched.</p>
-              <button id="sample-workspace" class="text-button" type="button">Use a demo workspace</button>
+              <label for="demo-repository">Trusted Studio service address</label><input id="demo-repository" type="url" maxlength="300" placeholder="http://127.0.0.1:4319" required aria-describedby="demo-repository-help">
+              <p id="demo-repository-help" class="field-help">Enter an origin only, without a path, query, fragment, or credentials. Only connect to a service you operate or trust.</p>
+              <label for="service-token">Service owner-issued access token</label><input id="service-token" type="password" minlength="32" maxlength="256" autocomplete="off" spellcheck="false" aria-describedby="service-token-help">
+              <p id="service-token-help" class="field-help">Not your GitHub password or token. Kept only in page memory, sent only to the chosen service, and cleared on disconnect or refresh.</p>
+              <p id="workspace-details" class="field-help">No product workspace connected.</p>
               <div id="demo-connection-status" class="demo-status" role="status"></div>
-              <div class="demo-actions"><button id="simulate-connection" class="button primary" type="button">Simulate connection</button><button id="cancel-demo-check" class="text-button" type="button" hidden>Cancel simulation</button></div>
+              <div class="demo-actions"><button id="connect-service" class="button primary" type="button">Connect service</button><button id="disconnect-service" class="text-button" type="button">Disconnect</button></div>
+              <div class="demo-actions"><button id="save-blueprint" class="button secondary" type="button" disabled>Save blueprint to product Git</button><button id="load-blueprint" class="text-button" type="button" disabled>Load saved product blueprint</button></div>
             </div>
-            <aside id="demo-runtime" class="summary-panel" aria-label="Selected runtime in the demo"></aside>
+            <aside id="demo-runtime" class="summary-panel" aria-label="Selected execution location"></aside>
           </div>
-          <details class="explain-box demo-scenarios"><summary>Try a different demo scenario</summary><label for="demo-scenario">Scripted scenario</label><select id="demo-scenario"><option value="happy">Successful first cycle</option><option value="connection-failure">Connection hiccup, then retry</option><option value="readiness-gap">Missing verification capability</option><option value="interruption">Interrupted cycle, then resume</option><option value="verification-failure">Acceptance verification fails</option></select><p class="field-help">These are deliberately injected fixtures, not live incidents. Changing the scenario resets the simulated connection and checks.</p></details>
+          <details class="explain-box"><summary>Service setup and trust boundary</summary><p>Install the Studio package and start its service with a separate product repository, an owner-approved verification executable and arguments, and a token from your secret store. Copilot authentication remains human-only. A static GitHub Pages host is the interface, not a worker host.</p></details>
         </section>
         <section id="review-panel" hidden aria-labelledby="review-title">
-          <div class="step-heading"><span class="eyebrow">ACTIVATION DEMO / STEP 2 OF 3</span><h2 id="review-title">Small scope. Clear boundaries.</h2><p>Review the kinds of decisions a real first cycle would need. These are sample terms, not financial approval or host permissions.</p></div>
+          <div class="step-heading"><span class="eyebrow">ACTIVATION / STEP 2 OF 3</span><h2 id="review-title">Small scope. Clear boundaries.</h2><p>Approve one card and its product-scoped actions. This does not change native host permissions or authorize deployment.</p></div>
           <div class="activation-grid">
             <div class="form-panel">
-              <label for="demo-scope">One outcome for the simulated first cycle</label><textarea id="demo-scope" maxlength="400" rows="3" required aria-describedby="demo-scope-help"></textarea><p id="demo-scope-help" class="field-help">Start with the goal from your blueprint, then narrow it to one useful first step.</p>
-              <label for="demo-budget">Sample spending limit (USD, not charged)</label><input id="demo-budget" type="number" min="0" max="10000" step="0.01" required aria-describedby="demo-budget-help"><p id="demo-budget-help" class="field-help">Scripted estimate: $1.00. These are illustration values, not vendor rates or actual costs. This demo charges nothing.</p>
-              <fieldset class="demo-permissions"><legend>Sample permissions, not real grants</legend><label><input id="demo-write" type="checkbox">Allow simulated workspace changes</label><label><input id="demo-verify" type="checkbox">Allow simulated verification</label></fieldset>
+              <label for="demo-scope">One outcome for the bounded card</label><textarea id="demo-scope" maxlength="400" rows="3" required aria-describedby="demo-scope-help"></textarea><p id="demo-scope-help" class="field-help">Describe one independently verifiable increment. Do not include secrets or additional permissions in this text.</p>
+              <label for="run-squad">Assigned Factory / Squad</label><select id="run-squad"></select>
+              <label for="run-model">Model or routing entry reported by this service</label><select id="run-model"></select>
+              <label for="demo-budget">Maximum AI credits for this cycle</label><input id="demo-budget" type="number" min="30" max="100" step="1" required aria-describedby="demo-budget-help"><p id="demo-budget-help" class="field-help">AI credits, not dollars. This runtime requires a minimum 30-credit cap. Sequential roles share one accounting window; they are not independent workers. A cap is not an estimated charge. Missing billing remains unknown.</p>
+              <label for="run-seconds">Generation operating window (seconds)</label><input id="run-seconds" type="number" min="30" max="900" step="1" required>
+              <p>Owner-configured verification command: <code id="verification-command"></code></p>
+              <fieldset class="demo-permissions"><legend>Explicit product-scoped authorization</legend><label><input id="provider-share" type="checkbox">Allow scoped product source to reach the configured Copilot provider</label><label><input id="demo-write" type="checkbox">Allow writes in an isolated product Git worktree</label><label><input id="demo-verify" type="checkbox">Allow the displayed acceptance command after I inspect the diff</label></fieldset>
             </div>
-            <aside class="idea-note"><div class="note-art"><svg aria-hidden="true"><use href="#icon-heart"/></svg></div><h3>You stay in control.</h3><p>One simulated cycle only. No production deployment, customer contact, purchases, credentials, or real repository writes.</p><p class="fine-print">Real implementation must verify existing authority, actual tools, budget, and provider access. These checkboxes cannot grant any of them.</p></aside>
+            <aside class="idea-note"><div class="note-art"><svg aria-hidden="true"><use href="#icon-heart"/></svg></div><h3>You stay in control.</h3><p>One active card only. No remote push, deployment, customer contact, purchases, or automatic future cycle.</p><p class="fine-print">Local execution is not an OS sandbox. Inspect generated code before executing acceptance checks. Copilot keeps its own session history on the service host; Studio history captures metadata, not full transcripts.</p></aside>
           </div>
         </section>
         <section id="readiness-panel" hidden aria-labelledby="readiness-title">
-          <div class="step-heading"><span class="eyebrow">ACTIVATION DEMO / STEP 3 OF 3</span><h2 id="readiness-title">A quick check before the test drive.</h2><p>The checks below use this page's inputs and staged fixtures. Passing them does not certify real runtime readiness.</p></div>
+          <div class="step-heading"><span class="eyebrow">ACTIVATION / STEP 3 OF 3</span><h2 id="readiness-title">Check before you start.</h2><p>Checks use the actual product repository and SDK authentication. Successful inference and increment acceptance are established only by execution.</p></div>
           <div id="demo-review-summary" class="demo-recap"></div>
           <div id="demo-readiness-status" class="demo-status" role="status"></div>
-          <ul id="demo-checks" class="demo-check-list" aria-label="Simulated readiness results"></ul>
-          <div class="demo-actions"><button id="run-demo-checks" class="button secondary" type="button">Run simulated checks</button><button id="restore-demo-capability" class="button secondary" type="button" hidden>Restore demo capability</button><button id="cancel-readiness-check" class="text-button" type="button" hidden>Cancel checks</button></div>
+          <ul id="demo-checks" class="demo-check-list" aria-label="Observed readiness results"></ul>
+          <div class="demo-actions"><button id="run-demo-checks" class="button secondary" type="button">Check real readiness</button></div>
         </section>
-        <div class="wizard-footer"><button id="activation-back" class="button secondary" type="button">Back</button><p>Demo data stays on this page. Refreshing clears it.</p><button id="activation-next" class="button primary" type="submit">Continue</button></div>
+        <div class="wizard-footer"><button id="activation-back" class="button secondary" type="button">Back</button><p>Product records survive refresh. Re-enter the service token to reconnect.</p><button id="activation-next" class="button primary" type="submit">Continue</button></div>
       </form>
     </section>
     <section id="cycle-view" hidden aria-labelledby="cycle-title">
-      <div class="blueprint-heading"><div><span class="eyebrow purple">A FIRST CYCLE, IN DEMO MODE</span><h1 id="cycle-title" tabindex="-1">Watch the team connect the dots.</h1><p>Scripted activity, not live agents or actual product delivery.</p></div><span class="draft-stamp">SIMULATION ONLY</span></div>
+      <div class="blueprint-heading"><div><span class="eyebrow purple">ONE REAL BOUNDED CYCLE</span><h1 id="cycle-title" tabindex="-1">Follow your product work.</h1><p>Observed role activity and actual product Git changes.</p></div><span class="draft-stamp">LIVE SERVICE</span></div>
       <div id="demo-cycle-context" class="demo-recap"></div>
       <div id="demo-cycle-status" class="demo-status" role="status" aria-live="polite"></div>
-      <div class="cycle-layout"><ol id="demo-cycle-steps" class="cycle-timeline" aria-label="Scripted cycle progress"></ol><section class="summary-panel" aria-labelledby="demo-board-title"><h2 id="demo-board-title">One demo card. One Squad board.</h2><p>Only To Do and In Progress are board columns. Completion is recorded separately.</p><div class="demo-board"><section><h3>To Do</h3><div id="demo-board-todo"></div></section><section><h3>In Progress</h3><div id="demo-board-progress"></div></section></div><p class="fine-print">An illustration only. No canonical Kanban records are read or changed.</p></section></div>
-      <div class="summary-actions"><button id="pause-demo-cycle" class="button secondary" type="button">Pause demo</button><button id="resume-demo-cycle" class="button primary" type="button" hidden>Resume demo cycle</button><button id="end-demo-cycle" class="text-button" type="button">End demo</button><a class="text-button" href="#activate/3">Review demo setup</a></div>
-      <p class="fine-print summary-disclaimer">Leaving this view pauses a running simulation. Resume continues its saved page-only cursor; editing the blueprint or demo terms invalidates previous checks. No background worker or scheduler exists.</p>
+      <div class="cycle-layout"><ol id="demo-cycle-steps" class="cycle-timeline" aria-label="Observed role progress"></ol><section class="summary-panel" aria-labelledby="demo-board-title"><h2 id="demo-board-title">One common Squad board.</h2><p>Only To Do and In Progress are board columns. Completion is recorded separately.</p><div class="demo-board"><section><h3>To Do</h3><div id="demo-board-todo"></div></section><section><h3>In Progress</h3><div id="demo-board-progress"></div></section></div><p class="fine-print">Pending intake is not silently admitted as a ready card. Failed and cancelled attempts remain traceable.</p></section></div>
+      <details class="explain-box"><summary>Live model output</summary><pre id="run-output" class="live-output" aria-live="off"></pre></details>
+      <section class="summary-panel"><h2>Inspect the actual candidate before verification</h2><pre id="run-diff" class="live-output"></pre></section>
+      <div class="summary-actions"><button id="pause-demo-cycle" class="button secondary" type="button">Pause generation</button><button id="resume-demo-cycle" class="button primary" type="button" hidden>Resume cycle</button><button id="end-demo-cycle" class="text-button" type="button">Cancel cycle</button><button id="verify-run" class="button primary" type="button" hidden>Run registered acceptance checks</button><button id="accept-run" class="button primary" type="button" hidden>Accept and integrate verified increment</button><a class="text-button" href="#activate/3">Review scope</a></div>
+      <p class="fine-print summary-disclaimer">Leaving the page does not cancel backend work. Pause or cancel explicitly. The original generation window remains binding; no scheduler starts future cycles.</p>
     </section>
     <section id="outcome-view" hidden aria-labelledby="outcome-title">
-      <div class="blueprint-heading"><div><span class="eyebrow purple">THE END OF THE TEST DRIVE</span><h1 id="outcome-title" tabindex="-1">Your activation demo result.</h1><p id="demo-outcome-description"></p></div><span class="draft-stamp">STAGED RESULT<br><small>Not a built product</small></span></div>
+      <div class="blueprint-heading"><div><span class="eyebrow purple">YOUR RECORDED OUTCOME</span><h1 id="outcome-title" tabindex="-1">Your product cycle result.</h1><p id="demo-outcome-description"></p></div><span class="draft-stamp">RECORDED EVIDENCE</span></div>
       <div id="demo-outcome-summary" class="demo-recap"></div>
-      <div class="blueprint-bottom"><section id="demo-result-preview" class="summary-panel" aria-label="Sample first increment"></section><section id="demo-completion-record" class="summary-panel" aria-label="Simulated completion evidence"></section></div>
-      <div class="summary-actions"><button id="focus-demo-feedback" class="button primary" type="button">Share demo feedback</button><button id="replay-demo" class="button secondary" type="button">Replay this demo scenario</button><a class="button secondary" href="#activate/1">Change demo setup</a><a class="text-button" href="#blueprint">Back to blueprint</a></div>
+      <div class="blueprint-bottom"><section id="demo-result-preview" class="summary-panel" aria-label="Actual product increment"></section><section id="demo-completion-record" class="summary-panel" aria-label="Recorded verification evidence"></section></div>
+      <div class="summary-actions"><button id="focus-demo-feedback" class="button primary" type="button">Record feedback</button><button id="replay-demo" class="button secondary" type="button">Authorize another cycle</button><a class="button secondary" href="#activate/1">Connection settings</a><a class="text-button" href="#blueprint">Back to blueprint</a></div>
       <section class="feedback-panel" aria-labelledby="feedback-title">
-        <div class="step-heading"><span class="eyebrow purple">HELP SHAPE THE NEXT VERSION</span><h2 id="feedback-title">How did the journey feel?</h2><p>Optional feedback for the repo owner. No names, contact details, secrets, or automatic analytics.</p></div>
-        <form id="demo-feedback-form" novalidate><div id="demo-feedback-error" class="error-banner" role="alert" hidden></div><label for="demo-feedback-response">Could you get through this demo without outside guidance?</label><select id="demo-feedback-response" required><option value="">Choose your experience</option><option value="unaided">Yes, without outside help</option><option value="help-needed">I needed some help</option><option value="confusing">The journey was confusing</option></select><label for="demo-feedback-notes">What worked, and where did you get stuck?</label><textarea id="demo-feedback-notes" rows="3" maxlength="1200" placeholder="Tell us about confusing steps, missing information, or useful parts."></textarea><button class="button secondary" type="submit">Prepare feedback to share</button></form>
-        <div id="demo-feedback-receipt" hidden><p id="demo-feedback-status" class="demo-status" role="status"></p><label for="demo-feedback-text">Your feedback text</label><textarea id="demo-feedback-text" readonly rows="8"></textarea><button id="select-demo-feedback" class="text-button" type="button">Select feedback to copy</button><p class="fine-print">Copy and share this text with the owner yourself. Nothing has been sent or saved outside this page; refreshing clears it.</p></div>
+        <div class="step-heading"><span class="eyebrow purple">HELP SHAPE THE NEXT VERSION</span><h2 id="feedback-title">How did the journey feel?</h2><p>Optional feedback is explicitly saved in the connected product Git repository as Pending VOC. No names, contact details, secrets, or automatic analytics.</p></div>
+        <form id="demo-feedback-form" novalidate><div id="demo-feedback-error" class="error-banner" role="alert" hidden></div><label for="demo-feedback-response">Could you finish without outside guidance?</label><select id="demo-feedback-response" required><option value="">Choose your experience</option><option value="unaided">Yes, without outside help</option><option value="help-needed">I needed some help</option><option value="confusing">The journey was confusing</option></select><label for="demo-feedback-notes">What worked, and where did you get stuck?</label><textarea id="demo-feedback-notes" rows="3" maxlength="1200" placeholder="Tell us about confusing steps, missing information, or useful parts."></textarea><button class="button secondary" type="submit">Save feedback to product Git</button></form>
+        <div id="demo-feedback-receipt" hidden><p id="demo-feedback-status" class="demo-status" role="status"></p><label for="demo-feedback-text">Saved receipt</label><textarea id="demo-feedback-text" readonly rows="5"></textarea><button id="select-demo-feedback" class="text-button" type="button">Select receipt to copy</button><p class="fine-print">A saved receipt is not VOC review, investment approval, or a new work authorization.</p></div>
       </section>
-      <p class="fine-print summary-disclaimer">The result and cost estimate are scripted examples. No actual code, customer-value increment, runtime validation, Git-tracked evidence, or release was produced.</p>
+      <p class="fine-print summary-disclaimer">Verified and integrated are distinct states. Release and remote publication are not implied by completion. Missing usage data remains explicitly unknown.</p>
+    </section>
+    <section id="factory-view" hidden aria-labelledby="factory-title">
+      <div class="blueprint-heading"><div><span class="eyebrow purple">BLUEPRINT TO CONTAINER TO PRODUCTION</span><h1 id="factory-title" tabindex="-1">Your governed Factory.</h1><p>Configure deployment, authorize one operating envelope, and observe actual role activity and verified increments.</p></div><a class="button secondary" href="#blueprint">My blueprint</a></div>
+      <div id="factory-error" class="error-banner" role="alert" hidden></div>
+      <div id="factory-connection" class="demo-status" role="status"></div>
+      <div class="summary-actions"><a class="button secondary" href="#activate/1">Connect a trusted product service</a><button id="factory-add-fleet" class="button secondary" type="button">Monitor this service in my fleet</button></div>
+      <div class="factory-layout">
+        <form id="factory-deployment-form" class="form-panel">
+          <h2>Deployment blueprint</h2><p class="field-help">These choices describe a deployment, not permission to provision resources or run agents.</p>
+          <label for="factory-target">Deployment target</label><select id="factory-target"><option value="docker">Docker / Compose</option><option value="kubernetes">Kubernetes</option><option value="aks">Azure Kubernetes Service</option><option value="aca">Azure Container Apps</option><option value="aci">Azure Container Instances</option></select>
+          <label for="factory-topology">Deployment shape</label><select id="factory-topology"><option value="single">Self-contained container</option><option value="distributed">Controller and independently scaled workers</option></select>
+          <label for="factory-startup">Startup trigger</label><select id="factory-startup"><option value="studio">Start Factory in Studio</option><option value="api">API / CLI</option><option value="automatic">Automatic, with an independently signed mandate</option></select>
+          <label for="factory-human-mode">Human participation</label><select id="factory-human-mode"><option value="in-loop">In the loop: approve individual gates</option><option value="on-loop">On the loop: monitor and intervene</option><option value="out-of-loop">Out of the loop: governed unattended operation</option></select>
+          <label for="factory-stack">Allowed work-product stacks</label><select id="factory-stack" multiple size="7"><option value="node">Node.js / TypeScript</option><option value="dotnet">.NET / C#</option><option value="python">Python</option><option value="java">Java</option><option value="go">Go</option><option value="native">C / C++</option><option value="infrastructure">Infrastructure</option></select>
+          <label class="factory-check"><input id="factory-delegate-stack" type="checkbox" checked>Let the Fullstacker council select the stack</label>
+          <label for="factory-cloud">Factory cloud</label><select id="factory-cloud"><option value="local">Local / existing infrastructure</option><option value="azure">Azure</option><option value="aws">AWS</option><option value="gcp">Google Cloud</option><option value="council">Delegate a placement proposal to the council</option></select>
+          <label for="factory-product-cloud">Work-product cloud</label><select id="factory-product-cloud"><option value="council">Delegate to the council</option><option value="local">Local / existing infrastructure</option><option value="azure">Azure</option><option value="aws">AWS</option><option value="gcp">Google Cloud</option></select>
+          <label for="factory-redundancy">Redundancy (blank delegates a bounded proposal)</label><input id="factory-redundancy" type="number" min="1" max="64" step="1">
+          <label for="factory-identity">Identity strategy</label><select id="factory-identity"><option value="runtime-secrets">Secure runtime credentials</option><option value="workload-identity">Workload identity where supported; provider credentials otherwise</option><option value="hosted-connector">Owner-managed hosted connector</option></select>
+          <label for="factory-persistence">Durable state</label><select id="factory-persistence"><option value="volume">Product Git and persistent volume</option><option value="postgres">PostgreSQL state and a persistent Git workspace</option></select>
+          <div class="factory-fields"><div><label for="factory-cpu">CPU per container</label><input id="factory-cpu" type="number" min="0.1" max="64" step="0.1" required></div><div><label for="factory-memory">Memory per container (MiB)</label><input id="factory-memory" type="number" min="256" max="262144" step="1" required></div></div>
+          <p class="field-help">All toolchains are installed in the runtime image. An owner chooses resource ceilings; configuration is not proof of host capacity. ACI requires explicit root bootstrap approval and then drops to UID 1000.</p>
+          <button id="factory-save-deployment" class="button primary" type="submit">Save deployment blueprint to product Git</button>
+        </form>
+        <form id="factory-mandate-form" class="form-panel">
+          <h2>Owner operating mandate</h2><p class="field-help">One signed scope, expiry, cumulative budget and decision envelope. No browser checkbox can override managed permissions, repository protections or human-only sign-in.</p>
+          <label for="factory-model">Provider-reported model / routing entry</label><select id="factory-model" required></select>
+          <div class="factory-fields"><div><label for="factory-max-credits">Total AI-credit ceiling</label><input id="factory-max-credits" type="number" min="270" step="1" required></div><div><label for="factory-task-credits">Credit escrow per session</label><input id="factory-task-credits" type="number" min="30" max="100" step="1" required></div></div>
+          <div class="factory-fields"><div><label for="factory-max-cycles">Authorized value cycles</label><input id="factory-max-cycles" type="number" min="1" max="1000" step="1" required></div><div><label for="factory-max-parallel">Concurrent assignment ceiling</label><input id="factory-max-parallel" type="number" min="9" max="64" step="1" required></div></div>
+          <div class="factory-fields"><div><label for="factory-task-seconds">Assignment deadline (seconds)</label><input id="factory-task-seconds" type="number" min="30" max="3600" step="1" required></div><div><label for="factory-retries">Approved recovery retries</label><input id="factory-retries" type="number" min="0" max="10" step="1" required></div></div>
+          <label for="factory-expires">Operating authority expires</label><input id="factory-expires" type="datetime-local" required>
+          <label for="factory-write-paths">Allowed product write paths (one per line; "." permits ordinary product files)</label><textarea id="factory-write-paths" rows="3" required></textarea>
+          <label class="factory-check"><input id="factory-restart" type="checkbox">Authorize checkpoint recovery after a runtime restart</label>
+          <fieldset id="factory-actions" class="demo-permissions"><legend>Explicitly delegated actions</legend></fieldset>
+          <details class="explain-box"><summary>Optional currency and infrastructure ceilings</summary><label for="factory-currency">Currency code</label><input id="factory-currency" maxlength="3" placeholder="USD"><label for="factory-max-cost">Total currency ceiling</label><input id="factory-max-cost" type="number" min="0.01" step="0.01"><label for="factory-credit-rate">Owner-confirmed cost per AI credit</label><input id="factory-credit-rate" type="number" min="0.000001" step="0.000001"><label for="factory-infra-reserve">Maximum infrastructure cost reserve</label><input id="factory-infra-reserve" type="number" min="0" step="0.01"><label for="factory-rate-version">Confirmed rate source / version</label><input id="factory-rate-version" maxlength="120"></details>
+          <p class="field-help">Missing billing consumes the whole reserved session cap. Currency rates are owner inputs, not invented prices. Paid infrastructure requires a source-bound plan and a configured adapter. On-loop/out-of-loop verification requires an isolated executor.</p>
+          <label class="factory-check"><input id="factory-owner-confirm" type="checkbox" required>I authorize the displayed limits, scoped provider access, permitted writes and delegated actions on this product.</label>
+          <button id="factory-authorize" class="button primary" type="submit">Accept / amend the operating mandate</button>
+        </form>
+      </div>
+      <section class="summary-panel factory-operations" aria-labelledby="factory-operations-title">
+        <h2 id="factory-operations-title">Factory Operations Center</h2><div id="factory-recap" class="demo-recap"></div><div id="factory-status" class="demo-status" role="status"></div>
+        <div class="summary-actions"><button id="factory-start" class="button primary" type="button">Start Factory</button><button id="factory-resume" class="button secondary" type="button">Approve pending gate / resume</button><button id="factory-pause" class="button secondary" type="button">Pause this Factory</button><button id="factory-revoke" class="button danger" type="button">Revoke its mandate</button><button id="factory-download-mandate" class="button secondary" type="button">Download signed startup mandate</button></div>
+        <div class="factory-layout"><section><h3>Actual assignments</h3><ul id="factory-agent-list" class="factory-agent-list"></ul></section><section><h3>Verified increments</h3><ol id="factory-increments"></ol></section></div>
+        <details class="explain-box"><summary>Candidate diff for review</summary><pre id="factory-diff" class="live-output"></pre></details>
+        <details class="explain-box"><summary>Observed journal and capture gaps</summary><button id="factory-refresh-observations" class="button secondary" type="button">Read product-owned observations</button><pre id="factory-observations" class="live-output"></pre></details>
+        <p class="field-help">Delivery WIP is one product card. Independently capped role sessions and technical reviewers can overlap. Declared teams, transport health and test fixtures are not live-host concurrency certificates. An expired horizon is a checkpoint, not autonomous Factory shutdown.</p>
+      </section>
+      <form id="factory-package-form" class="form-panel">
+        <h2>Export a deployable Factory</h2><p class="field-help">The package is saved and committed in your product Git before download. Get the <a href="https://github.com/chadhage/adhd/pkgs/container/adhd-studio">published Studio runtime image</a> or build your reviewed image, then supply its immutable registry digest. Publishing an image does not start a backend service. No cloud resources are provisioned by export.</p>
+        <label for="factory-image">Reviewed runtime image, pinned by digest</label><input id="factory-image" required placeholder="ghcr.io/chadhage/adhd-studio@sha256:..." autocomplete="off">
+        <label for="factory-container-command">Linux-container acceptance executable</label><input id="factory-container-command" required placeholder="node" autocomplete="off">
+        <label for="factory-container-args">Acceptance arguments (JSON string array)</label><textarea id="factory-container-args" rows="3" required placeholder='["--test","tests/acceptance.test.mjs"]'></textarea>
+        <button id="factory-export" class="button primary" type="submit">Save and request package download</button><p id="factory-package-status" class="field-help" role="status"></p>
+        <details id="factory-package-copy" class="explain-box" hidden><summary>Saved package JSON for browsers without file downloads</summary><label for="factory-package-json">Verified package contents</label><textarea id="factory-package-json" readonly rows="8"></textarea><button id="factory-select-package" class="button secondary" type="button">Select package JSON to copy</button><p class="field-help">Save this JSON to a local file and materialize it with the package CLI. A download request is not proof your browser saved a file.</p></details>
+      </form>
+      <section class="summary-panel" aria-labelledby="factory-fleet-title"><h2 id="factory-fleet-title">Central Studio fleet</h2><p>Monitor separate product services with separate credentials. Tokens stay in page memory; removing a service clears its fleet credential but does not stop its backend.</p><div id="factory-fleet" class="factory-fleet"></div></section>
     </section>
   </main>
-  <footer class="site-footer"><span><strong>ADHD studio</strong> &middot; A friendlier first step.</span><span>Explore freely. Nothing runs. Nothing leaves this page.</span></footer>
+  <footer class="site-footer"><span><strong>ADHD studio</strong> &middot; A friendlier first step.</span><span>Plan locally. Connect deliberately. Verify before accepting.</span></footer>
   <p id="announcements" class="sr-only" role="status" aria-live="polite"></p>
-  <noscript><p class="error-banner">This interactive prototype needs JavaScript enabled. It does not require VS Code, Copilot, an account, or a local service.</p></noscript>
+  <noscript><p class="error-banner">Studio needs JavaScript. Planning needs only a browser; real execution also needs an authenticated product service.</p></noscript>
   <dialog id="how-dialog" aria-labelledby="how-dialog-title">
     <div class="dialog-heading"><span class="eyebrow purple">THE SHORT VERSION</span><button class="icon-button" type="button" data-close-dialog aria-label="Close explanation"><svg aria-hidden="true"><use href="#icon-close"/></svg></button></div>
     <h2 id="how-dialog-title">An idea is easier with a team.</h2><p>ADHD means <strong>Agent Driven Hybrid Development</strong>: people set the direction, AI helpers contribute, and results still need evidence.</p>
     <div class="explanation-grid"><article><span class="role-symbol purple"><svg aria-hidden="true"><use href="#icon-factory"/></svg></span><h3>Factory = delivery coordinator</h3><p>A Factory brings the right Squads together for one product. Multiple Factories still share the same backlog and roadmap.</p></article><article><span class="role-symbol green"><svg aria-hidden="true"><use href="#icon-robot"/></svg></span><h3>Squad = small builder team</h3><p>Each Squad shares one board with two columns: To Do and In Progress. Builders tackle ready work and verify it together.</p></article></div>
-    <p class="callout">You'll design a visual blueprint, not start live agents. The choice of runtime is separate from your product and team structure.</p><button class="button primary" type="button" id="begin-from-explanation">Got it. Let's make a blueprint.</button>
+    <p class="callout">First design the blueprint. Then configure a container Factory and its operating mandate, or connect a service for one manual card. Planned teams are distinct from observed running agents.</p><button class="button primary" type="button" id="begin-from-explanation">Got it. Let's make a blueprint.</button>
   </dialog>
   <dialog id="compare-dialog" class="wide-dialog" aria-labelledby="compare-title">
     <div class="dialog-heading"><span class="eyebrow purple">YOUR COMFORT ZONE MATTERS</span><button class="icon-button" type="button" data-close-dialog aria-label="Close comparison"><svg aria-hidden="true"><use href="#icon-close"/></svg></button></div>
-    <h2 id="compare-title">Same framework. Different ways in.</h2><p>All five paths work in this prototype with a browser alone. These are the requirements for <strong>future real agent execution</strong>, not requirements for exploring this page.</p><div id="comparison-options" class="comparison-options"></div><p class="callout">Only the VS Code + Copilot setup is documented in the current framework. Alternative adapters, hosted services, container packages, and CLI orchestration still need implementation and real-host validation. No credentials are collected here.</p>
+    <h2 id="compare-title">Same service. Three places to run it.</h2><p>Choose hosted, local, or self-hosted execution. Planning works without a service; each execution path needs the listed real prerequisites.</p><div id="comparison-options" class="comparison-options"></div><p class="callout">Hosted instances require an owner and deployment. Local services stay on loopback. Self-hosted instances require protected infrastructure and TLS. Tokens are never embedded in the static site.</p>
   </dialog>
   <dialog id="team-dialog" class="wide-dialog" aria-labelledby="agents-title">
     <div class="dialog-heading"><span class="eyebrow purple">HELPERS, NOT A WHOLE NEW VOCABULARY</span><button class="icon-button" type="button" data-close-dialog aria-label="Close agent guide"><svg aria-hidden="true"><use href="#icon-close"/></svg></button></div>
