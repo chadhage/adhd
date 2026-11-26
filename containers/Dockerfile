@@ -58,10 +58,12 @@ RUN curl --fail --silent --show-error --location --proto '=https' --proto-redir 
     && tar -xzf helm.tar.gz linux-amd64/helm \
     && install -m 0755 linux-amd64/helm /usr/local/bin/helm \
     && curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
-      https://dl.k8s.io/release/v1.37.3/bin/linux/amd64/kubectl -o kubectl \
-    && echo '9a1b55af2795b25dd288dbef62387db9b5530087ab918d28c6ad067f2e3cb07c  kubectl' | sha256sum --check --strict \
-    && install -m 0755 kubectl /usr/local/bin/kubectl \
-    && rm -rf terraform.zip bicep helm.tar.gz linux-amd64 kubectl
+      https://github.com/cli/cli/releases/download/v2.106.0/gh_2.106.0_linux_amd64.tar.gz -o gh.tar.gz \
+    && echo 'a476449fa9625413c54a3734eded62e9e480e49f421ff08e7f3b3879c059a033  gh.tar.gz' | sha256sum --check --strict \
+    && tar -xzf gh.tar.gz \
+    && install -m 0755 gh_2.106.0_linux_amd64/bin/gh /usr/local/bin/gh \
+    && install -D -m 0644 gh_2.106.0_linux_amd64/LICENSE /usr/local/share/licenses/gh/LICENSE \
+    && rm -rf terraform.zip bicep helm.tar.gz linux-amd64 gh.tar.gz gh_2.106.0_linux_amd64
 WORKDIR /opt/adhd
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --include=optional --ignore-scripts --no-audit --no-fund \
@@ -71,6 +73,29 @@ RUN npm ci --omit=dev --include=optional --ignore-scripts --no-audit --no-fund \
     && ln -s /opt/typescript/node_modules/typescript/bin/tsc /usr/local/bin/tsc \
     && ln -s /opt/typescript/node_modules/typescript/bin/tsserver /usr/local/bin/tsserver \
     && npm cache clean --force >/dev/null
+
+FROM toolchains AS kubectl-build
+ENV GOWORK=off GOTOOLCHAIN=local CGO_ENABLED=0 \
+    GOPROXY=https://proxy.golang.org GOSUMDB=sum.golang.org
+WORKDIR /build/kubernetes
+RUN curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
+      https://dl.k8s.io/v1.37.3/kubernetes-src.tar.gz -o source.tar.gz \
+    && echo '49cf65f05aad72015bd93567ee90e4fe9e74ee5cf7e5082003bc721b3532b583  source.tar.gz' | sha256sum --check --strict \
+    && tar -xzf source.tar.gz \
+    && rm source.tar.gz \
+    && go mod edit -require=golang.org/x/net@v0.60.0 \
+    && go mod download golang.org/x/net \
+    && grep -Fx 'golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=' go.sum \
+    && go build -p 2 -mod=mod -trimpath \
+      -ldflags '-X k8s.io/client-go/pkg/version.gitVersion=v1.37.3+adhd.1 -X k8s.io/client-go/pkg/version.gitCommit=f81a9c5f95912fd97b7c8aa4966301aeae84a253 -X k8s.io/client-go/pkg/version.gitTreeState=dirty' \
+      -o /usr/local/bin/kubectl ./cmd/kubectl \
+    && go test -p 2 -mod=mod k8s.io/kubectl/pkg/cmd/version \
+    && go mod verify \
+    && go list -m -mod=mod golang.org/x/net | grep -Fx 'golang.org/x/net v0.60.0' \
+    && mkdir -p /opt/kubectl-provenance \
+    && cp go.mod go.sum LICENSE /opt/kubectl-provenance/ \
+    && go version -m /usr/local/bin/kubectl > /opt/kubectl-provenance/build-info.txt \
+    && sha256sum /usr/local/bin/kubectl > /opt/kubectl-provenance/binary.sha256
 
 FROM --platform=linux/amd64 ${BASE_IMAGE} AS runtime
 ARG SOURCE_REVISION
@@ -94,7 +119,7 @@ RUN test "$(dpkg --print-architecture)" = amd64 \
     && [[ "$BUILD_TIMESTAMP" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?Z$ ]] \
     && apt-get update -qq \
     && apt-get install -y --no-install-recommends \
-      ca-certificates curl git gh util-linux tzdata python3 python3-venv openjdk-21-jdk-headless maven \
+      ca-certificates curl git util-linux tzdata python3 python3-venv openjdk-21-jdk-headless maven \
       build-essential cmake ninja-build pkg-config gdb libicu74 libgssapi-krb5-2 libssl3t64 zlib1g \
     && rm -rf /var/lib/apt/lists/* \
     && (getent group 1000 >/dev/null || groupadd --gid 1000 studio) \
@@ -107,6 +132,8 @@ COPY --from=toolchains /opt/google-cloud-sdk /opt/google-cloud-sdk
 COPY --from=toolchains /opt/cloud-cli /opt/cloud-cli
 COPY --from=toolchains /opt/typescript /opt/typescript
 COPY --from=toolchains /opt/adhd/node_modules /opt/adhd/node_modules
+COPY --from=kubectl-build /usr/local/bin/kubectl /usr/local/bin/kubectl
+COPY --from=kubectl-build /opt/kubectl-provenance /opt/adhd/provenance/kubectl
 WORKDIR /opt/adhd
 COPY --chown=0:0 package.json package-lock.json LICENSE ./
 COPY --chown=0:0 studio/*.mjs ./studio/
@@ -138,7 +165,8 @@ RUN mkdir -p provenance \
     && bicep --version | grep 'Bicep CLI version 0.49.2' \
     && pwsh -NoLogo -NoProfile -NonInteractive -Command '$PSVersionTable.PSVersion.ToString()' | grep -Fx '7.7.0' \
     && helm version --short | grep '^v4.3.2' \
-    && kubectl version --client --output=json | grep '"gitVersion": "v1.37.3"' \
+    && kubectl version --client --output=json | grep '"gitVersion": "v1.37.3+adhd.1"' \
+    && gh --version | grep '^gh version 2.106.0 ' \
     && rm -rf /root/.cache /root/.azure /root/.config /root/.dotnet
 LABEL org.opencontainers.image.title="ADHD immutable Factory runtime" \
       org.opencontainers.image.version="1.0.0" \

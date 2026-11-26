@@ -77,6 +77,14 @@ repository visibility alone is not evidence of public image access.
 Toolchain binaries are pinned with upstream checksums; OS package inventories
 are retained. The inventory and critical-vulnerability gate do not replace
 licensing review, lower-severity triage or live operational assurance.
+The image uses the checksum-verified upstream GitHub CLI rather than Ubuntu's
+older binary. Its kubectl is explicitly versioned `v1.37.3+adhd.1`: an
+owner-approved source build of Kubernetes v1.37.3 with `golang.org/x/net` raised
+from v0.57.0 to v0.60.0 for GO-2026-6612. The source archive and Go module are
+checksum-verified, command-version unit tests run during the build, and the
+resulting module files, license, binary hash and build information are retained
+under `/opt/adhd/provenance/kubectl`. This is not an unmodified upstream binary;
+cluster interoperability and live deployment remain separately unverified.
 
 Runtime inputs are protected files outside the product Git workspace:
 `STUDIO_CONFIG_FILE`, `STUDIO_TOKEN_FILE`, `STUDIO_COPILOT_TOKEN_FILE`,

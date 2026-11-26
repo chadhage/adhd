@@ -114,12 +114,29 @@
         "source": "https://get.helm.sh/helm-v4.3.2-linux-amd64.tar.gz.sha256sum"
       },
       "kubectl": {
-        "version": "1.37.3",
-        "archive": "https://dl.k8s.io/release/v1.37.3/bin/linux/amd64/kubectl",
-        "sha256": "9a1b55af2795b25dd288dbef62387db9b5530087ab918d28c6ad067f2e3cb07c",
-        "source": "https://dl.k8s.io/release/v1.37.3/bin/linux/amd64/kubectl.sha256"
+        "version": "1.37.3+adhd.1",
+        "upstreamVersion": "1.37.3",
+        "sourceRevision": "f81a9c5f95912fd97b7c8aa4966301aeae84a253",
+        "archive": "https://dl.k8s.io/v1.37.3/kubernetes-src.tar.gz",
+        "sha256": "49cf65f05aad72015bd93567ee90e4fe9e74ee5cf7e5082003bc721b3532b583",
+        "source": "https://dl.k8s.io/v1.37.3/kubernetes-src.tar.gz.sha256",
+        "securityPatch": {
+          "module": "golang.org/x/net",
+          "from": "v0.57.0",
+          "to": "v0.60.0",
+          "sum": "h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=",
+          "advisory": "https://pkg.go.dev/vuln/GO-2026-6612",
+          "verification": "Go checksum database, kubectl version-command unit tests, go mod verify and the unchanged critical Grype gate",
+          "provenance": "/opt/adhd/provenance/kubectl"
+        }
       },
-      "gitAndGithubCli": { "source": "Ubuntu 24.04 git and gh packages" }
+      "git": { "source": "Ubuntu 24.04 git package" },
+      "githubCli": {
+        "version": "2.106.0",
+        "archive": "https://github.com/cli/cli/releases/download/v2.106.0/gh_2.106.0_linux_amd64.tar.gz",
+        "sha256": "a476449fa9625413c54a3734eded62e9e480e49f421ff08e7f3b3879c059a033",
+        "source": "https://github.com/cli/cli/releases/download/v2.106.0/gh_2.106.0_checksums.txt"
+      }
     }
   },
   "provenance": {
