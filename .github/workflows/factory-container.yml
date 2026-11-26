@@ -42,6 +42,7 @@ jobs:
         shell: pwsh
         run: docker image inspect adhd-factory:assurance --format '{{.Id}}'
       - name: Reject critical vulnerabilities in the candidate image
+        id: scan
         uses: anchore/scan-action@1638637db639e0ade3258b51db49a9a137574c3e
         env:
           GRYPE_DB_VALIDATE_AGE: 'true'
@@ -53,3 +54,20 @@ jobs:
           grype-version: v0.122.1
           fail-build: true
           severity-cutoff: critical
+          output-format: json
+          output-file: ${{ runner.temp }}/adhd-studio.grype.json
+      - name: Show critical findings without weakening the publication gate
+        if: ${{ !cancelled() && (steps.scan.outcome == 'success' || steps.scan.outcome == 'failure') }}
+        shell: pwsh
+        env:
+          REPORT_PATH: ${{ runner.temp }}/adhd-studio.grype.json
+        run: |
+          node -e "const fs=require('node:fs');const report=JSON.parse(fs.readFileSync(process.env.REPORT_PATH,'utf8'));if(!Array.isArray(report.matches))throw Error('Invalid vulnerability report');for(const match of report.matches.filter(match=>match.vulnerability.severity.toLowerCase()==='critical'))console.log(match.artifact.name+'@'+match.artifact.version+': '+match.vulnerability.id+'; fixed in '+(match.vulnerability.fix.versions.join(', ')||'not reported'))"
+      - name: Retain the candidate image scan report even on failure
+        if: ${{ !cancelled() && (steps.scan.outcome == 'success' || steps.scan.outcome == 'failure') }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: studio-runtime-scan-${{ github.sha }}
+          path: ${{ runner.temp }}/adhd-studio.grype.json
+          if-no-files-found: error
+          retention-days: 7

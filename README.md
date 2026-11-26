@@ -61,6 +61,8 @@ portable deployment. An image publication does not start a hosted backend.
 
 The [container assembly workflow](.github/workflows/factory-container.yml)
 checks a non-published PR image without AI inference or cloud provisioning.
+Critical findings and the full scan report are retained in Actions even when
+the gate fails; a failed scan is not hidden or treated as release approval.
 The [publication workflow](.github/workflows/factory-publish.yml) runs only after
 both main-branch quality gates pass. It builds that exact source revision,
 verifies non-root SDK imports and browser assets, generates an SPDX inventory,
