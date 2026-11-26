@@ -34,7 +34,11 @@ export class FixtureRunner {
 
 export async function fixture(t, options = {}) {
   const root = await mkdtemp(join(tmpdir(), 'adhd-studio-test-'));
-  t.after(() => rm(root, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 }));
+  let studio;
+  t.after(async () => {
+    try { await studio?.close(); }
+    finally { await rm(root, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 }); }
+  });
   for (const args of [
     ['init', '-b', 'main'], ['config', 'user.name', 'Studio test fixture'],
     ['config', 'user.email', 'studio-fixture@example.invalid'],
@@ -47,17 +51,16 @@ export async function fixture(t, options = {}) {
   await command('git', ['add', '.'], root);
   await command('git', ['commit', '-m', 'Initialize isolated Studio fixture'], root);
   const runner = options.runner ?? new FixtureRunner();
-  const studio = await new Studio({
+  studio = await new Studio({
     workspace: root, runner, mode: options.mode ?? 'local',
     verification: { command: process.execPath, args: ['--test', 'acceptance.test.mjs'] },
   }).initialize();
-  t.after(() => studio.close());
   const initial = await studio.snapshot();
   await studio.saveBlueprint({ blueprint: { ...blueprint, path: options.mode ?? 'local' }, revision: initial.revision });
   return { root, runner, studio };
 }
 
-export async function waitFor(studio, predicate, timeoutMs = 10_000) {
+export async function waitFor(studio, predicate, timeoutMs = review.maxSeconds * 1000) {
   return new Promise((resolve, reject) => {
     let settled = false;
     const finish = (error, state) => {

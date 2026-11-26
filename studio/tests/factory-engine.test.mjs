@@ -81,13 +81,14 @@ test('negative: owner revocation aborts ongoing work and prevents automatic rest
 });
 
 test('positive: restart preserves the same identity, readiness, failed reservation and Git worktree', async (t) => {
+  let resumed;
+  t.after(() => resumed?.close());
   const { studio, controller, root } = await factoryFixture(t, { runner: new FactoryFixtureRunner({ block: true }), policy: { ...mandate, maxCycles: 1 } });
   await controller.start();
   await waitFor(studio, (current) => current.factory?.tasks.some((task) => task.kind === 'delivery' && task.acceptedAt));
   const original = (await studio.snapshot()).factory;
   await studio.close();
-  const resumed = await new Studio({ workspace: root, runner: new FixtureRunner(), verification: { command: process.execPath, args: ['--test', 'acceptance.test.mjs'] } }).initialize();
-  t.after(() => resumed.close());
+  resumed = await new Studio({ workspace: root, runner: new FixtureRunner(), verification: { command: process.execPath, args: ['--test', 'acceptance.test.mjs'] } }).initialize();
   const runner = new FactoryFixtureRunner();
   resumed.factory = await new FactoryController(resumed, { secret, runner, executor: fixtureExecutor, observer: null }).initialize();
   await resumed.factory.start();
