@@ -87,7 +87,7 @@ RUN curl --fail --silent --show-error --location --proto '=https' --proto-redir 
     && go mod download golang.org/x/net \
     && grep -Fx 'golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=' go.sum \
     && go build -p 2 -mod=mod -trimpath \
-      -ldflags '-X k8s.io/client-go/pkg/version.gitVersion=v1.37.3+adhd.1 -X k8s.io/client-go/pkg/version.gitCommit=f81a9c5f95912fd97b7c8aa4966301aeae84a253 -X k8s.io/client-go/pkg/version.gitTreeState=dirty' \
+      -ldflags '-X k8s.io/component-base/version.gitVersion=v1.37.3+adhd.1 -X k8s.io/component-base/version.gitCommit=f81a9c5f95912fd97b7c8aa4966301aeae84a253 -X k8s.io/component-base/version.gitTreeState=dirty -X k8s.io/client-go/pkg/version.gitVersion=v1.37.3+adhd.1 -X k8s.io/client-go/pkg/version.gitCommit=f81a9c5f95912fd97b7c8aa4966301aeae84a253 -X k8s.io/client-go/pkg/version.gitTreeState=dirty' \
       -o /usr/local/bin/kubectl ./cmd/kubectl \
     && go test -p 2 -mod=mod k8s.io/kubectl/pkg/cmd/version \
     && go mod verify \
@@ -165,7 +165,7 @@ RUN mkdir -p provenance \
     && bicep --version | grep 'Bicep CLI version 0.49.2' \
     && pwsh -NoLogo -NoProfile -NonInteractive -Command '$PSVersionTable.PSVersion.ToString()' | grep -Fx '7.7.0' \
     && helm version --short | grep '^v4.3.2' \
-    && kubectl version --client --output=json | grep '"gitVersion": "v1.37.3+adhd.1"' \
+    && node -e "const v=JSON.parse(require('node:child_process').execFileSync('kubectl',['version','--client','--output=json'])).clientVersion;if(v.gitVersion!=='v1.37.3+adhd.1'||v.gitCommit!=='f81a9c5f95912fd97b7c8aa4966301aeae84a253'||v.gitTreeState!=='dirty')throw Error('Incorrect patched kubectl identity: '+JSON.stringify(v));console.log('Verified patched kubectl '+v.gitVersion)" \
     && gh --version | grep '^gh version 2.106.0 ' \
     && rm -rf /root/.cache /root/.azure /root/.config /root/.dotnet
 LABEL org.opencontainers.image.title="ADHD immutable Factory runtime" \
